@@ -14,6 +14,12 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Initialize products real-time sync
+if (typeof initProductsListener === 'function') {
+  initProductsListener();
+  migrateProductsToFirebase();
+}
+
 // Auth State Observer
 auth.onAuthStateChanged(function(user) {
   updateNavAuth(user);
@@ -30,20 +36,93 @@ auth.onAuthStateChanged(function(user) {
 // Update navigation based on auth state
 function updateNavAuth(user) {
   const accountLinks = document.querySelectorAll('.account-link');
-  const authLinks = document.querySelectorAll('.auth-link');
+
+  // Remove any existing dropdown
+  var existingDropdown = document.getElementById('account-dropdown');
+  if (existingDropdown) existingDropdown.remove();
 
   accountLinks.forEach(link => {
     if (user) {
       link.style.display = 'block';
       link.innerHTML = '<i class="fas fa-user"></i>';
-      link.href = 'account.html';
+      link.href = '#';
+      link.style.position = 'relative';
+
+      // Fetch user data and show name
+      db.collection('users').doc(user.uid).get().then(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
+          var name = data.firstName || user.displayName?.split(' ')[0] || '';
+          if (name) {
+            link.innerHTML = '<i class="fas fa-user"></i> ' + name;
+          }
+        }
+      }).catch(function() {});
+
+      // Create dropdown
+      var dropdown = document.createElement('div');
+      dropdown.id = 'account-dropdown';
+      dropdown.className = 'account-dropdown';
+      dropdown.style.display = 'none';
+      dropdown.innerHTML =
+        '<div class="dropdown-rewards" id="dropdown-rewards">Loading rewards...</div>' +
+        '<a href="account.html" class="dropdown-link"><i class="fas fa-user-cog"></i> My Account</a>' +
+        '<button class="dropdown-signout" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>';
+      link.parentElement.appendChild(dropdown);
+
+      // Load rewards into dropdown
+      db.collection('users').doc(user.uid).get().then(function(doc) {
+        var rewardsEl = document.getElementById('dropdown-rewards');
+        if (!rewardsEl) return;
+        if (doc.exists) {
+          var data = doc.data();
+          var orderCount = (data.rewards && data.rewards.orderCount) || 0;
+          var rewardAvailable = (data.rewards && data.rewards.rewardAvailable) || false;
+
+          if (rewardAvailable) {
+            rewardsEl.innerHTML = '<div class="dropdown-reward-badge">£20 OFF</div><p>Applied at checkout!</p>';
+          } else {
+            var remaining = 5 - (orderCount % 5);
+            rewardsEl.innerHTML =
+              '<div class="dropdown-stamps">' + buildDots(orderCount % 5) + '</div>' +
+              '<p>' + remaining + ' more order' + (remaining !== 1 ? 's' : '') + ' until £20 off</p>';
+          }
+        }
+      }).catch(function() {});
+
+      // Toggle dropdown on click
+      link.onclick = function(e) {
+        e.preventDefault();
+        var dd = document.getElementById('account-dropdown');
+        if (dd) {
+          dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+        }
+      };
     } else {
       link.style.display = 'block';
       link.innerHTML = '<i class="fas fa-user"></i>';
       link.href = 'login.html';
+      link.onclick = null;
     }
   });
 }
+
+// Build stamp dots for dropdown
+function buildDots(count) {
+  var html = '';
+  for (var i = 0; i < 5; i++) {
+    html += '<span class="dropdown-dot ' + (i < count ? 'filled' : '') + '"></span>';
+  }
+  return html;
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  var dropdown = document.getElementById('account-dropdown');
+  if (dropdown && !e.target.closest('.account-link') && !e.target.closest('.account-dropdown')) {
+    dropdown.style.display = 'none';
+  }
+});
 
 // Sign Up Function
 async function signUp(email, password, firstName, lastName, phone) {
@@ -59,8 +138,8 @@ async function signUp(email, password, firstName, lastName, phone) {
       phone: phone || '',
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       rewards: {
-        points: 100, // Welcome bonus
-        tier: 'Bronze'
+        orderCount: 0,
+        rewardAvailable: false
       },
       purchases: []
     });
@@ -108,8 +187,8 @@ async function signInWithGoogle() {
         phone: user.phoneNumber || '',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         rewards: {
-          points: 100,
-          tier: 'Bronze'
+          orderCount: 0,
+          rewardAvailable: false
         },
         purchases: [],
         signInMethod: 'google'
@@ -218,14 +297,19 @@ async function addPurchase(orderData) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // Update rewards points (1 point per £1 spent)
-    const pointsEarned = Math.floor(orderData.total);
-    await db.collection('users').doc(user.uid).update({
-      'rewards.points': firebase.firestore.FieldValue.increment(pointsEarned)
-    });
+    // Increment order count for rewards
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    const userData = userDoc.data();
+    const newCount = ((userData.rewards && userData.rewards.orderCount) || 0) + 1;
 
-    // Check and update tier
-    await updateRewardsTier(user.uid);
+    const rewardUpdate = { 'rewards.orderCount': newCount };
+
+    // Grant reward every 5th order (5, 10, 15, etc.)
+    if (newCount % 5 === 0) {
+      rewardUpdate['rewards.rewardAvailable'] = true;
+    }
+
+    await db.collection('users').doc(user.uid).update(rewardUpdate);
 
     return true;
   } catch (error) {

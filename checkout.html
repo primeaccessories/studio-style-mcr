@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout | Studio Style MCR</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/cart.css?v=4">
+  <link rel="stylesheet" href="css/cart.css?v=5">
   <link rel="stylesheet" href="css/auth.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,9 +72,30 @@
             </div>
           </div>
 
-          <h2>Delivery Options</h2>
+          <h2>How would you like to receive your order?</h2>
 
           <div class="delivery-options">
+            <div class="delivery-option-wrap">
+              <label class="delivery-option">
+                <input type="radio" name="delivery" value="local">
+                <span class="option-content">
+                  <span class="option-name">Collection / Drop-off</span>
+                  <span class="option-price">FREE</span>
+                  <span class="option-time">Collect or M28 drop-off</span>
+                </span>
+              </label>
+              <div id="local-options" class="local-options" style="display:none;">
+                <select id="localTypeSelect" class="local-select">
+                  <option value="" disabled selected>Choose an option...</option>
+                  <option value="collection">Collection</option>
+                  <option value="dropoff">Drop-off (M28 only)</option>
+                </select>
+                <div id="dropoff-postcode" style="display:none;">
+                  <input type="text" id="localPostcode" class="local-postcode-input" placeholder="Enter your postcode (e.g. M28 3AA)">
+                </div>
+                <div id="delivery-message" class="delivery-message" style="display:none;"></div>
+              </div>
+            </div>
             <label class="delivery-option">
               <input type="radio" name="delivery" value="standard" checked>
               <span class="option-content">
@@ -91,8 +112,8 @@
                 <span class="option-time">1-2 working days</span>
               </span>
             </label>
-            <label class="delivery-option">
-              <input type="radio" name="delivery" value="free" id="free-delivery" disabled>
+            <label class="delivery-option" id="free-delivery-label" style="display:none;">
+              <input type="radio" name="delivery" value="free" id="free-delivery">
               <span class="option-content">
                 <span class="option-name">Free Delivery</span>
                 <span class="option-price">FREE</span>
@@ -101,9 +122,19 @@
             </label>
           </div>
 
-          <button type="submit" class="pay-btn" id="pay-btn">
-            Pay Now - <span id="final-total">£0.00</span>
-          </button>
+          <div id="pay-buttons">
+            <button type="submit" class="pay-btn" id="pay-btn">
+              Pay Now - <span id="final-total">£0.00</span>
+            </button>
+          </div>
+          <div id="local-pay-buttons" class="local-pay-buttons" style="display:none;">
+            <button type="button" class="pay-btn pay-cash-btn" id="pay-cash-btn">
+              Pay Cash - <span class="local-total">£0.00</span>
+            </button>
+            <button type="button" class="pay-btn pay-card-btn" id="pay-card-btn">
+              Pay by Card - <span class="local-total">£0.00</span>
+            </button>
+          </div>
         </form>
       </div>
 
@@ -119,6 +150,10 @@
           <div class="summary-row">
             <span>Delivery</span>
             <span id="checkout-delivery">£3.99</span>
+          </div>
+          <div class="summary-row reward-row" id="reward-row" style="display: none; color: #2e7d32;">
+            <span>Reward Discount</span>
+            <span id="checkout-reward">-£20.00</span>
           </div>
           <div class="summary-row total">
             <span>Total</span>
@@ -189,23 +224,133 @@
   <script src="js/products.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/search.js"></script>
-  <script src="js/auth.js"></script>
+  <script src="js/auth.js?v=2"></script>
   <script>
-    // Delivery prices
     const deliveryPrices = {
+      local: 0,
       standard: 3.99,
       express: 5.99,
       free: 0
     };
 
-    // Render checkout items
+    let rewardAvailable = false;
+
+    // Check for reward on page load
+    auth.onAuthStateChanged(async function(user) {
+      if (user) {
+        try {
+          const doc = await db.collection('users').doc(user.uid).get();
+          if (doc.exists) {
+            const data = doc.data();
+            rewardAvailable = (data.rewards && data.rewards.rewardAvailable) || false;
+            if (rewardAvailable) {
+              document.getElementById('reward-row').style.display = 'flex';
+            }
+            updateTotal();
+          }
+        } catch (error) {
+          console.error('Error checking reward:', error);
+        }
+      }
+    });
+
+    const addressInput = document.querySelector('input[name="address"]');
+    const addressGroup = addressInput.closest('.form-group');
+    const cityPostcodeRow = document.querySelector('input[name="city"]').closest('.form-row');
+
+    function showAddressFields(show) {
+      addressGroup.style.display = show ? '' : 'none';
+      cityPostcodeRow.style.display = show ? '' : 'none';
+      if (show) {
+        addressInput.setAttribute('required', '');
+        document.querySelector('input[name="city"]').setAttribute('required', '');
+        document.querySelector('input[name="postcode"]').setAttribute('required', '');
+      } else {
+        addressInput.removeAttribute('required');
+        document.querySelector('input[name="city"]').removeAttribute('required');
+        document.querySelector('input[name="postcode"]').removeAttribute('required');
+      }
+    }
+
+    function handleDeliveryChange() {
+      const delivery = document.querySelector('input[name="delivery"]:checked').value;
+      const messageEl = document.getElementById('delivery-message');
+      const localOptions = document.getElementById('local-options');
+      const payBtn = document.getElementById('pay-btn');
+
+      if (delivery === 'local') {
+        localOptions.style.display = 'block';
+        handleLocalTypeChange();
+      } else {
+        // standard, express, free
+        localOptions.style.display = 'none';
+        showAddressFields(true);
+        messageEl.style.display = 'none';
+        payBtn.disabled = false;
+      }
+
+      updateTotal();
+    }
+
+    function handleLocalTypeChange() {
+      const select = document.getElementById('localTypeSelect');
+      const localType = select.value;
+      const dropoffPostcode = document.getElementById('dropoff-postcode');
+      const messageEl = document.getElementById('delivery-message');
+
+      if (!localType) {
+        dropoffPostcode.style.display = 'none';
+        showAddressFields(false);
+        messageEl.style.display = 'block';
+        messageEl.className = 'delivery-message info';
+        messageEl.textContent = 'Please choose collection or drop-off';
+      } else if (localType === 'collection') {
+        dropoffPostcode.style.display = 'none';
+        showAddressFields(false);
+        messageEl.style.display = 'block';
+        messageEl.className = 'delivery-message success';
+        messageEl.textContent = 'Collection available';
+      } else {
+        dropoffPostcode.style.display = 'block';
+        showAddressFields(true);
+        validateDropoffPostcode();
+      }
+
+      updateTotal();
+    }
+
+    function validateDropoffPostcode() {
+      const postcode = document.getElementById('localPostcode').value.trim().toUpperCase().replace(/\s/g, '');
+      const messageEl = document.getElementById('delivery-message');
+      const payBtn = document.getElementById('pay-btn');
+
+      if (!postcode) {
+        messageEl.style.display = 'block';
+        messageEl.className = 'delivery-message info';
+        messageEl.textContent = 'Enter your postcode to check drop-off availability';
+        payBtn.disabled = true;
+        return;
+      }
+
+      if (postcode.startsWith('M28')) {
+        messageEl.style.display = 'block';
+        messageEl.className = 'delivery-message success';
+        messageEl.textContent = 'Free drop-off delivery available for your area!';
+        payBtn.disabled = false;
+        // Auto-fill the postcode field in the form
+        document.querySelector('input[name="postcode"]').value = document.getElementById('localPostcode').value;
+      } else {
+        messageEl.style.display = 'block';
+        messageEl.className = 'delivery-message error';
+        messageEl.textContent = 'Drop-off is not available for your area. Please select Collection or use our postal delivery service.';
+        payBtn.disabled = true;
+      }
+    }
+
     function renderCheckout() {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const checkoutItems = document.getElementById('checkout-items');
       const subtotalEl = document.getElementById('checkout-subtotal');
-      const deliveryEl = document.getElementById('checkout-delivery');
-      const totalEl = document.getElementById('checkout-total');
-      const finalTotalEl = document.getElementById('final-total');
       const freeDelivery = document.getElementById('free-delivery');
 
       if (cart.length === 0) {
@@ -213,7 +358,6 @@
         return;
       }
 
-      // Render items
       checkoutItems.innerHTML = cart.map(item => `
         <div class="checkout-item">
           <div class="checkout-item-image">
@@ -227,20 +371,31 @@
         </div>
       `).join('');
 
-      // Calculate subtotal
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       subtotalEl.textContent = `£${subtotal.toFixed(2)}`;
 
-      // Enable free delivery if over £50
       if (subtotal >= 100) {
-        freeDelivery.disabled = false;
+        document.getElementById('free-delivery-label').style.display = '';
         freeDelivery.checked = true;
+      } else {
+        document.getElementById('free-delivery-label').style.display = 'none';
+        if (freeDelivery.checked) {
+          document.querySelector('input[name="delivery"][value="standard"]').checked = true;
+        }
       }
 
       updateTotal();
+      handleDeliveryChange();
     }
 
-    // Update total based on delivery selection
+    function getActiveDeliveryType() {
+      const delivery = document.querySelector('input[name="delivery"]:checked').value;
+      if (delivery === 'local') {
+        return document.getElementById('localTypeSelect').value || 'collection';
+      }
+      return delivery;
+    }
+
     function updateTotal() {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -248,61 +403,189 @@
       const deliveryCost = deliveryPrices[delivery];
 
       document.getElementById('checkout-delivery').textContent = deliveryCost === 0 ? 'FREE' : `£${deliveryCost.toFixed(2)}`;
-      const total = subtotal + deliveryCost;
+
+      let total = subtotal + deliveryCost;
+
+      // Apply £20 reward discount if available
+      const rewardDiscount = rewardAvailable ? Math.min(20, total) : 0;
+      if (rewardAvailable) {
+        document.getElementById('checkout-reward').textContent = `-£${rewardDiscount.toFixed(2)}`;
+        total = Math.max(0, total - 20);
+      }
+
       document.getElementById('checkout-total').textContent = `£${total.toFixed(2)}`;
       document.getElementById('final-total').textContent = `£${total.toFixed(2)}`;
+
+      const payBtn = document.getElementById('pay-btn');
+      const activeType = getActiveDeliveryType();
+      const payButtons = document.getElementById('pay-buttons');
+      const localPayButtons = document.getElementById('local-pay-buttons');
+
+      const delivery2 = document.querySelector('input[name="delivery"]:checked').value;
+      if (delivery2 === 'local') {
+        payButtons.style.display = 'none';
+        const localType = document.getElementById('localTypeSelect').value;
+        if (localType === 'collection' || localType === 'dropoff') {
+          localPayButtons.style.display = 'flex';
+        } else {
+          localPayButtons.style.display = 'none';
+        }
+        document.querySelectorAll('.local-total').forEach(el => el.textContent = '£' + total.toFixed(2));
+      } else {
+        payButtons.style.display = 'block';
+        localPayButtons.style.display = 'none';
+      }
     }
 
-    // Listen for delivery option changes
     document.querySelectorAll('input[name="delivery"]').forEach(radio => {
-      radio.addEventListener('change', updateTotal);
+      radio.addEventListener('change', handleDeliveryChange);
     });
 
-    // Handle form submission
+    document.getElementById('localTypeSelect').addEventListener('change', handleLocalTypeChange);
+
+    document.getElementById('localPostcode').addEventListener('input', validateDropoffPostcode);
+
+    function getCustomerInfo() {
+      const formData = new FormData(document.getElementById('checkout-form'));
+      return {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        address: formData.get('address') || 'Collection',
+        city: formData.get('city') || '',
+        postcode: formData.get('postcode') || ''
+      };
+    }
+
+    // Pay Cash button
+    document.getElementById('pay-cash-btn').addEventListener('click', async function() {
+      const form = document.getElementById('checkout-form');
+      if (!form.reportValidity()) return;
+
+      this.disabled = true;
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const activeType = getActiveDeliveryType();
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const finalTotal = rewardAvailable ? Math.max(0, subtotal - 20) : subtotal;
+
+      try {
+        const user = auth.currentUser;
+        const orderData = {
+          items: cart,
+          customerInfo: getCustomerInfo(),
+          deliveryOption: activeType,
+          paymentMethod: 'cash',
+          total: finalTotal,
+          rewardUsed: rewardAvailable,
+          status: 'pending',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (user) {
+          await db.collection('users').doc(user.uid).collection('orders').add(orderData);
+
+          // Update rewards: increment count and reset reward if used
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          const userData = userDoc.data();
+          const currentCount = (userData.rewards && userData.rewards.orderCount) || 0;
+          const newCount = currentCount + 1;
+
+          const rewardUpdate = {
+            'rewards.orderCount': newCount
+          };
+
+          // If reward was used, reset it. Otherwise check if new reward earned.
+          if (rewardAvailable) {
+            rewardUpdate['rewards.rewardAvailable'] = false;
+          } else if (newCount % 5 === 0) {
+            rewardUpdate['rewards.rewardAvailable'] = true;
+          }
+
+          await db.collection('users').doc(user.uid).update(rewardUpdate);
+        }
+
+        localStorage.removeItem('cart');
+        window.location.href = 'order-confirmation.html?method=' + activeType;
+      } catch (error) {
+        console.error('Order error:', error);
+        alert('Order failed: ' + error.message);
+        this.disabled = false;
+        this.innerHTML = 'Pay Cash - <span class="local-total">£' + document.getElementById('checkout-total').textContent.replace('£', '') + '</span>';
+      }
+    });
+
+    // Pay Card button (local collection/dropoff)
+    document.getElementById('pay-card-btn').addEventListener('click', async function() {
+      const form = document.getElementById('checkout-form');
+      if (!form.reportValidity()) return;
+
+      this.disabled = true;
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const activeType = getActiveDeliveryType();
+
+      try {
+        const user = auth.currentUser;
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: cart,
+            customerInfo: getCustomerInfo(),
+            deliveryOption: activeType,
+            rewardUsed: rewardAvailable,
+            userId: user ? user.uid : null
+          })
+        });
+
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error('No checkout URL returned');
+        }
+      } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Payment failed: ' + error.message + '. Please try again.');
+        this.disabled = false;
+        this.innerHTML = 'Pay by Card - <span class="local-total">£' + document.getElementById('checkout-total').textContent.replace('£', '') + '</span>';
+      }
+    });
+
+    // Pay Now button (standard/express/free delivery)
     document.getElementById('checkout-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+
+      const activeType = getActiveDeliveryType();
+      if (activeType === 'collection' || activeType === 'dropoff') return;
 
       const payBtn = document.getElementById('pay-btn');
       payBtn.disabled = true;
       payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
-      // Get form data
-      const formData = new FormData(this);
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const delivery = formData.get('delivery');
-
-      // Prepare customer info
-      const customerInfo = {
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        address: formData.get('address'),
-        city: formData.get('city'),
-        postcode: formData.get('postcode')
-      };
 
       try {
-        // Call Stripe Checkout API
+        const user = auth.currentUser;
         const response = await fetch('/api/create-checkout-session', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             items: cart,
-            customerInfo: customerInfo,
-            deliveryOption: delivery
+            customerInfo: getCustomerInfo(),
+            deliveryOption: activeType,
+            rewardUsed: rewardAvailable,
+            userId: user ? user.uid : null
           })
         });
 
         const data = await response.json();
-
-        if (data.error) {
-          throw new Error(data.error);
-        }
-
-        // Redirect to Stripe Checkout
+        if (data.error) throw new Error(data.error);
         if (data.url) {
           window.location.href = data.url;
         } else {
@@ -316,7 +599,6 @@
       }
     });
 
-    // Initialize
     renderCheckout();
   </script>
 

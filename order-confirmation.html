@@ -253,15 +253,27 @@
     <div class="search-results" id="searchResults"></div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="js/products.js"></script>
   <script src="js/search.js"></script>
+  <script src="js/auth.js?v=2"></script>
   <script>
     // Get session ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
+    const method = urlParams.get('method'); // For cash/collection orders
 
     async function loadOrderDetails() {
       const container = document.getElementById('confirmationContent');
+
+      // Handle collection/dropoff cash orders
+      if (method === 'collection' || method === 'dropoff') {
+        showCollectionSuccess(method);
+        return;
+      }
 
       if (!sessionId) {
         showError();
@@ -270,6 +282,9 @@
 
       // Clear the cart since payment was successful
       localStorage.removeItem('cart');
+
+      // Update rewards for logged-in user
+      await updateUserRewards();
 
       // Generate order number from session ID
       const orderNumber = 'SSM-' + sessionId.slice(-8).toUpperCase();
@@ -319,8 +334,89 @@
       `;
     }
 
-    // Load order details on page load
-    loadOrderDetails();
+    function showCollectionSuccess(method) {
+      const container = document.getElementById('confirmationContent');
+      const isCollection = method === 'collection';
+      localStorage.removeItem('cart');
+
+      container.innerHTML = `
+        <div class="confirmation-icon">
+          <i class="fas fa-check"></i>
+        </div>
+        <h1>Thank You</h1>
+        <p class="subtitle">Your order has been received</p>
+
+        <div class="confirmation-details">
+          <h3>${isCollection ? 'Collection Details' : 'Drop-off Details'}</h3>
+          <p><i class="fas fa-${isCollection ? 'store' : 'truck'}" style="width: 20px; color: #1a1a1a;"></i> ${isCollection ? 'Ready for collection' : 'We\'ll deliver to your door'}</p>
+          <p><i class="fas fa-clock" style="width: 20px; color: #1a1a1a;"></i> We'll contact you to arrange ${isCollection ? 'pickup' : 'delivery'}</p>
+          <p><i class="fas fa-phone" style="width: 20px; color: #1a1a1a;"></i> Payment on ${isCollection ? 'collection' : 'delivery'}</p>
+        </div>
+
+        <p class="confirmation-message">
+          Thank you for your order! We'll be in touch shortly via WhatsApp or phone to confirm the details.
+        </p>
+
+        <a href="index.html" class="confirmation-btn">Continue Shopping</a>
+      `;
+    }
+
+    async function updateUserRewards() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        // Check if we've already processed this session
+        const processedKey = 'processed_' + sessionId;
+        if (localStorage.getItem(processedKey)) return;
+
+        // Fetch session details to get metadata
+        const response = await fetch('/api/get-session?session_id=' + sessionId);
+        if (!response.ok) {
+          // If API doesn't exist, just increment order count
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          const userData = userDoc.data();
+          const currentCount = (userData.rewards && userData.rewards.orderCount) || 0;
+          const newCount = currentCount + 1;
+
+          const rewardUpdate = { 'rewards.orderCount': newCount };
+          if (newCount % 5 === 0) {
+            rewardUpdate['rewards.rewardAvailable'] = true;
+          }
+
+          await db.collection('users').doc(user.uid).update(rewardUpdate);
+          localStorage.setItem(processedKey, 'true');
+          return;
+        }
+
+        const session = await response.json();
+        const rewardUsed = session.metadata?.rewardUsed === 'true';
+
+        // Update rewards
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        const currentCount = (userData.rewards && userData.rewards.orderCount) || 0;
+        const newCount = currentCount + 1;
+
+        const rewardUpdate = { 'rewards.orderCount': newCount };
+
+        if (rewardUsed) {
+          rewardUpdate['rewards.rewardAvailable'] = false;
+        } else if (newCount % 5 === 0) {
+          rewardUpdate['rewards.rewardAvailable'] = true;
+        }
+
+        await db.collection('users').doc(user.uid).update(rewardUpdate);
+        localStorage.setItem(processedKey, 'true');
+      } catch (error) {
+        console.error('Error updating rewards:', error);
+      }
+    }
+
+    // Wait for auth state before loading
+    auth.onAuthStateChanged(function() {
+      loadOrderDetails();
+    });
   </script>
 
 </body>

@@ -399,10 +399,112 @@
 .account-link {
   font-size: 1rem !important;
   padding: 0 5px;
+  white-space: nowrap;
 }
 
 .account-link.active {
   color: #8b7355;
+}
+
+/* Account Dropdown */
+.account-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 260px;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  border: 1px solid #eee;
+  z-index: 9999;
+  margin-top: 10px;
+}
+
+.dropdown-rewards {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.dropdown-rewards p {
+  margin: 8px 0 0;
+}
+
+.dropdown-stamps {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dropdown-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.dropdown-dot.filled {
+  background: linear-gradient(135deg, #c9a86c, #8b7355);
+  border-color: #8b7355;
+}
+
+.dropdown-reward-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #c9a86c, #8b7355);
+  color: #fff;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.dropdown-link {
+  display: block;
+  padding: 14px 20px;
+  color: #333;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background 0.2s;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-link:hover {
+  background: #f9f7f4;
+}
+
+.dropdown-link i {
+  margin-right: 10px;
+  color: #999;
+  width: 16px;
+  text-align: center;
+}
+
+.dropdown-signout {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #888;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.dropdown-signout:hover {
+  background: #f9f7f4;
+  color: #333;
+}
+
+.dropdown-signout i {
+  margin-right: 10px;
+  width: 16px;
+  text-align: center;
 }
 
 /* ==================== */
@@ -534,80 +636,80 @@
 
 .rewards-card.main-reward {
   background: linear-gradient(145deg, #f5f0ea 0%, #e8e0d6 100%);
-  padding: 35px;
+  padding: 40px;
   text-align: center;
 }
 
-.reward-tier {
+/* Stamp System */
+.stamp-container {
   margin-bottom: 20px;
 }
 
-.tier-badge {
-  display: inline-block;
-  padding: 8px 20px;
-  font-size: 0.7rem;
+.stamp-title {
+  font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  font-weight: 400;
-}
-
-.tier-badge.bronze {
-  background: linear-gradient(135deg, #cd7f32, #b8860b);
-  color: #fff;
-}
-
-.tier-badge.silver {
-  background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
-  color: #333;
-}
-
-.tier-badge.gold {
-  background: linear-gradient(135deg, #ffd700, #daa520);
-  color: #333;
-}
-
-.points-label {
-  display: block;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #888;
-  margin-bottom: 8px;
-}
-
-.points-value {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: #2c2c2c;
-  line-height: 1;
-  margin-bottom: 25px;
-}
-
-.points-progress {
-  padding-top: 20px;
-  border-top: 1px solid rgba(0,0,0,0.08);
-}
-
-.progress-bar {
-  height: 6px;
-  background: rgba(255,255,255,0.5);
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #8b7355, #c9a86c);
-  border-radius: 3px;
-  transition: width 0.5s ease;
-}
-
-.progress-text {
-  font-size: 0.8rem;
   color: #666;
+  margin-bottom: 20px;
+}
+
+.stamp-dots {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stamp-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #ccc;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.stamp-dot.filled {
+  background: linear-gradient(135deg, #c9a86c, #8b7355);
+  border-color: #8b7355;
+}
+
+.stamp-dot.filled::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  color: #fff;
+  font-size: 16px;
+}
+
+.stamp-message {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.stamp-message strong {
+  color: #2c2c2c;
+}
+
+/* Reward Available State */
+.reward-earned {
+  background: linear-gradient(135deg, #c9a86c, #8b7355);
+  color: #fff;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.reward-earned-message {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
 }
 
 .rewards-info {
@@ -654,47 +756,6 @@
   line-height: 1.4;
 }
 
-/* Tier Benefits */
-.tier-benefits h3 {
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #2c2c2c;
-  margin-bottom: 20px;
-}
-
-.benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.benefit-card {
-  padding: 25px;
-  border: 1px solid #eee;
-  transition: all 0.3s ease;
-}
-
-.benefit-card:hover {
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-}
-
-.benefit-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
-}
-
-.benefit-header i {
-  font-size: 1.2rem;
-}
-
-.benefit-card.bronze .benefit-header i { color: #cd7f32; }
-.benefit-card.silver .benefit-header i { color: #c0c0c0; }
-.benefit-card.gold .benefit-header i { color: #ffd700; }
 
 .benefit-header span {
   font-size: 0.85rem;
@@ -995,12 +1056,17 @@
     grid-template-columns: 1fr;
   }
 
-  .points-value {
-    font-size: 2.5rem;
+  .stamp-dots {
+    gap: 10px;
   }
 
-  .benefits-grid {
-    grid-template-columns: 1fr;
+  .stamp-dot {
+    width: 35px;
+    height: 35px;
+  }
+
+  .stamp-dot.filled::after {
+    font-size: 14px;
   }
 
   .order-header {

@@ -87,18 +87,8 @@
         <div class="tab-pane active" id="rewards">
           <div class="rewards-overview">
             <div class="rewards-card main-reward">
-              <div class="reward-tier" id="rewardTier">
-                <span class="tier-badge bronze">Bronze</span>
-              </div>
-              <div class="reward-points">
-                <span class="points-label">Your Points</span>
-                <span class="points-value" id="pointsValue">0</span>
-              </div>
-              <div class="points-progress">
-                <div class="progress-bar">
-                  <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                </div>
-                <span class="progress-text" id="progressText">0 points to Silver</span>
+              <div id="rewardStatus">
+                <!-- Dynamically updated -->
               </div>
             </div>
 
@@ -108,67 +98,24 @@
                 <div class="rule">
                   <i class="fas fa-shopping-bag"></i>
                   <div>
-                    <strong>Earn Points</strong>
-                    <p>Get 1 point for every £1 spent</p>
+                    <strong>Shop With Us</strong>
+                    <p>Place orders as normal</p>
                   </div>
                 </div>
                 <div class="rule">
                   <i class="fas fa-star"></i>
                   <div>
-                    <strong>Level Up</strong>
-                    <p>500 pts = Silver, 1000 pts = Gold</p>
+                    <strong>Collect Stamps</strong>
+                    <p>Earn 1 stamp per order</p>
                   </div>
                 </div>
                 <div class="rule">
-                  <i class="fas fa-percent"></i>
+                  <i class="fas fa-gift"></i>
                   <div>
-                    <strong>Get Rewards</strong>
-                    <p>Higher tiers = Exclusive discounts</p>
+                    <strong>Get £20 Off</strong>
+                    <p>Every 5th order is discounted!</p>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tier Benefits -->
-          <div class="tier-benefits">
-            <h3>Tier Benefits</h3>
-            <div class="benefits-grid">
-              <div class="benefit-card bronze">
-                <div class="benefit-header">
-                  <i class="fas fa-medal"></i>
-                  <span>Bronze</span>
-                </div>
-                <ul>
-                  <li><i class="fas fa-check"></i> 100 welcome points</li>
-                  <li><i class="fas fa-check"></i> Early access to sales</li>
-                  <li><i class="fas fa-check"></i> Birthday discount</li>
-                </ul>
-              </div>
-              <div class="benefit-card silver">
-                <div class="benefit-header">
-                  <i class="fas fa-medal"></i>
-                  <span>Silver</span>
-                  <small>500+ points</small>
-                </div>
-                <ul>
-                  <li><i class="fas fa-check"></i> All Bronze benefits</li>
-                  <li><i class="fas fa-check"></i> 10% off every order</li>
-                  <li><i class="fas fa-check"></i> Free standard delivery</li>
-                </ul>
-              </div>
-              <div class="benefit-card gold">
-                <div class="benefit-header">
-                  <i class="fas fa-medal"></i>
-                  <span>Gold</span>
-                  <small>1000+ points</small>
-                </div>
-                <ul>
-                  <li><i class="fas fa-check"></i> All Silver benefits</li>
-                  <li><i class="fas fa-check"></i> 15% off every order</li>
-                  <li><i class="fas fa-check"></i> Free express delivery</li>
-                  <li><i class="fas fa-check"></i> Exclusive collections</li>
-                </ul>
               </div>
             </div>
           </div>
@@ -336,7 +283,7 @@
   <script src="js/products.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/search.js"></script>
-  <script src="js/auth.js"></script>
+  <script src="js/auth.js?v=2"></script>
   <script>
     // Require authentication and set up real-time sync
     auth.onAuthStateChanged(function(user) {
@@ -361,33 +308,36 @@
       // Update header
       document.getElementById('userName').textContent = userData.firstName || 'there';
 
-      // Update rewards
-      const points = userData.rewards?.points || 0;
-      const tier = userData.rewards?.tier || 'Bronze';
+      // Update rewards with new stamp system
+      const orderCount = (userData.rewards && userData.rewards.orderCount) || 0;
+      const rewardAvailable = (userData.rewards && userData.rewards.rewardAvailable) || false;
+      const stampsInCycle = orderCount % 5;
+      const remaining = 5 - stampsInCycle;
 
-      document.getElementById('pointsValue').textContent = points.toLocaleString();
+      const rewardStatus = document.getElementById('rewardStatus');
 
-      const tierBadge = document.querySelector('.tier-badge');
-      tierBadge.textContent = tier;
-      tierBadge.className = 'tier-badge ' + tier.toLowerCase();
-
-      // Update progress bar
-      let progressPercent = 0;
-      let progressText = '';
-
-      if (points < 500) {
-        progressPercent = (points / 500) * 100;
-        progressText = (500 - points) + ' points to Silver';
-      } else if (points < 1000) {
-        progressPercent = ((points - 500) / 500) * 100;
-        progressText = (1000 - points) + ' points to Gold';
+      if (rewardAvailable) {
+        rewardStatus.innerHTML = `
+          <div class="stamp-container">
+            <div class="reward-earned">£20 OFF YOUR NEXT ORDER!</div>
+            <p class="reward-earned-message">Congratulations! You've earned £20 off.<br>This will be applied automatically at checkout.</p>
+          </div>
+        `;
       } else {
-        progressPercent = 100;
-        progressText = 'You\'ve reached the highest tier!';
+        let dotsHtml = '';
+        for (let i = 0; i < 5; i++) {
+          dotsHtml += '<span class="stamp-dot ' + (i < stampsInCycle ? 'filled' : '') + '"></span>';
+        }
+        rewardStatus.innerHTML = `
+          <div class="stamp-container">
+            <p class="stamp-title">Your Stamps</p>
+            <div class="stamp-dots">
+              ${dotsHtml}
+            </div>
+            <p class="stamp-message"><strong>${remaining}</strong> more order${remaining !== 1 ? 's' : ''} until £20 off!</p>
+          </div>
+        `;
       }
-
-      document.getElementById('progressFill').style.width = progressPercent + '%';
-      document.getElementById('progressText').textContent = progressText;
 
       // Update profile form (only if not currently being edited)
       if (document.activeElement.tagName !== 'INPUT') {
@@ -451,7 +401,7 @@
             </div>
             <div class="order-footer">
               <span class="order-total">Total: £${(order.total || 0).toFixed(2)}</span>
-              <span class="order-points">+${Math.floor(order.total || 0)} points earned</span>
+              <span class="order-points">+1 stamp earned</span>
             </div>
           </div>
         `;

@@ -13,7 +13,7 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json();
-    const { items, customerInfo, deliveryOption } = body;
+    const { items, customerInfo, deliveryOption, rewardUsed, userId } = body;
 
     if (!items || items.length === 0) {
       return new Response(JSON.stringify({ error: 'No items in cart' }), {
@@ -27,6 +27,8 @@ export async function onRequestPost(context) {
       standard: 399, // in pence
       express: 599,
       free: 0,
+      collection: 0,
+      dropoff: 0,
     };
 
     // Build line items for Stripe
@@ -43,7 +45,7 @@ export async function onRequestPost(context) {
     }));
 
     // Add delivery as a line item
-    const deliveryCost = deliveryPrices[deliveryOption] || deliveryPrices.standard;
+    const deliveryCost = deliveryPrices[deliveryOption] !== undefined ? deliveryPrices[deliveryOption] : deliveryPrices.standard;
     if (deliveryCost > 0) {
       lineItems.push({
         price_data: {
@@ -55,6 +57,39 @@ export async function onRequestPost(context) {
         },
         quantity: 1,
       });
+    }
+
+    // Calculate discount amount (capped at order total)
+    let discountParams = {};
+    if (rewardUsed) {
+      const subtotal = items.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0) + deliveryCost;
+      const discountAmount = Math.min(2000, subtotal); // £20 max, capped at subtotal
+
+      // Use Stripe's discount feature
+      discountParams = {
+        'discounts[0][coupon]': await getOrCreateRewardCoupon(env, discountAmount),
+      };
+    }
+
+    // Helper function to get or create a coupon for the exact discount amount
+    async function getOrCreateRewardCoupon(env, amountOff) {
+      // Create a one-time coupon for the exact amount
+      const couponResponse = await fetch('https://api.stripe.com/v1/coupons', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          'amount_off': amountOff,
+          'currency': 'gbp',
+          'duration': 'once',
+          'name': 'Loyalty Reward - £20 Off',
+          'max_redemptions': 1,
+        }),
+      });
+      const coupon = await couponResponse.json();
+      return coupon.id;
     }
 
     // Get the origin for success/cancel URLs
@@ -82,6 +117,9 @@ export async function onRequestPost(context) {
         'metadata[city]': customerInfo.city,
         'metadata[postcode]': customerInfo.postcode,
         'metadata[delivery]': deliveryOption,
+        'metadata[userId]': userId || '',
+        'metadata[rewardUsed]': rewardUsed ? 'true' : 'false',
+        ...discountParams,
         ...lineItems.reduce((acc, item, index) => {
           acc[`line_items[${index}][price_data][currency]`] = item.price_data.currency;
           acc[`line_items[${index}][price_data][product_data][name]`] = item.price_data.product_data.name;
