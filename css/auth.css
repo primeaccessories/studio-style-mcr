@@ -1,0 +1,1048 @@
+/* Auth Pages Styles */
+
+/* Auth Section */
+.auth-section {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #faf9f7;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  padding: 50px 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.auth-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 2px;
+  color: #2c2c2c;
+  margin-bottom: 10px;
+}
+
+.auth-header p {
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+/* Welcome Bonus Banner */
+.welcome-bonus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #f5f0ea 0%, #e8e0d6 100%);
+  padding: 15px 20px;
+  margin-bottom: 30px;
+  border-radius: 4px;
+}
+
+.welcome-bonus i {
+  font-size: 1.2rem;
+  color: #c9a86c;
+}
+
+.welcome-bonus span {
+  font-size: 0.85rem;
+  color: #2c2c2c;
+  letter-spacing: 0.3px;
+}
+
+.welcome-bonus strong {
+  color: #8b7355;
+}
+
+/* Form Styles */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 400;
+}
+
+.form-group label .optional {
+  color: #aaa;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.7rem;
+}
+
+.form-group input {
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s ease;
+  background: #fff;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #8b7355;
+}
+
+.form-group input::placeholder {
+  color: #bbb;
+}
+
+.form-group input:disabled {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.input-hint {
+  font-size: 0.7rem;
+  color: #999;
+  font-weight: 300;
+}
+
+/* Form Extras */
+.form-extras {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remember-me {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 300;
+}
+
+.remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: #8b7355;
+  cursor: pointer;
+}
+
+.terms-checkbox {
+  margin-top: 10px;
+}
+
+.terms-checkbox a {
+  color: #8b7355;
+  text-decoration: underline;
+}
+
+.forgot-link {
+  font-size: 0.8rem;
+  color: #8b7355;
+  font-weight: 300;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Error & Success Messages */
+.form-error {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  text-align: center;
+  min-height: 20px;
+}
+
+.form-success {
+  color: #2e7d32;
+  font-size: 0.85rem;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Auth Button */
+.auth-btn {
+  padding: 16px;
+  background: #e8e0d6;
+  color: #2c2c2c;
+  border: none;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auth-btn:hover {
+  background: #ddd5ca;
+}
+
+.btn-loading i {
+  font-size: 1rem;
+}
+
+/* Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 25px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+
+.auth-divider span {
+  padding: 0 15px;
+  font-size: 0.8rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Google Button */
+.google-btn {
+  width: 100%;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #333;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.google-btn:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+.google-btn i {
+  font-size: 1.1rem;
+}
+
+/* Auth Footer */
+.auth-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #eee;
+}
+
+.auth-footer p {
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 300;
+}
+
+.auth-footer a {
+  color: #8b7355;
+  font-weight: 400;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 40px;
+  max-width: 400px;
+  width: 90%;
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+  transform: scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #000;
+}
+
+.modal-content h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #2c2c2c;
+  margin-bottom: 10px;
+}
+
+.modal-content p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.cancel-btn {
+  flex: 1;
+  padding: 14px;
+  background: #f5f5f5;
+  border: none;
+  color: #666;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #eee;
+}
+
+.confirm-delete-btn {
+  flex: 1;
+  padding: 14px;
+  background: #d32f2f;
+  border: none;
+  color: #fff;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.confirm-delete-btn:hover {
+  background: #b71c1c;
+}
+
+/* Account Link in Nav */
+.account-link {
+  font-size: 1rem !important;
+  padding: 0 5px;
+}
+
+.account-link.active {
+  color: #8b7355;
+}
+
+/* ==================== */
+/* ACCOUNT PAGE STYLES  */
+/* ==================== */
+
+.account-section {
+  padding: 40px 20px 80px;
+  background: #faf9f7;
+  min-height: calc(100vh - 200px);
+}
+
+.account-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Account Header */
+.account-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #eee;
+}
+
+.account-welcome h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #2c2c2c;
+  margin-bottom: 5px;
+}
+
+.account-welcome h1 span {
+  font-style: italic;
+}
+
+.account-welcome p {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.signout-btn {
+  padding: 12px 20px;
+  background: none;
+  border: 1px solid #ddd;
+  color: #666;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.signout-btn:hover {
+  border-color: #999;
+  color: #333;
+}
+
+/* Account Tabs */
+.account-tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 30px;
+  background: #fff;
+  padding: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  color: #888;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: #555;
+}
+
+.tab-btn.active {
+  background: #e8e0d6;
+  color: #2c2c2c;
+}
+
+.tab-btn i {
+  font-size: 0.9rem;
+}
+
+/* Tab Content */
+.tab-content {
+  background: #fff;
+  padding: 40px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* Rewards Tab */
+.rewards-overview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.rewards-card.main-reward {
+  background: linear-gradient(145deg, #f5f0ea 0%, #e8e0d6 100%);
+  padding: 35px;
+  text-align: center;
+}
+
+.reward-tier {
+  margin-bottom: 20px;
+}
+
+.tier-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.tier-badge.bronze {
+  background: linear-gradient(135deg, #cd7f32, #b8860b);
+  color: #fff;
+}
+
+.tier-badge.silver {
+  background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+  color: #333;
+}
+
+.tier-badge.gold {
+  background: linear-gradient(135deg, #ffd700, #daa520);
+  color: #333;
+}
+
+.points-label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.points-value {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: #2c2c2c;
+  line-height: 1;
+  margin-bottom: 25px;
+}
+
+.points-progress {
+  padding-top: 20px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+.progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b7355, #c9a86c);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.rewards-info {
+  padding: 30px;
+  border: 1px solid #eee;
+}
+
+.rewards-info h3 {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #2c2c2c;
+  margin-bottom: 25px;
+}
+
+.reward-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rule {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.rule i {
+  font-size: 1.2rem;
+  color: #c9a86c;
+  margin-top: 2px;
+}
+
+.rule strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #2c2c2c;
+  margin-bottom: 3px;
+}
+
+.rule p {
+  font-size: 0.8rem;
+  color: #888;
+  line-height: 1.4;
+}
+
+/* Tier Benefits */
+.tier-benefits h3 {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #2c2c2c;
+  margin-bottom: 20px;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.benefit-card {
+  padding: 25px;
+  border: 1px solid #eee;
+  transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.benefit-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.benefit-header i {
+  font-size: 1.2rem;
+}
+
+.benefit-card.bronze .benefit-header i { color: #cd7f32; }
+.benefit-card.silver .benefit-header i { color: #c0c0c0; }
+.benefit-card.gold .benefit-header i { color: #ffd700; }
+
+.benefit-header span {
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #2c2c2c;
+}
+
+.benefit-header small {
+  font-size: 0.7rem;
+  color: #999;
+  margin-left: auto;
+}
+
+.benefit-card ul {
+  list-style: none;
+}
+
+.benefit-card li {
+  font-size: 0.8rem;
+  color: #666;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.benefit-card li i {
+  font-size: 0.7rem;
+  color: #2e7d32;
+}
+
+/* Orders Tab */
+.orders-section h3 {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #2c2c2c;
+  margin-bottom: 25px;
+}
+
+.orders-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #888;
+}
+
+.orders-loading i {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #c9a86c;
+}
+
+.no-orders {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-orders i {
+  font-size: 3rem;
+  color: #ddd;
+  margin-bottom: 20px;
+}
+
+.no-orders p {
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 25px;
+}
+
+.shop-link {
+  display: inline-block;
+  padding: 14px 30px;
+  background: #2c2c2c;
+  color: #fff;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: background 0.3s;
+}
+
+.shop-link:hover {
+  background: #1a1a1a;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  border: 1px solid #eee;
+  padding: 25px;
+  transition: box-shadow 0.3s;
+}
+
+.order-card:hover {
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.order-number {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2c2c2c;
+  letter-spacing: 0.5px;
+}
+
+.order-date {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.order-status {
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+}
+
+.order-status.completed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.order-status.processing {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.order-status.shipped {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.order-items {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.order-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.order-item img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.item-name {
+  display: block;
+  font-size: 0.85rem;
+  color: #2c2c2c;
+}
+
+.item-qty {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.more-items {
+  font-size: 0.8rem;
+  color: #888;
+  align-self: center;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.order-total {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2c2c2c;
+}
+
+.order-points {
+  font-size: 0.8rem;
+  color: #c9a86c;
+}
+
+/* Profile Tab */
+.profile-section h3 {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #2c2c2c;
+  margin-bottom: 25px;
+}
+
+.profile-form {
+  max-width: 500px;
+}
+
+.profile-form .form-group {
+  margin-bottom: 20px;
+}
+
+.checkbox-group {
+  margin: 25px 0;
+}
+
+.danger-zone {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 1px solid #eee;
+}
+
+.danger-zone h4 {
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #d32f2f;
+  margin-bottom: 10px;
+}
+
+.danger-zone p {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.delete-btn {
+  padding: 12px 25px;
+  background: none;
+  border: 1px solid #d32f2f;
+  color: #d32f2f;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: #d32f2f;
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 40px 25px;
+  }
+
+  .auth-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .account-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .account-welcome h1 {
+    font-size: 1.4rem;
+  }
+
+  .account-tabs {
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 12px 15px;
+    font-size: 0.7rem;
+  }
+
+  .tab-content {
+    padding: 25px;
+  }
+
+  .rewards-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .points-value {
+    font-size: 2.5rem;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .order-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .order-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-section {
+    padding: 40px 15px;
+  }
+
+  .auth-container {
+    padding: 30px 20px;
+  }
+
+  .form-extras {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .welcome-bonus {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .account-section {
+    padding: 20px 15px 60px;
+  }
+
+  .tab-btn span {
+    display: none;
+  }
+
+  .tab-btn i {
+    font-size: 1.1rem;
+  }
+}

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account | Studio Style MCR</title>
+  <meta name="description" content="View your Studio Style MCR account, rewards, and order history.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- SCROLLING ANNOUNCEMENT BAR -->
+  <div class="announcement-ticker">
+    <div class="ticker-track">
+      <div class="ticker-content">
+        <span>FREE DELIVERY ON ORDERS OVER £100</span>
+        <span>★</span>
+        <span>NEW ARRIVALS EVERY WEEK</span>
+        <span>★</span>
+        <span>USE CODE <span class="highlight">STUDIO10</span> FOR 10% OFF YOUR FIRST ORDER</span>
+        <span>★</span>
+      </div>
+      <div class="ticker-content">
+        <span>FREE DELIVERY ON ORDERS OVER £100</span>
+        <span>★</span>
+        <span>NEW ARRIVALS EVERY WEEK</span>
+        <span>★</span>
+        <span>USE CODE <span class="highlight">STUDIO10</span> FOR 10% OFF YOUR FIRST ORDER</span>
+        <span>★</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <a href="index.html" class="logo">STUDIO STYLE MCR</a>
+    <nav class="nav">
+      <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
+      <a href="account.html" class="account-link active"><i class="fas fa-user"></i></a>
+      <div class="cart-link cart-link-header" onclick="toggleMiniCart()">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-count">0</span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ACCOUNT SECTION -->
+  <section class="account-section">
+    <div class="account-container">
+
+      <!-- Account Header -->
+      <div class="account-header">
+        <div class="account-welcome">
+          <h1>Welcome back, <span id="userName">Loading...</span></h1>
+          <p id="userEmail"></p>
+        </div>
+        <button class="signout-btn" onclick="signOut()">
+          <i class="fas fa-sign-out-alt"></i> Sign Out
+        </button>
+      </div>
+
+      <!-- Account Tabs -->
+      <div class="account-tabs">
+        <button class="tab-btn active" data-tab="rewards">
+          <i class="fas fa-gift"></i> Rewards
+        </button>
+        <button class="tab-btn" data-tab="orders">
+          <i class="fas fa-box"></i> Orders
+        </button>
+        <button class="tab-btn" data-tab="profile">
+          <i class="fas fa-user-cog"></i> Profile
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+
+        <!-- Rewards Tab -->
+        <div class="tab-pane active" id="rewards">
+          <div class="rewards-overview">
+            <div class="rewards-card main-reward">
+              <div class="reward-tier" id="rewardTier">
+                <span class="tier-badge bronze">Bronze</span>
+              </div>
+              <div class="reward-points">
+                <span class="points-label">Your Points</span>
+                <span class="points-value" id="pointsValue">0</span>
+              </div>
+              <div class="points-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text" id="progressText">0 points to Silver</span>
+              </div>
+            </div>
+
+            <div class="rewards-info">
+              <h3>How It Works</h3>
+              <div class="reward-rules">
+                <div class="rule">
+                  <i class="fas fa-shopping-bag"></i>
+                  <div>
+                    <strong>Earn Points</strong>
+                    <p>Get 1 point for every £1 spent</p>
+                  </div>
+                </div>
+                <div class="rule">
+                  <i class="fas fa-star"></i>
+                  <div>
+                    <strong>Level Up</strong>
+                    <p>500 pts = Silver, 1000 pts = Gold</p>
+                  </div>
+                </div>
+                <div class="rule">
+                  <i class="fas fa-percent"></i>
+                  <div>
+                    <strong>Get Rewards</strong>
+                    <p>Higher tiers = Exclusive discounts</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tier Benefits -->
+          <div class="tier-benefits">
+            <h3>Tier Benefits</h3>
+            <div class="benefits-grid">
+              <div class="benefit-card bronze">
+                <div class="benefit-header">
+                  <i class="fas fa-medal"></i>
+                  <span>Bronze</span>
+                </div>
+                <ul>
+                  <li><i class="fas fa-check"></i> 100 welcome points</li>
+                  <li><i class="fas fa-check"></i> Early access to sales</li>
+                  <li><i class="fas fa-check"></i> Birthday discount</li>
+                </ul>
+              </div>
+              <div class="benefit-card silver">
+                <div class="benefit-header">
+                  <i class="fas fa-medal"></i>
+                  <span>Silver</span>
+                  <small>500+ points</small>
+                </div>
+                <ul>
+                  <li><i class="fas fa-check"></i> All Bronze benefits</li>
+                  <li><i class="fas fa-check"></i> 10% off every order</li>
+                  <li><i class="fas fa-check"></i> Free standard delivery</li>
+                </ul>
+              </div>
+              <div class="benefit-card gold">
+                <div class="benefit-header">
+                  <i class="fas fa-medal"></i>
+                  <span>Gold</span>
+                  <small>1000+ points</small>
+                </div>
+                <ul>
+                  <li><i class="fas fa-check"></i> All Silver benefits</li>
+                  <li><i class="fas fa-check"></i> 15% off every order</li>
+                  <li><i class="fas fa-check"></i> Free express delivery</li>
+                  <li><i class="fas fa-check"></i> Exclusive collections</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div class="tab-pane" id="orders">
+          <div class="orders-section">
+            <h3>Order History</h3>
+            <div class="orders-list" id="ordersList">
+              <div class="orders-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading your orders...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div class="tab-pane" id="profile">
+          <div class="profile-section">
+            <h3>Your Details</h3>
+            <form id="profileForm" class="profile-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="profileFirstName">First Name</label>
+                  <input type="text" id="profileFirstName" required>
+                </div>
+                <div class="form-group">
+                  <label for="profileLastName">Last Name</label>
+                  <input type="text" id="profileLastName" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="profileEmail">Email Address</label>
+                <input type="email" id="profileEmail" disabled>
+                <span class="input-hint">Email cannot be changed</span>
+              </div>
+
+              <div class="form-group">
+                <label for="profilePhone">Phone Number</label>
+                <input type="tel" id="profilePhone">
+              </div>
+
+              <div class="form-group checkbox-group">
+                <label class="remember-me">
+                  <input type="checkbox" id="profileNewsletter">
+                  <span>Receive emails about new arrivals and exclusive offers</span>
+                </label>
+              </div>
+
+              <div class="form-success" id="profileSuccess"></div>
+              <div class="form-error" id="profileError"></div>
+
+              <button type="submit" class="auth-btn">
+                <span class="btn-text">Save Changes</span>
+                <span class="btn-loading" style="display:none;"><i class="fas fa-spinner fa-spin"></i></span>
+              </button>
+            </form>
+
+            <div class="danger-zone">
+              <h4>Danger Zone</h4>
+              <p>Once you delete your account, there is no going back. Please be certain.</p>
+              <button class="delete-btn" onclick="confirmDeleteAccount()">Delete Account</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+      <h2>Delete Account?</h2>
+      <p>This will permanently delete your account, rewards, and order history. This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+        <button class="confirm-delete-btn" onclick="deleteAccount()">Delete Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">STUDIO STYLE MCR</div>
+        <p>Women's fashion boutique based in Manchester. Curated style, delivered to your door.</p>
+      </div>
+      <div class="footer-column">
+        <h4>Shop</h4>
+        <a href="new-arrivals.html">New In</a>
+        <a href="accessories.html">Accessories</a>
+        <a href="last-chance.html">Last Chance</a>
+        <a href="shop.html">All Products</a>
+      </div>
+      <div class="footer-column">
+        <h4>Info</h4>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="style-quiz.html">Style Quiz</a>
+        <a href="returns.html">Returns</a>
+        <a href="click-collect.html">Click &amp; Collect</a>
+        <a href="login.html">My Account</a>
+      </div>
+      <div class="footer-column">
+        <h4>Connect</h4>
+        <a href="https://www.instagram.com/the_studio_mcr?igsh=Zmd3NXVvbGNvOXh4" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="https://www.facebook.com/share/1D38Co16cq/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="https://www.tiktok.com/@thestudiomcr?_r=1&amp;_t=ZN-93QigICnc4E" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+        <a href="https://wa.me/447802725901" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      </div>
+    </div>
+    <div class="payment-methods">
+      <div class="payment-icons">
+        <i class="fab fa-cc-visa"></i>
+        <i class="fab fa-cc-mastercard"></i>
+        <i class="fab fa-apple-pay"></i>
+        <i class="fab fa-google-pay"></i>
+        <i class="fab fa-klarna"></i>
+      </div>
+    </div>
+    <p class="copyright">&copy; 2026 Studio Style MCR. All rights reserved.</p>
+  </footer>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" onclick="closeSearch()">&times;</button>
+    <div class="search-input-wrap">
+      <input type="text" id="searchInput" placeholder="Search products..." oninput="performSearch()">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Mini Cart Overlay -->
+  <div class="mini-cart-overlay" onclick="closeMiniCart()"></div>
+
+  <!-- Mini Cart -->
+  <div class="mini-cart" id="miniCart">
+    <div class="mini-cart-header">
+      <span>Your Basket</span>
+      <button class="mini-cart-close" onclick="closeMiniCart()">&times;</button>
+    </div>
+    <div class="mini-cart-items" id="miniCartItems">
+      <div class="mini-cart-empty">Your basket is empty</div>
+    </div>
+    <div class="mini-cart-footer" id="miniCartFooter" style="display:none;">
+      <div class="mini-cart-total">
+        <span>Subtotal</span>
+        <span id="miniCartTotal">£0.00</span>
+      </div>
+      <a href="checkout.html" class="mini-cart-btn">Checkout</a>
+      <a href="cart.html" class="mini-cart-view">View Basket</a>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Require authentication and set up real-time sync
+    auth.onAuthStateChanged(function(user) {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Set up real-time listeners - data syncs automatically across all devices
+      subscribeToUserData(updateUserDataUI);
+      subscribeToOrders(updateOrdersUI);
+
+      // Set email (doesn't change)
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('profileEmail').value = user.email;
+    });
+
+    // Update UI when user data changes (real-time)
+    function updateUserDataUI(userData) {
+      if (!userData) return;
+
+      // Update header
+      document.getElementById('userName').textContent = userData.firstName || 'there';
+
+      // Update rewards
+      const points = userData.rewards?.points || 0;
+      const tier = userData.rewards?.tier || 'Bronze';
+
+      document.getElementById('pointsValue').textContent = points.toLocaleString();
+
+      const tierBadge = document.querySelector('.tier-badge');
+      tierBadge.textContent = tier;
+      tierBadge.className = 'tier-badge ' + tier.toLowerCase();
+
+      // Update progress bar
+      let progressPercent = 0;
+      let progressText = '';
+
+      if (points < 500) {
+        progressPercent = (points / 500) * 100;
+        progressText = (500 - points) + ' points to Silver';
+      } else if (points < 1000) {
+        progressPercent = ((points - 500) / 500) * 100;
+        progressText = (1000 - points) + ' points to Gold';
+      } else {
+        progressPercent = 100;
+        progressText = 'You\'ve reached the highest tier!';
+      }
+
+      document.getElementById('progressFill').style.width = progressPercent + '%';
+      document.getElementById('progressText').textContent = progressText;
+
+      // Update profile form (only if not currently being edited)
+      if (document.activeElement.tagName !== 'INPUT') {
+        document.getElementById('profileFirstName').value = userData.firstName || '';
+        document.getElementById('profileLastName').value = userData.lastName || '';
+        document.getElementById('profilePhone').value = userData.phone || '';
+        document.getElementById('profileNewsletter').checked = userData.newsletter || false;
+      }
+    }
+
+    // Update orders UI when orders change (real-time)
+    function updateOrdersUI(orders) {
+      const ordersList = document.getElementById('ordersList');
+
+      if (!orders || orders.length === 0) {
+        ordersList.innerHTML = `
+          <div class="no-orders">
+            <i class="fas fa-box-open"></i>
+            <p>You haven't placed any orders yet</p>
+            <a href="index.html" class="shop-link">Start Shopping</a>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      orders.forEach(order => {
+        const date = order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        }) : 'N/A';
+
+        const items = order.items || [];
+        const itemsHtml = items.slice(0, 3).map(item => `
+          <div class="order-item">
+            <img src="${item.image}" alt="${item.name}">
+            <div class="item-details">
+              <span class="item-name">${item.name}</span>
+              <span class="item-qty">Qty: ${item.quantity || 1}</span>
+            </div>
+          </div>
+        `).join('');
+
+        const moreItems = items.length > 3 ? `<span class="more-items">+${items.length - 3} more items</span>` : '';
+
+        html += `
+          <div class="order-card">
+            <div class="order-header">
+              <div class="order-info">
+                <span class="order-number">Order #${order.id.substring(0, 8).toUpperCase()}</span>
+                <span class="order-date">${date}</span>
+              </div>
+              <div class="order-status ${order.status || 'completed'}">
+                ${order.status || 'Completed'}
+              </div>
+            </div>
+            <div class="order-items">
+              ${itemsHtml}
+              ${moreItems}
+            </div>
+            <div class="order-footer">
+              <span class="order-total">Total: £${(order.total || 0).toFixed(2)}</span>
+              <span class="order-points">+${Math.floor(order.total || 0)} points earned</span>
+            </div>
+          </div>
+        `;
+      });
+
+      ordersList.innerHTML = html;
+    }
+
+    // Clean up listeners when leaving page
+    window.addEventListener('beforeunload', function() {
+      unsubscribeAll();
+    });
+
+    // Tab Switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Remove active from all tabs and panes
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+        // Add active to clicked tab and corresponding pane
+        this.classList.add('active');
+        document.getElementById(this.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Profile Form
+    document.getElementById('profileForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const btnText = this.querySelector('.btn-text');
+      const btnLoading = this.querySelector('.btn-loading');
+      const successEl = document.getElementById('profileSuccess');
+      const errorEl = document.getElementById('profileError');
+
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline-block';
+      successEl.textContent = '';
+      errorEl.textContent = '';
+
+      const data = {
+        firstName: document.getElementById('profileFirstName').value.trim(),
+        lastName: document.getElementById('profileLastName').value.trim(),
+        phone: document.getElementById('profilePhone').value.trim(),
+        newsletter: document.getElementById('profileNewsletter').checked
+      };
+
+      const success = await updateUserProfile(data);
+
+      if (success) {
+        successEl.textContent = 'Profile updated successfully!';
+        document.getElementById('userName').textContent = data.firstName;
+      } else {
+        errorEl.textContent = 'Failed to update profile. Please try again.';
+      }
+
+      btnText.style.display = 'inline-block';
+      btnLoading.style.display = 'none';
+    });
+
+    // Delete Account
+    function confirmDeleteAccount() {
+      document.getElementById('deleteModal').classList.add('show');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('show');
+    }
+
+    async function deleteAccount() {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          // Delete user document
+          await db.collection('users').doc(user.uid).delete();
+          // Delete auth account
+          await user.delete();
+          window.location.href = 'index.html';
+        }
+      } catch (error) {
+        alert('Error deleting account: ' + error.message);
+        closeDeleteModal();
+      }
+    }
+
+    // Close modal on overlay click
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDeleteModal();
+      }
+    });
+  </script>
+
+</body>
+</html>

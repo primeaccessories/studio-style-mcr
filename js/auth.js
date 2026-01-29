@@ -1,0 +1,370 @@
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAb7lZfMV8Dk-O07uzbYFt07IASelOihVA",
+  authDomain: "studiostylemcr-e5ead.firebaseapp.com",
+  projectId: "studiostylemcr-e5ead",
+  storageBucket: "studiostylemcr-e5ead.firebasestorage.app",
+  messagingSenderId: "763513185614",
+  appId: "1:763513185614:web:98a10b3b5d9fd0aa2caa1f",
+  measurementId: "G-25R94YS2PC"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Auth State Observer
+auth.onAuthStateChanged(function(user) {
+  updateNavAuth(user);
+
+  if (user) {
+    // User is signed in
+    console.log('User signed in:', user.email);
+  } else {
+    // User is signed out
+    console.log('User signed out');
+  }
+});
+
+// Update navigation based on auth state
+function updateNavAuth(user) {
+  const accountLinks = document.querySelectorAll('.account-link');
+  const authLinks = document.querySelectorAll('.auth-link');
+
+  accountLinks.forEach(link => {
+    if (user) {
+      link.style.display = 'block';
+      link.innerHTML = '<i class="fas fa-user"></i>';
+      link.href = 'account.html';
+    } else {
+      link.style.display = 'block';
+      link.innerHTML = '<i class="fas fa-user"></i>';
+      link.href = 'login.html';
+    }
+  });
+}
+
+// Sign Up Function
+async function signUp(email, password, firstName, lastName, phone) {
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+
+    // Create user document in Firestore
+    await db.collection('users').doc(user.uid).set({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone || '',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      rewards: {
+        points: 100, // Welcome bonus
+        tier: 'Bronze'
+      },
+      purchases: []
+    });
+
+    // Update display name
+    await user.updateProfile({
+      displayName: firstName + ' ' + lastName
+    });
+
+    return { success: true, user: user };
+  } catch (error) {
+    console.error('Sign up error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Sign In Function
+async function signIn(email, password) {
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    return { success: true, user: userCredential.user };
+  } catch (error) {
+    console.error('Sign in error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Google Sign In Function
+async function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    const result = await auth.signInWithPopup(provider);
+    const user = result.user;
+
+    // Check if user exists in Firestore
+    const userDoc = await db.collection('users').doc(user.uid).get();
+
+    if (!userDoc.exists) {
+      // Create new user document for Google sign-in users
+      const names = user.displayName ? user.displayName.split(' ') : ['', ''];
+      await db.collection('users').doc(user.uid).set({
+        firstName: names[0] || '',
+        lastName: names.slice(1).join(' ') || '',
+        email: user.email,
+        phone: user.phoneNumber || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        rewards: {
+          points: 100,
+          tier: 'Bronze'
+        },
+        purchases: [],
+        signInMethod: 'google'
+      });
+    }
+
+    return { success: true, user: user };
+  } catch (error) {
+    // If popup blocked, try redirect
+    if (error.code === 'auth/popup-blocked') {
+      auth.signInWithRedirect(provider);
+      return { success: true, redirect: true };
+    }
+    console.error('Google sign in error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Handle redirect result (for when popup is blocked)
+auth.getRedirectResult().then(function(result) {
+  if (result.user) {
+    const user = result.user;
+    // Check if user exists in Firestore
+    db.collection('users').doc(user.uid).get().then(function(userDoc) {
+      if (!userDoc.exists) {
+        const names = user.displayName ? user.displayName.split(' ') : ['', ''];
+        db.collection('users').doc(user.uid).set({
+          firstName: names[0] || '',
+          lastName: names.slice(1).join(' ') || '',
+          email: user.email,
+          phone: user.phoneNumber || '',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          rewards: {
+            points: 100,
+            tier: 'Bronze'
+          },
+          purchases: [],
+          signInMethod: 'google'
+        });
+      }
+    });
+    window.location.href = 'account.html';
+  }
+}).catch(function(error) {
+  console.error('Redirect result error:', error);
+});
+
+// Sign Out Function
+async function signOut() {
+  try {
+    await auth.signOut();
+    window.location.href = 'index.html';
+  } catch (error) {
+    console.error('Sign out error:', error);
+  }
+}
+
+// Get User Data
+async function getUserData() {
+  const user = auth.currentUser;
+  if (!user) return null;
+
+  try {
+    const doc = await db.collection('users').doc(user.uid).get();
+    if (doc.exists) {
+      return doc.data();
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting user data:', error);
+    return null;
+  }
+}
+
+// Get Purchase History
+async function getPurchaseHistory() {
+  const user = auth.currentUser;
+  if (!user) return [];
+
+  try {
+    const snapshot = await db.collection('users').doc(user.uid)
+      .collection('orders')
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    const orders = [];
+    snapshot.forEach(doc => {
+      orders.push({ id: doc.id, ...doc.data() });
+    });
+    return orders;
+  } catch (error) {
+    console.error('Error getting purchase history:', error);
+    return [];
+  }
+}
+
+// Add Purchase (call this after successful checkout)
+async function addPurchase(orderData) {
+  const user = auth.currentUser;
+  if (!user) return false;
+
+  try {
+    // Add order to user's orders subcollection
+    await db.collection('users').doc(user.uid).collection('orders').add({
+      ...orderData,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Update rewards points (1 point per £1 spent)
+    const pointsEarned = Math.floor(orderData.total);
+    await db.collection('users').doc(user.uid).update({
+      'rewards.points': firebase.firestore.FieldValue.increment(pointsEarned)
+    });
+
+    // Check and update tier
+    await updateRewardsTier(user.uid);
+
+    return true;
+  } catch (error) {
+    console.error('Error adding purchase:', error);
+    return false;
+  }
+}
+
+// Update Rewards Tier based on total points
+async function updateRewardsTier(userId) {
+  try {
+    const doc = await db.collection('users').doc(userId).get();
+    const userData = doc.data();
+    const points = userData.rewards.points;
+
+    let tier = 'Bronze';
+    if (points >= 1000) tier = 'Gold';
+    else if (points >= 500) tier = 'Silver';
+
+    await db.collection('users').doc(userId).update({
+      'rewards.tier': tier
+    });
+  } catch (error) {
+    console.error('Error updating tier:', error);
+  }
+}
+
+// Password Reset
+async function resetPassword(email) {
+  try {
+    await auth.sendPasswordResetEmail(email);
+    return { success: true };
+  } catch (error) {
+    console.error('Password reset error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Update User Profile
+async function updateUserProfile(data) {
+  const user = auth.currentUser;
+  if (!user) return false;
+
+  try {
+    await db.collection('users').doc(user.uid).update(data);
+    return true;
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    return false;
+  }
+}
+
+// Check if user is logged in
+function isLoggedIn() {
+  return auth.currentUser !== null;
+}
+
+// Require auth - redirect to login if not authenticated
+function requireAuth() {
+  auth.onAuthStateChanged(function(user) {
+    if (!user) {
+      window.location.href = 'login.html';
+    }
+  });
+}
+
+// ============================================
+// REAL-TIME LISTENERS - Sync across all devices
+// ============================================
+
+// Store active listeners for cleanup
+let userDataUnsubscribe = null;
+let ordersUnsubscribe = null;
+
+// Subscribe to user data changes in real-time
+function subscribeToUserData(callback) {
+  const user = auth.currentUser;
+  if (!user) return null;
+
+  // Unsubscribe from previous listener if exists
+  if (userDataUnsubscribe) {
+    userDataUnsubscribe();
+  }
+
+  // Set up real-time listener
+  userDataUnsubscribe = db.collection('users').doc(user.uid)
+    .onSnapshot(function(doc) {
+      if (doc.exists) {
+        callback(doc.data());
+      }
+    }, function(error) {
+      console.error('Error listening to user data:', error);
+    });
+
+  return userDataUnsubscribe;
+}
+
+// Subscribe to orders in real-time
+function subscribeToOrders(callback) {
+  const user = auth.currentUser;
+  if (!user) return null;
+
+  // Unsubscribe from previous listener if exists
+  if (ordersUnsubscribe) {
+    ordersUnsubscribe();
+  }
+
+  // Set up real-time listener
+  ordersUnsubscribe = db.collection('users').doc(user.uid)
+    .collection('orders')
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(function(snapshot) {
+      const orders = [];
+      snapshot.forEach(function(doc) {
+        orders.push({ id: doc.id, ...doc.data() });
+      });
+      callback(orders);
+    }, function(error) {
+      console.error('Error listening to orders:', error);
+    });
+
+  return ordersUnsubscribe;
+}
+
+// Unsubscribe from all listeners (call on logout or page unload)
+function unsubscribeAll() {
+  if (userDataUnsubscribe) {
+    userDataUnsubscribe();
+    userDataUnsubscribe = null;
+  }
+  if (ordersUnsubscribe) {
+    ordersUnsubscribe();
+    ordersUnsubscribe = null;
+  }
+}
+
+// Clean up listeners on sign out
+auth.onAuthStateChanged(function(user) {
+  if (!user) {
+    unsubscribeAll();
+  }
+});

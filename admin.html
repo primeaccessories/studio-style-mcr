@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Studio Style MCR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Fjalla One', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* LOGIN */
+    .login-screen {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #0a0a0a;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .login-screen.hidden { display: none; }
+    .login-box { text-align: center; width: 340px; max-width: 90%; }
+    .login-logo { font-size: 1.4rem; letter-spacing: 4px; color: #fff; margin-bottom: 10px; }
+    .login-sub { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 40px; }
+    .login-input {
+      width: 100%; padding: 14px 20px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      color: #fff; font-family: inherit; font-size: 0.85rem;
+      letter-spacing: 3px; text-align: center; outline: none;
+      transition: border-color 0.3s; margin-bottom: 15px;
+    }
+    .login-input::placeholder { color: #555; letter-spacing: 2px; }
+    .login-input:focus { border-color: rgba(255,255,255,0.3); }
+    .login-btn {
+      width: 100%; padding: 14px; background: #fff; color: #000;
+      border: none; font-family: inherit; font-size: 0.75rem;
+      letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+    }
+    .login-btn:hover { background: #e0e0e0; }
+    .login-error { color: #e74c3c; font-size: 0.75rem; letter-spacing: 1px; margin-top: 15px; opacity: 0; transition: opacity 0.3s; }
+    .login-error.show { opacity: 1; }
+    .login-back { display: inline-block; margin-top: 30px; color: #444; font-size: 0.7rem; letter-spacing: 1px; text-decoration: none; }
+    .login-back:hover { color: #fff; }
+
+    /* ADMIN PANEL */
+    .admin-panel { display: none; }
+    .admin-panel.show { display: block; }
+
+    .admin-header {
+      background: #0a0a0a; color: #fff; padding: 20px 30px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-header-left { display: flex; align-items: center; gap: 15px; }
+    .admin-header-logo { font-size: 1rem; letter-spacing: 3px; }
+    .admin-badge { font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; background: rgba(255,255,255,0.1); padding: 4px 10px; color: #999; }
+    .admin-header-right { display: flex; gap: 20px; align-items: center; }
+    .admin-header-right a { color: #777; font-size: 0.7rem; letter-spacing: 1px; text-decoration: none; text-transform: uppercase; }
+    .admin-header-right a:hover { color: #fff; }
+    .admin-logout {
+      background: none; border: 1px solid rgba(255,255,255,0.15); color: #999;
+      padding: 8px 16px; font-family: inherit; font-size: 0.65rem;
+      letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer;
+    }
+    .admin-logout:hover { border-color: #fff; color: #fff; }
+
+    .admin-body { max-width: 1200px; margin: 0 auto; padding: 30px; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: #fff; padding: 25px; border: 1px solid #eee; }
+    .stat-label { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
+    .stat-value { font-size: 1.8rem; color: #333; }
+    .stat-sub { font-size: 0.7rem; color: #aaa; margin-top: 5px; }
+
+    /* TABS */
+    .admin-tabs { display: flex; gap: 0; margin-bottom: 0; background: #fff; border: 1px solid #eee; border-bottom: none; }
+    .admin-tab {
+      padding: 15px 25px; font-family: inherit; font-size: 0.7rem;
+      letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer;
+      background: #fff; border: none; color: #999; transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+    .admin-tab.active { color: #000; border-bottom-color: #000; }
+    .admin-tab:hover { color: #333; }
+
+    .tab-content { display: none; background: #fff; border: 1px solid #eee; border-top: none; }
+    .tab-content.active { display: block; }
+
+    /* TOOLBAR */
+    .admin-toolbar {
+      padding: 15px 25px; border-bottom: 1px solid #eee;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .toolbar-left { display: flex; gap: 10px; align-items: center; }
+    .admin-search {
+      padding: 8px 15px; border: 1px solid #ddd; font-family: inherit;
+      font-size: 0.8rem; outline: none; width: 250px;
+    }
+    .admin-search:focus { border-color: #999; }
+    .filter-select {
+      padding: 8px 15px; border: 1px solid #ddd; font-family: inherit;
+      font-size: 0.8rem; outline: none; background: #fff; cursor: pointer;
+    }
+    .add-btn {
+      padding: 10px 20px; background: #000; color: #fff; border: none;
+      font-family: inherit; font-size: 0.7rem; letter-spacing: 1.5px;
+      text-transform: uppercase; cursor: pointer;
+    }
+    .add-btn:hover { background: #333; }
+
+    /* PRODUCT TABLE */
+    .product-table { width: 100%; border-collapse: collapse; }
+    .product-table th {
+      text-align: left; font-size: 0.65rem; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #999; padding: 12px 25px;
+      border-bottom: 1px solid #eee; font-weight: 400;
+    }
+    .product-table td {
+      padding: 12px 25px; border-bottom: 1px solid #f5f5f5;
+      font-size: 0.85rem; color: #555; vertical-align: middle;
+    }
+    .product-table tr:hover { background: #fafafa; }
+    .product-thumb { width: 40px; height: 40px; object-fit: cover; margin-right: 10px; vertical-align: middle; }
+    .product-name { color: #333; }
+    .collection-badge {
+      display: inline-block; padding: 3px 10px;
+      font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .badge-new { background: #e3f2fd; color: #1565c0; }
+    .badge-last-chance { background: #fff3e0; color: #e65100; }
+    .badge-accessories { background: #f3e5f5; color: #7b1fa2; }
+    .status-active { display: inline-block; padding: 3px 10px; background: #e8f5e9; color: #2e7d32; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; }
+    .status-sale { display: inline-block; padding: 3px 10px; background: #fff3e0; color: #e65100; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; }
+    .was-price { text-decoration: line-through; color: #bbb; margin-right: 5px; }
+    .action-btns { display: flex; gap: 8px; }
+    .edit-btn, .delete-btn {
+      padding: 5px 12px; font-family: inherit; font-size: 0.6rem;
+      letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border: 1px solid #ddd;
+      background: #fff; color: #555; transition: all 0.2s;
+    }
+    .edit-btn:hover { border-color: #000; color: #000; }
+    .delete-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); z-index: 500; display: none;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #fff; width: 500px; max-width: 95%; max-height: 90vh;
+      overflow-y: auto; padding: 30px;
+    }
+    .modal h2 {
+      font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 25px; color: #333; font-weight: 400;
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; font-size: 0.65rem; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #999; margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%; padding: 10px 14px; border: 1px solid #ddd;
+      font-family: inherit; font-size: 0.85rem; color: #333; outline: none;
+    }
+    .form-input:focus { border-color: #999; }
+    .form-select {
+      width: 100%; padding: 10px 14px; border: 1px solid #ddd;
+      font-family: inherit; font-size: 0.85rem; color: #333;
+      outline: none; background: #fff; cursor: pointer;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .form-checkbox { display: flex; align-items: center; gap: 10px; margin: 15px 0; }
+    .form-checkbox input { width: 16px; height: 16px; cursor: pointer; }
+    .form-checkbox label { font-size: 0.8rem; color: #555; cursor: pointer; margin-bottom: 0; letter-spacing: 0; text-transform: none; }
+    .sale-fields { display: none; padding: 15px; background: #fff9f0; border: 1px solid #ffe0b2; margin-bottom: 18px; }
+    .sale-fields.show { display: block; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
+    .modal-save {
+      padding: 12px 30px; background: #000; color: #fff; border: none;
+      font-family: inherit; font-size: 0.7rem; letter-spacing: 2px;
+      text-transform: uppercase; cursor: pointer;
+    }
+    .modal-save:hover { background: #333; }
+    .modal-cancel {
+      padding: 12px 30px; background: #fff; color: #555; border: 1px solid #ddd;
+      font-family: inherit; font-size: 0.7rem; letter-spacing: 2px;
+      text-transform: uppercase; cursor: pointer;
+    }
+    .modal-cancel:hover { border-color: #999; }
+    .image-upload-area {
+      border: 2px dashed #ddd; padding: 30px; text-align: center;
+      cursor: pointer; transition: all 0.2s; background: #fafafa;
+    }
+    .image-upload-area:hover, .image-upload-area.dragover {
+      border-color: #999; background: #f0f0f0;
+    }
+    .upload-placeholder i { font-size: 2rem; color: #ccc; margin-bottom: 10px; }
+    .upload-placeholder p { font-size: 0.8rem; color: #777; margin-bottom: 4px; }
+    .upload-placeholder span { font-size: 0.65rem; color: #bbb; letter-spacing: 1px; }
+    .upload-preview { position: relative; display: inline-block; }
+    .upload-preview img { max-width: 200px; max-height: 200px; object-fit: cover; border: 1px solid #eee; }
+    .remove-image {
+      position: absolute; top: -8px; right: -8px;
+      width: 24px; height: 24px; background: #e74c3c; color: #fff;
+      border: none; border-radius: 50%; font-size: 1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .url-toggle { text-align: center; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .url-toggle span { font-size: 0.7rem; color: #bbb; }
+    .url-toggle-btn {
+      background: none; border: none; color: #999; font-family: inherit;
+      font-size: 0.7rem; cursor: pointer; text-decoration: underline;
+    }
+    .url-toggle-btn:hover { color: #333; }
+    .url-input-wrap { margin-top: 10px; }
+
+    /* SHOW MORE */
+    .table-container {
+      position: relative;
+    }
+    .table-container.collapsed tbody tr:nth-child(n+6) {
+      display: none;
+    }
+    .table-container.collapsed::after {
+      content: '';
+      position: absolute;
+      bottom: 50px;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(transparent, white);
+      pointer-events: none;
+    }
+    .show-more-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: #f8f8f8;
+      border: none;
+      border-top: 1px solid #eee;
+      font-family: inherit;
+      font-size: 0.7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .show-more-btn:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .show-more-btn i {
+      margin-left: 8px;
+      transition: transform 0.2s;
+    }
+    .table-container:not(.collapsed) .show-more-btn i {
+      transform: rotate(180deg);
+    }
+
+    /* BOOKINGS */
+    .bookings-container { padding: 25px; }
+
+    /* Summary Strip */
+    .bookings-summary {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+      margin-bottom: 25px; padding: 18px 20px; background: #fafafa; border: 1px solid #eee;
+    }
+    .summary-item { text-align: center; }
+    .summary-item-label {
+      font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase;
+      color: #999; margin-bottom: 6px;
+    }
+    .summary-item-value { font-size: 1.1rem; color: #333; }
+    .summary-item-value.highlight { color: #2e7d32; }
+    .summary-item-sub { font-size: 0.7rem; color: #888; margin-top: 2px; }
+
+    /* Availability Note */
+    .availability-note {
+      font-size: 0.7rem; color: #888; letter-spacing: 0.5px;
+      margin-bottom: 15px; padding: 10px 12px; background: #f8f8f8;
+      border-left: 3px solid #ddd;
+    }
+
+    .bookings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .bookings-title { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: #333; }
+
+    .booking-card {
+      background: #fafafa; border: 1px solid #eee; padding: 20px;
+      margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .booking-card:hover { background: #f5f5f5; border-color: #ddd; }
+    .booking-card:focus { outline: 2px solid #333; outline-offset: 2px; }
+    .booking-info { flex: 1; }
+    .booking-client-name { font-size: 1rem; font-weight: 400; color: #333; margin-bottom: 4px; }
+    .booking-datetime { font-size: 0.8rem; color: #666; margin-bottom: 8px; }
+    .booking-occasion {
+      display: inline-block; font-size: 0.65rem; letter-spacing: 1px;
+      padding: 3px 8px; background: #f0f0f0; color: #666; margin-top: 6px;
+    }
+    .booking-meta { display: flex; align-items: center; gap: 12px; margin-left: 20px; }
+    .booking-status {
+      padding: 5px 12px; font-size: 0.65rem; letter-spacing: 1px;
+      text-transform: uppercase; border: none;
+    }
+    .status-pending { background: #fff3e0; color: #e65100; }
+    .status-confirmed { background: #e8f5e9; color: #2e7d32; }
+    .status-completed { background: #e3f2fd; color: #1565c0; }
+    .status-cancelled { background: #ffebee; color: #c62828; }
+    .booking-actions { display: flex; gap: 6px; }
+    .booking-action-btn {
+      padding: 6px 10px; background: #fff; border: 1px solid #ddd;
+      font-family: inherit; font-size: 0.6rem; letter-spacing: 0.5px;
+      text-transform: uppercase; cursor: pointer; color: #666; transition: all 0.15s;
+    }
+    .booking-action-btn:hover { border-color: #333; color: #333; }
+    .booking-action-btn:focus { outline: 2px solid #333; outline-offset: 1px; }
+    .booking-action-btn.complete { background: #e8f5e9; border-color: #c8e6c9; color: #2e7d32; }
+    .booking-action-btn.complete:hover { background: #c8e6c9; }
+
+    /* Empty State */
+    .no-bookings {
+      text-align: center; padding: 60px 30px; color: #666;
+    }
+    .no-bookings-icon { font-size: 2.5rem; color: #ddd; margin-bottom: 15px; }
+    .no-bookings-title { font-size: 0.9rem; color: #333; margin-bottom: 8px; letter-spacing: 1px; }
+    .no-bookings-text { font-size: 0.8rem; color: #888; line-height: 1.6; max-width: 320px; margin: 0 auto; }
+
+    /* Calendar */
+    .calendar-view { margin-bottom: 30px; }
+    .calendar-nav { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
+    .calendar-nav button {
+      padding: 8px 15px; background: #fff; border: 1px solid #ddd;
+      font-family: inherit; font-size: 0.7rem; cursor: pointer; transition: all 0.15s;
+    }
+    .calendar-nav button:hover { border-color: #333; }
+    .calendar-nav button:focus { outline: 2px solid #333; outline-offset: 1px; }
+    .calendar-month { font-size: 0.85rem; letter-spacing: 1px; }
+
+    .calendar-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 1px; background: #e5e5e5; border: 1px solid #e5e5e5;
+    }
+    .calendar-header {
+      background: #333; color: #fff; padding: 10px;
+      text-align: center; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .calendar-header.weekend { background: #555; color: #999; }
+
+    .calendar-day {
+      background: #fff; min-height: 70px; padding: 8px;
+      font-size: 0.75rem; position: relative; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .calendar-day:hover:not(.disabled):not(.other-month) { background: #f8f8f8; }
+    .calendar-day:focus { outline: 2px solid #333; outline-offset: -2px; z-index: 1; }
+    .calendar-day.other-month { background: #fafafa; cursor: default; }
+    .calendar-day.disabled { background: #f5f5f5; cursor: not-allowed; opacity: 0.5; }
+    .calendar-day.today { background: #f0f7ff; }
+    .calendar-day.selected { background: #333; }
+    .calendar-day.selected .calendar-day-number { color: #fff; }
+    .calendar-day.selected .calendar-day-indicator { background: #fff; }
+
+    .calendar-day-number { font-weight: 400; margin-bottom: 4px; color: #333; }
+    .calendar-day.other-month .calendar-day-number { color: #ccc; }
+    .calendar-day.disabled .calendar-day-number { color: #bbb; }
+
+    /* Booking indicators */
+    .calendar-day-indicators { display: flex; gap: 3px; margin-top: 4px; }
+    .calendar-day-indicator {
+      width: 6px; height: 6px; border-radius: 50%; background: #e65100;
+    }
+    .calendar-day-indicator.confirmed { background: #2e7d32; }
+    .calendar-day.fully-booked { background: #e8f5e9; }
+    .calendar-day.fully-booked.selected { background: #333; }
+
+    /* Tooltip */
+    .calendar-day[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+      background: #333; color: #fff; padding: 5px 10px; border-radius: 3px;
+      font-size: 0.65rem; white-space: nowrap; z-index: 10;
+      pointer-events: none;
+    }
+    .calendar-day[data-tooltip]:hover::before {
+      content: '';
+      position: absolute; bottom: calc(100% - 5px); left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: #333; z-index: 10;
+    }
+
+    /* Slot View Panel */
+    .slot-view-panel {
+      margin-top: 20px; padding: 20px; background: #fafafa; border: 1px solid #eee;
+      display: none;
+    }
+    .slot-view-panel.show { display: block; }
+    .slot-view-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #eee;
+    }
+    .slot-view-title { font-size: 0.85rem; color: #333; }
+    .slot-view-date { font-size: 0.7rem; color: #888; letter-spacing: 0.5px; }
+    .slot-view-close {
+      background: none; border: none; font-size: 1.2rem; color: #999;
+      cursor: pointer; line-height: 1;
+    }
+    .slot-view-close:hover { color: #333; }
+
+    .slots-grid { display: flex; flex-direction: column; gap: 8px; }
+    .slot-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 15px; background: #fff; border: 1px solid #eee;
+      transition: all 0.15s;
+    }
+    .slot-item.booked { border-left: 3px solid #2e7d32; }
+    .slot-item.available { border-left: 3px solid #ddd; }
+    .slot-time { font-size: 0.8rem; color: #333; min-width: 100px; }
+    .slot-status { font-size: 0.7rem; color: #888; flex: 1; }
+    .slot-status.booked { color: #333; font-weight: 500; }
+    .slot-action-btn {
+      padding: 5px 10px; background: #fff; border: 1px solid #ddd;
+      font-family: inherit; font-size: 0.6rem; letter-spacing: 0.5px;
+      text-transform: uppercase; cursor: pointer; color: #666;
+    }
+    .slot-action-btn:hover { border-color: #333; color: #333; }
+
+    .calendar-booking {
+      font-size: 0.6rem; padding: 3px 5px; margin-bottom: 2px;
+      border-radius: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      cursor: pointer;
+    }
+    .calendar-booking.pending { background: #fff3e0; color: #e65100; }
+    .calendar-booking.confirmed { background: #e8f5e9; color: #2e7d32; }
+    .calendar-booking.completed { background: #e3f2fd; color: #1565c0; }
+    .calendar-booking.cancelled { background: #ffebee; color: #c62828; text-decoration: line-through; }
+
+    /* BOOKING DETAIL MODAL */
+    .booking-modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); z-index: 600; display: none;
+      align-items: center; justify-content: center;
+    }
+    .booking-modal.show { display: flex; }
+    .booking-modal-content {
+      background: #fff; width: 450px; max-width: 95%; padding: 30px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .booking-modal-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 25px;
+    }
+    .booking-modal-title {
+      font-size: 1.2rem; color: #333; font-weight: 400;
+    }
+    .booking-modal-close {
+      background: none; border: none; font-size: 1.5rem;
+      cursor: pointer; color: #999; line-height: 1;
+    }
+    .booking-modal-close:hover { color: #333; }
+    .booking-detail-row {
+      display: flex; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+    }
+    .booking-detail-row:last-child { border-bottom: none; }
+    .booking-detail-label {
+      font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: #999;
+    }
+    .booking-detail-value {
+      font-size: 0.9rem; color: #333; text-align: right; max-width: 60%;
+    }
+    .booking-detail-value.large {
+      font-size: 1.1rem; font-weight: 500;
+    }
+    .whatsapp-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #25D366; color: #fff; padding: 12px 20px;
+      border: none; border-radius: 4px; font-family: inherit;
+      font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; margin-top: 20px; width: 100%;
+      justify-content: center;
+    }
+    .whatsapp-btn:hover { background: #20bd5a; }
+    .whatsapp-btn i { font-size: 1.1rem; }
+    .calendar-nav { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+    .calendar-nav button {
+      padding: 8px 15px; background: #fff; border: 1px solid #ddd;
+      font-family: inherit; font-size: 0.7rem; cursor: pointer;
+    }
+    .calendar-nav button:hover { border-color: #333; }
+    .calendar-month { font-size: 0.85rem; letter-spacing: 1px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .admin-header { flex-direction: column; gap: 15px; text-align: center; }
+      .admin-body { padding: 20px 15px; }
+      .admin-toolbar { flex-direction: column; gap: 10px; }
+      .toolbar-left { flex-direction: column; width: 100%; }
+      .admin-search { width: 100%; }
+      .product-thumb { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .admin-tabs { overflow-x: auto; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <div class="login-logo">STUDIO STYLE MCR</div>
+      <div class="login-sub">Admin Portal</div>
+      <form onsubmit="attemptLogin(event)">
+        <input type="password" class="login-input" id="loginPassword" placeholder="Enter password" autocomplete="off">
+        <button type="submit" class="login-btn">Unlock</button>
+      </form>
+      <div class="login-error" id="loginError">Incorrect password</div>
+      <a href="index.html" class="login-back">&larr; Back to site</a>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <div class="admin-header-logo">STUDIO STYLE MCR</div>
+        <span class="admin-badge">Admin</span>
+      </div>
+      <div class="admin-header-right">
+        <a href="index.html">View Site</a>
+        <button class="admin-logout" onclick="adminLogout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="admin-body">
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Products</div>
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-sub">Across all collections</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">What's New</div>
+          <div class="stat-value" id="statNew">0</div>
+          <div class="stat-sub">Products</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Last Chance</div>
+          <div class="stat-value" id="statLastChance">0</div>
+          <div class="stat-sub">Products</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Accessories</div>
+          <div class="stat-value" id="statAccessories">0</div>
+          <div class="stat-sub">Products</div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('all')">All Products</button>
+        <button class="admin-tab" onclick="switchTab('new-arrivals')">What's New</button>
+        <button class="admin-tab" onclick="switchTab('last-chance')">Last Chance To Buy</button>
+        <button class="admin-tab" onclick="switchTab('accessories')">Accessories</button>
+        <button class="admin-tab" onclick="switchTab('bookings')">Bookings</button>
+      </div>
+
+      <!-- PRODUCT LIST -->
+      <div class="tab-content active" id="productList">
+        <div class="admin-toolbar">
+          <div class="toolbar-left">
+            <input type="text" class="admin-search" id="searchInput" placeholder="Search products..." oninput="renderTable()">
+          </div>
+          <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> &nbsp;Add Product</button>
+        </div>
+        <div class="table-container collapsed" id="tableContainer">
+          <div style="overflow-x:auto;">
+            <table class="product-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Collection</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productTableBody"></tbody>
+            </table>
+          </div>
+          <button class="show-more-btn" id="showMoreBtn" onclick="toggleProductList()">
+            Show All Products <i class="fas fa-chevron-down"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- BOOKINGS TAB -->
+      <div class="tab-content" id="bookingsTab">
+        <div class="bookings-container">
+          <!-- Summary Strip -->
+          <div class="bookings-summary" role="region" aria-label="Booking statistics">
+            <div class="summary-item">
+              <div class="summary-item-label">Today</div>
+              <div class="summary-item-value" id="summaryToday">0</div>
+              <div class="summary-item-sub">bookings</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-item-label">This Week</div>
+              <div class="summary-item-value" id="summaryWeek">0 / 12</div>
+              <div class="summary-item-sub">slots filled</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-item-label">Next Booking</div>
+              <div class="summary-item-value highlight" id="summaryNext">—</div>
+              <div class="summary-item-sub" id="summaryNextTime"></div>
+            </div>
+          </div>
+
+          <!-- Calendar -->
+          <div class="calendar-view" role="region" aria-label="Booking calendar">
+            <div class="availability-note">
+              <i class="fas fa-info-circle"></i> Available Mon–Wed, 12pm–4pm (4 sessions per day)
+            </div>
+            <div class="calendar-nav">
+              <button onclick="prevMonth()" aria-label="Previous month">&larr; Prev</button>
+              <span class="calendar-month" id="calendarMonth" aria-live="polite">January 2026</span>
+              <button onclick="nextMonth()" aria-label="Next month">Next &rarr;</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid" role="grid" aria-label="Calendar"></div>
+          </div>
+
+          <!-- Slot View Panel -->
+          <div class="slot-view-panel" id="slotViewPanel" role="region" aria-label="Day slots">
+            <div class="slot-view-header">
+              <div>
+                <div class="slot-view-title" id="slotViewTitle">Monday</div>
+                <div class="slot-view-date" id="slotViewDate">27 January 2026</div>
+              </div>
+              <button class="slot-view-close" onclick="closeSlotView()" aria-label="Close slot view">&times;</button>
+            </div>
+            <div class="slots-grid" id="slotsGrid"></div>
+          </div>
+
+          <!-- Bookings List -->
+          <div class="bookings-header">
+            <div class="bookings-title">All Bookings</div>
+          </div>
+          <div id="bookingsList" role="list" aria-label="Bookings list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h2 id="modalTitle">Add Product</h2>
+
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" class="form-input" id="formName" placeholder="e.g. COCOONS">
+      </div>
+
+      <div class="form-group">
+        <label>Product Image</label>
+        <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click();" ondragover="event.preventDefault(); this.classList.add('dragover');" ondragleave="this.classList.remove('dragover');" ondrop="handleDrop(event);">
+          <div class="upload-placeholder" id="uploadPlaceholder">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Click to upload or drag & drop</p>
+            <span>JPG, PNG up to 5MB</span>
+          </div>
+          <div class="upload-preview" id="uploadPreview" style="display:none;">
+            <img id="previewImg" src="" alt="Preview">
+            <button type="button" class="remove-image" onclick="event.stopPropagation(); removeImage();">&times;</button>
+          </div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(this)">
+        <div class="url-toggle">
+          <span>or</span>
+          <button type="button" class="url-toggle-btn" onclick="toggleUrlInput()">Paste image URL instead</button>
+        </div>
+        <div class="url-input-wrap" id="urlInputWrap" style="display:none;">
+          <input type="text" class="form-input" id="formImage" placeholder="https://..." oninput="previewFromUrl()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Collection</label>
+        <select class="form-select" id="formCollection">
+          <option value="new-arrivals">What's New</option>
+          <option value="last-chance">Last Chance To Buy</option>
+          <option value="accessories">Accessories</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Price (&pound;)</label>
+        <input type="number" class="form-input" id="formPrice" placeholder="19.99" step="0.01">
+      </div>
+
+      <div class="form-checkbox">
+        <input type="checkbox" id="formSale" onchange="toggleSaleFields()">
+        <label for="formSale">This product is on sale</label>
+      </div>
+
+      <div class="sale-fields" id="saleFields">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Original Price (&pound;)</label>
+            <input type="number" class="form-input" id="formOriginalPrice" placeholder="25.00" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Sale Price (&pound;)</label>
+            <input type="number" class="form-input" id="formSalePrice" placeholder="12.50" step="0.01">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-save" onclick="saveProduct()">Save Product</button>
+        <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING DETAIL MODAL -->
+  <div class="booking-modal" id="bookingModal" onclick="closeBookingModal()">
+    <div class="booking-modal-content" onclick="event.stopPropagation()">
+      <div class="booking-modal-header">
+        <div class="booking-modal-title">Booking Details</div>
+        <button class="booking-modal-close" onclick="closeBookingModal()">&times;</button>
+      </div>
+      <div id="bookingModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" onclick="closeSearch()">&times;</button>
+    <div class="search-input-wrap">
+      <input type="text" id="searchInput" placeholder="Search products..." oninput="performSearch()">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    var ADMIN_PASSWORD = 'studio2026';
+
+    // ============================================
+    // FIREBASE BOOKINGS - Real-time sync across all admin devices
+    // ============================================
+    var bookingsCache = []; // Local cache updated by real-time listener
+    var bookingsUnsubscribe = null;
+
+    // Initialize real-time bookings listener
+    function initBookingsListener() {
+      if (bookingsUnsubscribe) return; // Already listening
+
+      bookingsUnsubscribe = db.collection('bookings')
+        .orderBy('createdAt', 'desc')
+        .onSnapshot(function(snapshot) {
+          bookingsCache = [];
+          snapshot.forEach(function(doc) {
+            bookingsCache.push({ id: doc.id, ...doc.data() });
+          });
+
+          // Update UI if on bookings tab
+          if (currentTab === 'bookings') {
+            updateSummary();
+            renderBookings();
+            renderCalendar();
+            if (selectedCalendarDate) {
+              renderDaySlots(selectedCalendarDate);
+            }
+          }
+        }, function(error) {
+          console.error('Error listening to bookings:', error);
+          // Fallback to localStorage if Firebase fails
+          bookingsCache = JSON.parse(localStorage.getItem('studioBookings') || '[]');
+        });
+    }
+
+    // Get bookings (from cache, updated in real-time)
+    function getBookings() {
+      return bookingsCache;
+    }
+
+    // Save booking to Firebase
+    async function saveBookingToFirebase(booking) {
+      try {
+        if (booking.id && booking.id.length > 10) {
+          // Update existing
+          await db.collection('bookings').doc(booking.id).update(booking);
+        } else {
+          // Add new
+          booking.id = Date.now().toString();
+          await db.collection('bookings').add(booking);
+        }
+        return true;
+      } catch (error) {
+        console.error('Error saving booking:', error);
+        return false;
+      }
+    }
+
+    // Update booking status in Firebase
+    async function updateBookingStatusInFirebase(bookingId, status) {
+      try {
+        // Find the document by querying for the booking id
+        var snapshot = await db.collection('bookings')
+          .where('id', '==', bookingId)
+          .get();
+
+        if (!snapshot.empty) {
+          await snapshot.docs[0].ref.update({ status: status });
+        }
+        return true;
+      } catch (error) {
+        console.error('Error updating booking status:', error);
+        return false;
+      }
+    }
+
+    // Delete booking from Firebase
+    async function deleteBookingFromFirebase(bookingId) {
+      try {
+        var snapshot = await db.collection('bookings')
+          .where('id', '==', bookingId)
+          .get();
+
+        if (!snapshot.empty) {
+          await snapshot.docs[0].ref.delete();
+        }
+        return true;
+      } catch (error) {
+        console.error('Error deleting booking:', error);
+        return false;
+      }
+    }
+
+    // Migrate localStorage bookings to Firebase (one-time)
+    async function migrateLocalBookingsToFirebase() {
+      var localBookings = JSON.parse(localStorage.getItem('studioBookings') || '[]');
+      if (localBookings.length === 0) return;
+
+      console.log('Migrating ' + localBookings.length + ' bookings to Firebase...');
+
+      for (var i = 0; i < localBookings.length; i++) {
+        var booking = localBookings[i];
+        // Check if already exists in Firebase
+        var exists = bookingsCache.some(function(b) { return b.id === booking.id; });
+        if (!exists) {
+          await db.collection('bookings').add({
+            ...booking,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      }
+
+      // Clear localStorage after migration
+      localStorage.removeItem('studioBookings');
+      console.log('Migration complete!');
+    }
+    var currentTab = 'all';
+    var editingId = null;
+
+    function attemptLogin(e) {
+      e.preventDefault();
+      if (document.getElementById('loginPassword').value === ADMIN_PASSWORD) {
+        sessionStorage.setItem('adminAuth', 'true');
+        showDashboard();
+      } else {
+        document.getElementById('loginError').classList.add('show');
+        document.getElementById('loginPassword').value = '';
+        setTimeout(function() { document.getElementById('loginError').classList.remove('show'); }, 2000);
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('adminPanel').classList.add('show');
+
+      // Initialize Firebase real-time listener for bookings
+      initBookingsListener();
+
+      // Migrate any existing localStorage bookings to Firebase (one-time)
+      setTimeout(function() {
+        migrateLocalBookingsToFirebase();
+      }, 1000);
+
+      renderTable();
+    }
+
+    function adminLogout() {
+      // Clean up Firebase listener
+      if (bookingsUnsubscribe) {
+        bookingsUnsubscribe();
+        bookingsUnsubscribe = null;
+      }
+      sessionStorage.removeItem('adminAuth');
+      location.reload();
+    }
+
+    // TABS
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.admin-tab').forEach(function(t) { t.classList.remove('active'); });
+      event.target.classList.add('active');
+
+      // Show/hide tabs
+      document.getElementById('productList').classList.remove('active');
+      document.getElementById('bookingsTab').classList.remove('active');
+
+      if (tab === 'bookings') {
+        document.getElementById('bookingsTab').classList.add('active');
+        renderBookings();
+        renderCalendar();
+      } else {
+        document.getElementById('productList').classList.add('active');
+        renderTable();
+      }
+    }
+
+    // RENDER TABLE
+    function renderTable() {
+      var products = getProducts();
+      var search = document.getElementById('searchInput').value.toLowerCase();
+      var tbody = document.getElementById('productTableBody');
+
+      // Filter
+      var filtered = products.filter(function(p) {
+        var matchTab = currentTab === 'all' || p.collection === currentTab;
+        var matchSearch = !search || p.name.toLowerCase().indexOf(search) > -1;
+        return matchTab && matchSearch;
+      });
+
+      // Stats
+      document.getElementById('statTotal').textContent = products.length;
+      document.getElementById('statNew').textContent = products.filter(function(p) { return p.collection === 'new-arrivals'; }).length;
+      document.getElementById('statLastChance').textContent = products.filter(function(p) { return p.collection === 'last-chance'; }).length;
+      document.getElementById('statAccessories').textContent = products.filter(function(p) { return p.collection === 'accessories'; }).length;
+
+      // Table
+      tbody.innerHTML = '';
+      filtered.forEach(function(p) {
+        var priceHTML;
+        if (p.sale && p.originalPrice) {
+          priceHTML = '<span class="was-price">&pound;' + p.originalPrice.toFixed(2) + '</span> &pound;' + p.price.toFixed(2);
+        } else {
+          priceHTML = '&pound;' + p.price.toFixed(2);
+        }
+
+        var badgeClass = p.collection === 'new-arrivals' ? 'badge-new' : p.collection === 'last-chance' ? 'badge-last-chance' : 'badge-accessories';
+        var collectionLabel = p.collection === 'new-arrivals' ? "What's New" : p.collection === 'last-chance' ? 'Last Chance' : 'Accessories';
+
+        var row = document.createElement('tr');
+        row.innerHTML =
+          '<td>' +
+            (p.image ? '<img src="' + p.image + '" class="product-thumb" alt="">' : '') +
+            '<span class="product-name">' + p.name + '</span>' +
+          '</td>' +
+          '<td>' + priceHTML + '</td>' +
+          '<td><span class="collection-badge ' + badgeClass + '">' + collectionLabel + '</span></td>' +
+          '<td>' + (p.sale ? '<span class="status-sale">Sale</span>' : '<span class="status-active">Active</span>') + '</td>' +
+          '<td><div class="action-btns">' +
+            '<button class="edit-btn" onclick="openEditModal(\'' + p.id + '\')">Edit</button>' +
+            '<button class="delete-btn" onclick="deleteProduct(\'' + p.id + '\')">Delete</button>' +
+          '</div></td>';
+        tbody.appendChild(row);
+      });
+    }
+
+    // MODAL
+    function openAddModal() {
+      editingId = null;
+      currentImageData = '';
+      document.getElementById('modalTitle').textContent = 'Add Product';
+      document.getElementById('formName').value = '';
+      document.getElementById('formImage').value = '';
+      document.getElementById('formCollection').value = 'new-arrivals';
+      document.getElementById('formPrice').value = '';
+      document.getElementById('formSale').checked = false;
+      document.getElementById('formOriginalPrice').value = '';
+      document.getElementById('formSalePrice').value = '';
+      document.getElementById('saleFields').classList.remove('show');
+      document.getElementById('uploadPlaceholder').style.display = '';
+      document.getElementById('uploadPreview').style.display = 'none';
+      document.getElementById('urlInputWrap').style.display = 'none';
+      document.getElementById('fileInput').value = '';
+      document.getElementById('modalOverlay').classList.add('show');
+    }
+
+    function openEditModal(id) {
+      var products = getProducts();
+      var p = products.find(function(x) { return x.id === id; });
+      if (!p) return;
+
+      editingId = id;
+      currentImageData = p.image || '';
+      document.getElementById('modalTitle').textContent = 'Edit Product';
+      document.getElementById('formName').value = p.name;
+      document.getElementById('formImage').value = p.image || '';
+      document.getElementById('formCollection').value = p.collection;
+      document.getElementById('formPrice').value = p.price;
+      document.getElementById('formSale').checked = p.sale;
+      document.getElementById('urlInputWrap').style.display = 'none';
+      document.getElementById('fileInput').value = '';
+
+      if (p.image) {
+        showImagePreview(p.image);
+      } else {
+        document.getElementById('uploadPlaceholder').style.display = '';
+        document.getElementById('uploadPreview').style.display = 'none';
+      }
+
+      if (p.sale && p.originalPrice) {
+        document.getElementById('formOriginalPrice').value = p.originalPrice;
+        document.getElementById('formSalePrice').value = p.price;
+        document.getElementById('saleFields').classList.add('show');
+      } else {
+        document.getElementById('formOriginalPrice').value = '';
+        document.getElementById('formSalePrice').value = '';
+        document.getElementById('saleFields').classList.remove('show');
+      }
+
+      document.getElementById('modalOverlay').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('show');
+      editingId = null;
+    }
+
+    function toggleSaleFields() {
+      var checked = document.getElementById('formSale').checked;
+      document.getElementById('saleFields').classList.toggle('show', checked);
+    }
+
+    var currentImageData = '';
+
+    function handleFileUpload(input) {
+      if (!input.files || !input.files[0]) return;
+      processFile(input.files[0]);
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processFile(e.dataTransfer.files[0]);
+      }
+    }
+
+    function processFile(file) {
+      if (!file.type.startsWith('image/')) { alert('Please upload an image file'); return; }
+      if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return; }
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          // Resize to max 800px
+          var maxSize = 800;
+          var w = img.width, h = img.height;
+          if (w > maxSize || h > maxSize) {
+            if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+            else { w = Math.round(w * maxSize / h); h = maxSize; }
+          }
+          var canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          currentImageData = canvas.toDataURL('image/jpeg', 0.8);
+          showImagePreview(currentImageData);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function showImagePreview(src) {
+      document.getElementById('uploadPlaceholder').style.display = 'none';
+      document.getElementById('uploadPreview').style.display = 'inline-block';
+      document.getElementById('previewImg').src = src;
+    }
+
+    function removeImage() {
+      currentImageData = '';
+      document.getElementById('uploadPlaceholder').style.display = '';
+      document.getElementById('uploadPreview').style.display = 'none';
+      document.getElementById('previewImg').src = '';
+      document.getElementById('fileInput').value = '';
+      document.getElementById('formImage').value = '';
+    }
+
+    function toggleUrlInput() {
+      var wrap = document.getElementById('urlInputWrap');
+      wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function previewFromUrl() {
+      var url = document.getElementById('formImage').value.trim();
+      if (url) {
+        currentImageData = url;
+        showImagePreview(url);
+      }
+    }
+
+    // SAVE
+    function saveProduct() {
+      var name = document.getElementById('formName').value.trim();
+      var image = currentImageData || document.getElementById('formImage').value.trim();
+      var collection = document.getElementById('formCollection').value;
+      var isSale = document.getElementById('formSale').checked;
+      var price, originalPrice;
+
+      if (!name) { alert('Please enter a product name'); return; }
+
+      if (isSale) {
+        originalPrice = parseFloat(document.getElementById('formOriginalPrice').value);
+        price = parseFloat(document.getElementById('formSalePrice').value);
+        if (isNaN(originalPrice) || isNaN(price)) { alert('Please enter both original and sale prices'); return; }
+      } else {
+        price = parseFloat(document.getElementById('formPrice').value);
+        originalPrice = null;
+        if (isNaN(price)) { alert('Please enter a price'); return; }
+      }
+
+      var products = getProducts();
+
+      if (editingId) {
+        // Edit existing
+        var idx = products.findIndex(function(p) { return p.id === editingId; });
+        if (idx > -1) {
+          products[idx].name = name;
+          products[idx].image = image;
+          products[idx].collection = collection;
+          products[idx].price = price;
+          products[idx].sale = isSale;
+          products[idx].originalPrice = originalPrice;
+        }
+      } else {
+        // Add new
+        var id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') + '-' + Date.now();
+        products.push({
+          id: id,
+          name: name,
+          price: price,
+          image: image,
+          collection: collection,
+          sale: isSale,
+          originalPrice: originalPrice
+        });
+      }
+
+      saveProducts(products);
+      closeModal();
+      renderTable();
+    }
+
+    // DELETE
+    function deleteProduct(id) {
+      if (!confirm('Are you sure you want to delete this product?')) return;
+      var products = getProducts().filter(function(p) { return p.id !== id; });
+      saveProducts(products);
+      renderTable();
+    }
+
+    // BOOKINGS
+    var currentCalendarDate = new Date();
+    var selectedCalendarDate = null;
+    var AVAILABLE_DAYS = [1, 2, 3]; // Mon, Tue, Wed
+    var TIME_SLOTS = [
+      { time: '12:00', label: '12:00 – 13:00' },
+      { time: '13:00', label: '13:00 – 14:00' },
+      { time: '14:00', label: '14:00 – 15:00' },
+      { time: '15:00', label: '15:00 – 16:00' }
+    ];
+
+    function getBookings() {
+      return JSON.parse(localStorage.getItem('studioBookings') || '[]');
+    }
+
+    function saveBookings(bookings) {
+      localStorage.setItem('studioBookings', JSON.stringify(bookings));
+    }
+
+    function formatBookingDate(dateStr) {
+      var d = new Date(dateStr);
+      var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function formatShortDate(dateStr) {
+      var d = new Date(dateStr);
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return d.getDate() + ' ' + months[d.getMonth()];
+    }
+
+    function formatTime(time) {
+      var labels = { "12:00": "12pm", "13:00": "1pm", "14:00": "2pm", "15:00": "3pm" };
+      return labels[time] || time;
+    }
+
+    function formatPhoneForWhatsApp(phone) {
+      var cleaned = phone.replace(/[\s\-\(\)]/g, '');
+      if (cleaned.startsWith('0')) {
+        cleaned = '44' + cleaned.substring(1);
+      }
+      if (cleaned.startsWith('+')) {
+        cleaned = cleaned.substring(1);
+      }
+      return cleaned;
+    }
+
+    function getBookingsForDate(date) {
+      var bookings = getBookings();
+      return bookings.filter(function(b) {
+        var bDate = new Date(b.booking.date);
+        return bDate.toDateString() === date.toDateString() && b.status !== 'cancelled';
+      });
+    }
+
+    function isAvailableDay(date) {
+      return AVAILABLE_DAYS.indexOf(date.getDay()) > -1;
+    }
+
+    // Summary calculations
+    function updateSummary() {
+      var bookings = getBookings().filter(function(b) { return b.status !== 'cancelled'; });
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Today's bookings
+      var todayBookings = bookings.filter(function(b) {
+        var bDate = new Date(b.booking.date);
+        bDate.setHours(0, 0, 0, 0);
+        return bDate.getTime() === today.getTime();
+      });
+      document.getElementById('summaryToday').textContent = todayBookings.length;
+
+      // This week's bookings (Mon-Sun)
+      var startOfWeek = new Date(today);
+      var dayOfWeek = today.getDay() || 7;
+      startOfWeek.setDate(today.getDate() - dayOfWeek + 1);
+      var endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+      var weekBookings = bookings.filter(function(b) {
+        var bDate = new Date(b.booking.date);
+        bDate.setHours(0, 0, 0, 0);
+        return bDate >= startOfWeek && bDate <= endOfWeek;
+      });
+      document.getElementById('summaryWeek').textContent = weekBookings.length + ' / 12';
+
+      // Next booking
+      var futureBookings = bookings.filter(function(b) {
+        var bDate = new Date(b.booking.date);
+        return bDate >= today;
+      }).sort(function(a, b) {
+        return new Date(a.booking.date) - new Date(b.booking.date);
+      });
+
+      if (futureBookings.length > 0) {
+        var next = futureBookings[0];
+        var customerName = (next.customer && next.customer.name) ? next.customer.name : 'Booking';
+        document.getElementById('summaryNext').textContent = formatShortDate(next.booking.date);
+        document.getElementById('summaryNextTime').textContent = formatTime(next.booking.time) + ' - ' + customerName;
+      } else {
+        document.getElementById('summaryNext').textContent = 'None';
+        document.getElementById('summaryNextTime').textContent = '';
+      }
+    }
+
+    function renderBookings() {
+      var bookings = getBookings();
+      var list = document.getElementById('bookingsList');
+
+      updateSummary();
+
+      // Sort by date, upcoming first, then past
+      var now = new Date();
+      bookings.sort(function(a, b) {
+        var dateA = new Date(a.booking.date);
+        var dateB = new Date(b.booking.date);
+        var aFuture = dateA >= now;
+        var bFuture = dateB >= now;
+        if (aFuture && !bFuture) return -1;
+        if (!aFuture && bFuture) return 1;
+        if (aFuture) return dateA - dateB;
+        return dateB - dateA;
+      });
+
+      if (bookings.length === 0) {
+        list.innerHTML =
+          '<div class="no-bookings">' +
+            '<div class="no-bookings-icon"><i class="fas fa-calendar-alt"></i></div>' +
+            '<div class="no-bookings-title">No bookings yet</div>' +
+            '<div class="no-bookings-text">Share your styling link or promote "Let Us Style You" to start filling slots.</div>' +
+          '</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      bookings.forEach(function(b) {
+        var customerName = (b.customer && b.customer.name) ? b.customer.name : 'Unknown';
+        var occasion = (b.answers.occasion || []).join(', ') || '—';
+        var card = document.createElement('div');
+        card.className = 'booking-card';
+        card.setAttribute('role', 'listitem');
+        card.setAttribute('tabindex', '0');
+        card.onclick = function(e) {
+          if (!e.target.closest('.booking-actions')) {
+            openBookingModal(b.id);
+          }
+        };
+        card.onkeydown = function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openBookingModal(b.id);
+          }
+        };
+        card.innerHTML =
+          '<div class="booking-info">' +
+            '<div class="booking-client-name">' + customerName + '</div>' +
+            '<div class="booking-datetime">' + formatBookingDate(b.booking.date) + ' at ' + formatTime(b.booking.time) + '</div>' +
+            '<div class="booking-occasion">' + occasion + '</div>' +
+          '</div>' +
+          '<div class="booking-meta">' +
+            '<span class="booking-status status-' + b.status + '">' + b.status + '</span>' +
+            '<div class="booking-actions">' +
+              '<button class="booking-action-btn" onclick="event.stopPropagation(); openBookingModal(\'' + b.id + '\')" aria-label="View quiz details">View</button>' +
+              (b.status !== 'completed' ? '<button class="booking-action-btn complete" onclick="event.stopPropagation(); updateBookingStatus(\'' + b.id + '\', \'completed\')" aria-label="Mark as completed">Complete</button>' : '') +
+            '</div>' +
+          '</div>';
+        list.appendChild(card);
+      });
+    }
+
+    async function updateBookingStatus(id, status) {
+      // Update in Firebase - real-time listener will update UI automatically
+      await updateBookingStatusInFirebase(id, status);
+    }
+
+    async function deleteBooking(id) {
+      if (!confirm('Delete this booking?')) return;
+      // Delete from Firebase - real-time listener will update UI automatically
+      await deleteBookingFromFirebase(id);
+      closeBookingModal();
+    }
+
+    function openBookingModal(id) {
+      var bookings = getBookings();
+      var b = bookings.find(function(x) { return x.id === id; });
+      if (!b) return;
+
+      var customerName = (b.customer && b.customer.name) ? b.customer.name : 'Unknown';
+      var customerPhone = (b.customer && b.customer.phone) ? b.customer.phone : '-';
+
+      var body = document.getElementById('bookingModalBody');
+      body.innerHTML =
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Customer</span>' +
+          '<span class="booking-detail-value large">' + customerName + '</span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Phone</span>' +
+          '<span class="booking-detail-value large">' + customerPhone + '</span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Date</span>' +
+          '<span class="booking-detail-value">' + formatBookingDate(b.booking.date) + '</span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Time</span>' +
+          '<span class="booking-detail-value">' + formatTime(b.booking.time) + '</span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Status</span>' +
+          '<span class="booking-detail-value"><span class="booking-status status-' + b.status + '">' + b.status + '</span></span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Occasion</span>' +
+          '<span class="booking-detail-value">' + (b.answers.occasion || []).join(', ') + '</span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Fit Preference</span>' +
+          '<span class="booking-detail-value">' + (b.answers.fit || []).join(', ') + '</span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Colours</span>' +
+          '<span class="booking-detail-value">' + (b.answers.colour || []).join(', ') + '</span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Budget</span>' +
+          '<span class="booking-detail-value">' + (b.answers.budget || '-') + '</span>' +
+        '</div>' +
+        '<div class="booking-detail-row">' +
+          '<span class="booking-detail-label">Size</span>' +
+          '<span class="booking-detail-value">' + (b.answers.size || '-') + '</span>' +
+        '</div>' +
+        '<a href="https://wa.me/' + formatPhoneForWhatsApp(customerPhone) + '?text=' + encodeURIComponent('Hi ' + customerName + ', this is Joanne from Studio Style MCR regarding your styling session on ' + formatBookingDate(b.booking.date) + ' at ' + formatTime(b.booking.time) + '.') + '" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Message on WhatsApp</a>';
+
+      document.getElementById('bookingModal').classList.add('show');
+    }
+
+    function closeBookingModal() {
+      document.getElementById('bookingModal').classList.remove('show');
+    }
+
+    // Slot View
+    function renderSlotView(date) {
+      selectedCalendarDate = date;
+      var panel = document.getElementById('slotViewPanel');
+      var grid = document.getElementById('slotsGrid');
+      var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+      document.getElementById('slotViewTitle').textContent = days[date.getDay()];
+      document.getElementById('slotViewDate').textContent = date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
+
+      var dayBookings = getBookingsForDate(date);
+
+      grid.innerHTML = '';
+      TIME_SLOTS.forEach(function(slot) {
+        var booking = dayBookings.find(function(b) { return b.booking.time === slot.time; });
+        var item = document.createElement('div');
+        item.className = 'slot-item ' + (booking ? 'booked' : 'available');
+
+        if (booking) {
+          var customerName = (booking.customer && booking.customer.name) ? booking.customer.name : 'Booked';
+          item.innerHTML =
+            '<div class="slot-time">' + slot.label + '</div>' +
+            '<div class="slot-status booked">' + customerName + '</div>' +
+            '<button class="slot-action-btn" onclick="openBookingModal(\'' + booking.id + '\')">View details</button>';
+        } else {
+          item.innerHTML =
+            '<div class="slot-time">' + slot.label + '</div>' +
+            '<div class="slot-status">Available</div>';
+        }
+        grid.appendChild(item);
+      });
+
+      panel.classList.add('show');
+
+      // Update calendar selection
+      document.querySelectorAll('.calendar-day.selected').forEach(function(el) {
+        el.classList.remove('selected');
+      });
+    }
+
+    function closeSlotView() {
+      selectedCalendarDate = null;
+      document.getElementById('slotViewPanel').classList.remove('show');
+      document.querySelectorAll('.calendar-day.selected').forEach(function(el) {
+        el.classList.remove('selected');
+      });
+    }
+
+    function renderCalendar() {
+      var grid = document.getElementById('calendarGrid');
+      var monthLabel = document.getElementById('calendarMonth');
+      var bookings = getBookings().filter(function(b) { return b.status !== 'cancelled'; });
+
+      var year = currentCalendarDate.getFullYear();
+      var month = currentCalendarDate.getMonth();
+
+      var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      monthLabel.textContent = months[month] + ' ' + year;
+
+      var firstDay = new Date(year, month, 1);
+      var lastDay = new Date(year, month + 1, 0);
+      var startDay = firstDay.getDay();
+      if (startDay === 0) startDay = 7;
+      startDay--;
+
+      var daysInMonth = lastDay.getDate();
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      grid.innerHTML = '';
+
+      // Header row
+      ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(function(day, idx) {
+        var header = document.createElement('div');
+        header.className = 'calendar-header';
+        if (idx >= 3) header.classList.add('weekend');
+        header.textContent = day;
+        grid.appendChild(header);
+      });
+
+      // Previous month days
+      var prevMonthDate = new Date(year, month, 0);
+      var prevDays = prevMonthDate.getDate();
+      for (var i = startDay - 1; i >= 0; i--) {
+        var dayEl = document.createElement('div');
+        dayEl.className = 'calendar-day other-month';
+        dayEl.setAttribute('aria-hidden', 'true');
+        dayEl.innerHTML = '<div class="calendar-day-number">' + (prevDays - i) + '</div>';
+        grid.appendChild(dayEl);
+      }
+
+      // Current month days
+      for (var d = 1; d <= daysInMonth; d++) {
+        var currentDate = new Date(year, month, d);
+        var dayOfWeek = currentDate.getDay();
+        var isAvailable = isAvailableDay(currentDate);
+        var isPast = currentDate < today;
+
+        var dayEl = document.createElement('div');
+        dayEl.className = 'calendar-day';
+
+        if (!isAvailable || isPast) {
+          dayEl.classList.add('disabled');
+          dayEl.setAttribute('aria-disabled', 'true');
+        } else {
+          dayEl.setAttribute('tabindex', '0');
+          dayEl.setAttribute('role', 'button');
+          (function(date) {
+            dayEl.onclick = function() { selectDay(date, this); };
+            dayEl.onkeydown = function(e) {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectDay(date, this);
+              }
+            };
+          })(currentDate);
+        }
+
+        if (currentDate.toDateString() === today.toDateString()) {
+          dayEl.classList.add('today');
+        }
+
+        // Count bookings for this day
+        var dayBookings = bookings.filter(function(b) {
+          var bDate = new Date(b.booking.date);
+          return bDate.getFullYear() === year && bDate.getMonth() === month && bDate.getDate() === d;
+        });
+
+        var bookingCount = dayBookings.length;
+
+        if (isAvailable && !isPast) {
+          if (bookingCount >= 4) {
+            dayEl.classList.add('fully-booked');
+          }
+          dayEl.setAttribute('data-tooltip', bookingCount + ' / 4 slots booked');
+          dayEl.setAttribute('aria-label', d + ' ' + months[month] + ', ' + bookingCount + ' of 4 slots booked');
+        }
+
+        var dayContent = '<div class="calendar-day-number">' + d + '</div>';
+
+        // Add indicators
+        if (isAvailable && !isPast && bookingCount > 0) {
+          dayContent += '<div class="calendar-day-indicators">';
+          for (var i = 0; i < Math.min(bookingCount, 4); i++) {
+            var indicatorClass = dayBookings[i] && dayBookings[i].status === 'confirmed' ? 'confirmed' : '';
+            dayContent += '<div class="calendar-day-indicator ' + indicatorClass + '"></div>';
+          }
+          dayContent += '</div>';
+        }
+
+        dayEl.innerHTML = dayContent;
+        grid.appendChild(dayEl);
+      }
+
+      // Next month days
+      var totalCells = startDay + daysInMonth;
+      var remaining = 7 - (totalCells % 7);
+      if (remaining < 7) {
+        for (var i = 1; i <= remaining; i++) {
+          var dayEl = document.createElement('div');
+          dayEl.className = 'calendar-day other-month';
+          dayEl.setAttribute('aria-hidden', 'true');
+          dayEl.innerHTML = '<div class="calendar-day-number">' + i + '</div>';
+          grid.appendChild(dayEl);
+        }
+      }
+    }
+
+    function selectDay(date, element) {
+      document.querySelectorAll('.calendar-day.selected').forEach(function(el) {
+        el.classList.remove('selected');
+      });
+      element.classList.add('selected');
+      renderSlotView(date);
+    }
+
+    function prevMonth() {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+      renderCalendar();
+      closeSlotView();
+    }
+
+    function nextMonth() {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+      renderCalendar();
+      closeSlotView();
+    }
+
+    // TOGGLE PRODUCT LIST
+    function toggleProductList() {
+      var container = document.getElementById('tableContainer');
+      var btn = document.getElementById('showMoreBtn');
+      var isCollapsed = container.classList.contains('collapsed');
+
+      if (isCollapsed) {
+        container.classList.remove('collapsed');
+        btn.innerHTML = 'Show Less <i class="fas fa-chevron-down"></i>';
+      } else {
+        container.classList.add('collapsed');
+        btn.innerHTML = 'Show All Products <i class="fas fa-chevron-down"></i>';
+      }
+    }
+
+    // INIT
+    if (sessionStorage.getItem('adminAuth') === 'true') {
+      showDashboard();
+    }
+  </script>
+
+</body>
+</html>

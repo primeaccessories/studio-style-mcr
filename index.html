@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio Style MCR | Women's Fashion Manchester</title>
+  <meta name="description" content="Studio Style MCR - Women's fashion boutique in Manchester. New arrivals, best sellers and more.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cart.css?v=4">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-logo">STUDIO STYLE MCR</div>
+      <div class="loading-bar">
+        <div class="loading-bar-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCOUNT POPUP -->
+  <div class="popup-overlay" id="popupOverlay" onclick="closePopup()"></div>
+  <div class="discount-popup" id="discountPopup">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <div class="popup-content">
+      <h2>GET 10% OFF</h2>
+      <p>Your first order</p>
+      <div class="popup-code">STUDIO10</div>
+      <p class="popup-hint">Use code at checkout</p>
+      <a href="new-arrivals.html" class="popup-btn" onclick="closePopup()">Shop Now</a>
+    </div>
+  </div>
+
+  <!-- SCROLLING ANNOUNCEMENT BAR -->
+  <div class="announcement-ticker">
+    <div class="ticker-track">
+      <div class="ticker-content">
+        <span>FREE DELIVERY ON ORDERS OVER £100</span>
+        <span>★</span>
+        <span>NEW ARRIVALS EVERY WEEK</span>
+        <span>★</span>
+        <span>USE CODE <span class="highlight">STUDIO10</span> FOR 10% OFF YOUR FIRST ORDER</span>
+        <span>★</span>
+      </div>
+      <div class="ticker-content">
+        <span>FREE DELIVERY ON ORDERS OVER £100</span>
+        <span>★</span>
+        <span>NEW ARRIVALS EVERY WEEK</span>
+        <span>★</span>
+        <span>USE CODE <span class="highlight">STUDIO10</span> FOR 10% OFF YOUR FIRST ORDER</span>
+        <span>★</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <a href="index.html" class="logo">STUDIO STYLE MCR</a>
+    <nav class="nav">
+      <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
+      <a href="login.html" class="account-link"><i class="fas fa-user"></i></a>
+      <div class="cart-link cart-link-header" onclick="toggleMiniCart()">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-count">0</span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- SHOP SECTIONS -->
+  <section id="shop" class="shop-sections">
+    <div class="sections-grid four-grid">
+
+      <a href="style-quiz.html" class="section-card simple-card">
+        <span class="card-number">01</span>
+        <h3>Let Us Style You</h3>
+        <span class="card-line"></span>
+      </a>
+
+      <a href="new-arrivals.html" class="section-card simple-card">
+        <span class="card-number">02</span>
+        <h3>What's New</h3>
+        <span class="card-line"></span>
+      </a>
+
+      <a href="last-chance.html" class="section-card simple-card">
+        <span class="card-number">03</span>
+        <h3>Last Chance To Buy</h3>
+        <span class="card-line"></span>
+      </a>
+
+      <a href="accessories.html" class="section-card simple-card">
+        <span class="card-number">04</span>
+        <h3>Accessories</h3>
+        <span class="card-line"></span>
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">STUDIO STYLE MCR</div>
+        <p>Women's fashion boutique based in Manchester. Curated style, delivered to your door.</p>
+      </div>
+      <div class="footer-column">
+        <h4>Shop</h4>
+        <a href="new-arrivals.html">New In</a>
+        <a href="accessories.html">Accessories</a>
+        <a href="last-chance.html">Last Chance</a>
+        <a href="shop.html">All Products</a>
+      </div>
+      <div class="footer-column">
+        <h4>Info</h4>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="style-quiz.html">Style Quiz</a>
+        <a href="returns.html">Returns</a>
+        <a href="click-collect.html">Click &amp; Collect</a>
+        <a href="login.html">My Account</a>
+      </div>
+      <div class="footer-column">
+        <h4>Connect</h4>
+        <a href="https://www.instagram.com/the_studio_mcr?igsh=Zmd3NXVvbGNvOXh4" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="https://www.facebook.com/share/1D38Co16cq/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="https://www.tiktok.com/@thestudiomcr?_r=1&amp;_t=ZN-93QigICnc4E" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+        <a href="https://wa.me/447802725901" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      </div>
+    </div>
+    <div class="payment-methods">
+      <div class="payment-icons">
+        <i class="fab fa-cc-visa"></i>
+        <i class="fab fa-cc-mastercard"></i>
+        <i class="fab fa-apple-pay"></i>
+        <i class="fab fa-google-pay"></i>
+        <i class="fab fa-klarna"></i>
+      </div>
+    </div>
+    <p class="copyright">&copy; 2026 Studio Style MCR. All rights reserved.</p>
+    <a href="admin.html" class="admin-lock"><i class="fas fa-lock"></i></a>
+  </footer>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" onclick="closeSearch()">&times;</button>
+    <div class="search-input-wrap">
+      <input type="text" id="searchInput" placeholder="Search products..." oninput="performSearch()">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Mini Cart Overlay -->
+  <div class="mini-cart-overlay" onclick="closeMiniCart()"></div>
+
+  <!-- Mini Cart -->
+  <div class="mini-cart" id="miniCart">
+    <div class="mini-cart-header">
+      <span>Your Basket</span>
+      <button class="mini-cart-close" onclick="closeMiniCart()">&times;</button>
+    </div>
+    <div class="mini-cart-items" id="miniCartItems">
+      <div class="mini-cart-empty">Your basket is empty</div>
+    </div>
+    <div class="mini-cart-footer" id="miniCartFooter" style="display:none;">
+      <div class="mini-cart-total">
+        <span>Subtotal</span>
+        <span id="miniCartTotal">£0.00</span>
+      </div>
+      <a href="checkout.html" class="mini-cart-btn">Checkout</a>
+      <a href="cart.html" class="mini-cart-view">View Basket</a>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Loading Screen
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var loader = document.getElementById('loadingScreen');
+        loader.classList.add('fade-out');
+        setTimeout(function() {
+          loader.style.display = 'none';
+        }, 600);
+      }, 1800);
+
+      // Discount Popup - show 2s after page loads, once per session
+      if (!sessionStorage.getItem('popupShown')) {
+        setTimeout(function() {
+          document.getElementById('discountPopup').classList.add('show');
+          document.getElementById('popupOverlay').classList.add('show');
+          sessionStorage.setItem('popupShown', 'true');
+        }, 3800);
+      }
+    });
+
+    function closePopup() {
+      document.getElementById('discountPopup').classList.remove('show');
+      document.getElementById('popupOverlay').classList.remove('show');
+    }
+  </script>
+
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/447802725901" target="_blank" class="whatsapp-float" aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+    <span class="tooltip">Chat with us</span>
+  </a>
+
+</body>
+</html>
