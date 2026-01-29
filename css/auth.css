@@ -397,9 +397,16 @@
 
 /* Account Link in Nav */
 .account-link {
-  font-size: 1rem !important;
-  padding: 0 5px;
+  font-size: 0.85rem !important;
+  padding: 0;
   white-space: nowrap;
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.account-link i {
+  font-size: 1rem;
 }
 
 .account-link.active {
@@ -411,100 +418,181 @@
   position: absolute;
   top: 100%;
   right: 0;
-  width: 260px;
+  width: 300px;
   background: #fff;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-  border: 1px solid #eee;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+  border-radius: 12px;
   z-index: 9999;
-  margin-top: 10px;
+  margin-top: 15px;
+  overflow: hidden;
+  animation: dropdownSlide 0.3s ease;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropdown-rewards {
-  padding: 20px;
-  border-bottom: 1px solid #eee;
+  padding: 25px 20px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
   text-align: center;
-  font-size: 0.8rem;
-  color: #666;
+  color: #fff;
 }
 
 .dropdown-rewards p {
-  margin: 8px 0 0;
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.dropdown-rewards p strong {
+  color: #c9a86c;
 }
 
 .dropdown-stamps {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  padding: 10px 0;
 }
 
 .dropdown-dot {
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2px solid #ddd;
-  background: #fff;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dropdown-dot.filled {
-  background: linear-gradient(135deg, #c9a86c, #8b7355);
-  border-color: #8b7355;
+  background: linear-gradient(135deg, #c9a86c, #d4af37);
+  border-color: #c9a86c;
+  box-shadow: 0 0 15px rgba(201, 168, 108, 0.5);
+}
+
+.dropdown-dot.filled::after {
+  content: '★';
+  color: #fff;
+  font-size: 14px;
 }
 
 .dropdown-reward-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #c9a86c, #8b7355);
-  color: #fff;
-  padding: 8px 18px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 1px;
+  background: linear-gradient(135deg, #c9a86c, #d4af37);
+  color: #1a1a1a;
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  border-radius: 6px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .dropdown-link {
-  display: block;
-  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
   color: #333;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   text-decoration: none;
-  transition: background 0.2s;
-  border-bottom: 1px solid #eee;
+  transition: all 0.2s;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .dropdown-link:hover {
   background: #f9f7f4;
+  padding-left: 25px;
 }
 
 .dropdown-link i {
-  margin-right: 10px;
-  color: #999;
-  width: 16px;
+  margin-right: 12px;
+  color: #c9a86c;
+  width: 18px;
   text-align: center;
+  font-size: 1rem;
 }
 
 .dropdown-signout {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 14px 20px;
+  padding: 16px 20px;
   background: none;
   border: none;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #888;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .dropdown-signout:hover {
   background: #f9f7f4;
   color: #333;
+  padding-left: 25px;
 }
 
 .dropdown-signout i {
-  margin-right: 10px;
-  width: 16px;
+  margin-right: 12px;
+  width: 18px;
   text-align: center;
+  font-size: 1rem;
+}
+
+/* Mobile dropdown */
+@media (max-width: 768px) {
+  .account-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    margin-top: 0;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .dropdown-rewards {
+    padding: 30px 20px;
+  }
+
+  .dropdown-stamps {
+    gap: 15px;
+  }
+
+  .dropdown-dot {
+    width: 40px;
+    height: 40px;
+  }
+
+  .dropdown-dot.filled::after {
+    font-size: 18px;
+  }
+
+  .dropdown-link,
+  .dropdown-signout {
+    padding: 18px 25px;
+    font-size: 1rem;
+  }
 }
 
 /* ==================== */
@@ -547,6 +635,33 @@
 .account-welcome p {
   font-size: 0.85rem;
   color: #888;
+}
+
+.account-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.shop-now-btn {
+  padding: 12px 20px;
+  background: #e8e0d6;
+  border: none;
+  color: #1a1a1a;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.shop-now-btn:hover {
+  background: #d4ccc2;
 }
 
 .signout-btn {

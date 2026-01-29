@@ -9,6 +9,7 @@
   <title>My Account | Studio Style MCR</title>
   <meta name="description" content="View your Studio Style MCR account, rewards, and order history.">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cart.css?v=6">
   <link rel="stylesheet" href="css/auth.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,9 +63,14 @@
           <h1>Welcome back, <span id="userName">Loading...</span></h1>
           <p id="userEmail"></p>
         </div>
-        <button class="signout-btn" onclick="signOut()">
-          <i class="fas fa-sign-out-alt"></i> Sign Out
-        </button>
+        <div class="account-actions">
+          <a href="new-arrivals.html" class="shop-now-btn">
+            <i class="fas fa-shopping-bag"></i> Shop Now
+          </a>
+          <button class="signout-btn" onclick="signOut()">
+            <i class="fas fa-sign-out-alt"></i> Sign Out
+          </button>
+        </div>
       </div>
 
       <!-- Account Tabs -->
@@ -195,9 +201,14 @@
       <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
       <h2>Delete Account?</h2>
       <p>This will permanently delete your account, rewards, and order history. This action cannot be undone.</p>
+      <div class="form-group" id="deletePasswordGroup" style="margin: 20px 0;">
+        <label for="deletePassword" style="display: block; margin-bottom: 8px; font-size: 0.85rem;">Enter your password to confirm:</label>
+        <input type="password" id="deletePassword" placeholder="Your password" style="width: 100%; padding: 12px; border: 1px solid #ddd; font-size: 0.9rem;">
+      </div>
+      <div class="form-error" id="deleteError" style="color: #c53030; margin-bottom: 15px;"></div>
       <div class="modal-actions">
         <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
-        <button class="confirm-delete-btn" onclick="deleteAccount()">Delete Account</button>
+        <button class="confirm-delete-btn" id="confirmDeleteBtn" onclick="deleteAccount()">Delete Account</button>
       </div>
     </div>
   </div>
@@ -472,18 +483,51 @@
     }
 
     async function deleteAccount() {
+      const user = auth.currentUser;
+      const errorEl = document.getElementById('deleteError');
+      const btn = document.getElementById('confirmDeleteBtn');
+
+      if (!user) return;
+
+      errorEl.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'Deleting...';
+
       try {
-        const user = auth.currentUser;
-        if (user) {
-          // Delete user document
-          await db.collection('users').doc(user.uid).delete();
-          // Delete auth account
-          await user.delete();
-          window.location.href = 'index.html';
+        // Check if user signed in with Google
+        const isGoogleUser = user.providerData.some(p => p.providerId === 'google.com');
+
+        if (isGoogleUser) {
+          // Re-authenticate with Google
+          const provider = new firebase.auth.GoogleAuthProvider();
+          await user.reauthenticateWithPopup(provider);
+        } else {
+          // Re-authenticate with password
+          const password = document.getElementById('deletePassword').value;
+          if (!password) {
+            errorEl.textContent = 'Please enter your password';
+            btn.disabled = false;
+            btn.textContent = 'Delete Account';
+            return;
+          }
+          const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
+          await user.reauthenticateWithCredential(credential);
         }
+
+        // Delete user document and orders
+        await db.collection('users').doc(user.uid).delete();
+        // Delete auth account
+        await user.delete();
+        window.location.href = 'index.html';
       } catch (error) {
-        alert('Error deleting account: ' + error.message);
-        closeDeleteModal();
+        console.error('Delete error:', error);
+        if (error.code === 'auth/wrong-password') {
+          errorEl.textContent = 'Incorrect password';
+        } else {
+          errorEl.textContent = 'Error: ' + error.message;
+        }
+        btn.disabled = false;
+        btn.textContent = 'Delete Account';
       }
     }
 

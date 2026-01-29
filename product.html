@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product | Studio Style MCR</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/cart.css?v=5">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .product-page {
+      padding: 40px 20px 80px;
+      background: #faf9f7;
+      min-height: calc(100vh - 200px);
+    }
+
+    .product-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .product-gallery {
+      position: sticky;
+      top: 20px;
+    }
+
+    .product-main-image {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      background: #fff;
+    }
+
+    .product-details {
+      padding: 20px 0;
+    }
+
+    .product-breadcrumb {
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .product-breadcrumb a {
+      color: #888;
+      text-decoration: none;
+    }
+
+    .product-breadcrumb a:hover {
+      color: #2c2c2c;
+    }
+
+    .product-title {
+      font-family: 'Fjalla One', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+      color: #1a1a1a;
+    }
+
+    .product-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      color: #2c2c2c;
+      margin-bottom: 30px;
+    }
+
+    .product-price .was-price {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 1.4rem;
+      margin-right: 10px;
+    }
+
+    .product-price .sale-price {
+      color: #c53030;
+    }
+
+    .product-description {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .product-sizes {
+      margin-bottom: 30px;
+    }
+
+    .product-sizes h4 {
+      font-family: 'Fjalla One', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      color: #2c2c2c;
+    }
+
+    .size-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .size-btn {
+      min-width: 50px;
+      padding: 12px 18px;
+      border: 1px solid #ddd;
+      background: #fff;
+      font-family: 'Fjalla One', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .size-btn:hover,
+    .size-btn.active {
+      border-color: #2c2c2c;
+      background: #2c2c2c;
+      color: #fff;
+    }
+
+    .add-to-cart-large {
+      width: 100%;
+      padding: 18px 40px;
+      background: #e8e0d6;
+      border: none;
+      color: #1a1a1a;
+      font-family: 'Fjalla One', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .add-to-cart-large:hover {
+      background: #d4ccc2;
+    }
+
+    .product-meta {
+      padding-top: 30px;
+      border-top: 1px solid #eee;
+    }
+
+    .product-meta p {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .product-meta i {
+      width: 20px;
+      margin-right: 8px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 30px;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: #2c2c2c;
+    }
+
+    @media (max-width: 768px) {
+      .product-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .product-gallery {
+        position: static;
+      }
+
+      .product-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SCROLLING ANNOUNCEMENT BAR -->
+  <div class="announcement-ticker">
+    <div class="ticker-track">
+      <div class="ticker-content">
+        <span>FREE DELIVERY ON ORDERS OVER £100</span>
+        <span>★</span>
+        <span>NEW ARRIVALS EVERY WEEK</span>
+        <span>★</span>
+        <span>USE CODE <span class="highlight">STUDIO10</span> FOR 10% OFF YOUR FIRST ORDER</span>
+        <span>★</span>
+      </div>
+      <div class="ticker-content">
+        <span>FREE DELIVERY ON ORDERS OVER £100</span>
+        <span>★</span>
+        <span>NEW ARRIVALS EVERY WEEK</span>
+        <span>★</span>
+        <span>USE CODE <span class="highlight">STUDIO10</span> FOR 10% OFF YOUR FIRST ORDER</span>
+        <span>★</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <a href="index.html" class="logo">STUDIO STYLE MCR</a>
+    <nav class="nav">
+      <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
+      <a href="account.html" class="account-link"><i class="fas fa-user"></i></a>
+      <div class="cart-link cart-link-header" onclick="toggleMiniCart()">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-count">0</span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- PRODUCT PAGE -->
+  <section class="product-page">
+    <div class="product-container">
+      <div class="product-gallery">
+        <img id="productImage" class="product-main-image" src="" alt="">
+      </div>
+      <div class="product-details">
+        <a href="javascript:history.back()" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
+
+        <div class="product-breadcrumb">
+          <a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <span id="productBreadcrumb">Product</span>
+        </div>
+
+        <h1 id="productTitle" class="product-title">Loading...</h1>
+        <p id="productPrice" class="product-price"></p>
+
+        <p id="productDescription" class="product-description">
+          Beautiful piece from our latest collection. Perfect for any occasion, this versatile item will become a staple in your wardrobe.
+        </p>
+
+        <div class="product-sizes">
+          <h4>Select Size</h4>
+          <div class="size-options">
+            <!-- Sizes loaded dynamically -->
+          </div>
+        </div>
+
+        <button id="addToCartBtn" class="add-to-cart-large" onclick="addProductToCart()">
+          Add to Basket
+        </button>
+
+        <div class="product-meta">
+          <p><i class="fas fa-truck"></i> Free delivery on orders over £100</p>
+          <p><i class="fas fa-sync-alt"></i> 14-day returns policy</p>
+          <p><i class="fas fa-shield-alt"></i> Secure checkout</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">STUDIO STYLE MCR</div>
+        <p>Women's fashion boutique based in Manchester. Curated style, delivered to your door.</p>
+      </div>
+      <div class="footer-column">
+        <h4>Shop</h4>
+        <a href="new-arrivals.html">New In</a>
+        <a href="accessories.html">Accessories</a>
+        <a href="last-chance.html">Last Chance</a>
+        <a href="shop.html">All Products</a>
+      </div>
+      <div class="footer-column">
+        <h4>Info</h4>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="style-quiz.html">Style Quiz</a>
+        <a href="returns.html">Returns</a>
+        <a href="click-collect.html">Click &amp; Collect</a>
+        <a href="login.html">My Account</a>
+      </div>
+      <div class="footer-column">
+        <h4>Connect</h4>
+        <a href="https://www.instagram.com/the_studio_mcr?igsh=Zmd3NXVvbGNvOXh4" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="https://www.facebook.com/share/1D38Co16cq/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="https://www.tiktok.com/@thestudiomcr?_r=1&amp;_t=ZN-93QigICnc4E" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+        <a href="https://wa.me/447802725901" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      </div>
+    </div>
+    <div class="payment-methods">
+      <div class="payment-icons">
+        <i class="fab fa-cc-visa"></i>
+        <i class="fab fa-cc-mastercard"></i>
+        <i class="fab fa-apple-pay"></i>
+        <i class="fab fa-google-pay"></i>
+        <i class="fab fa-klarna"></i>
+      </div>
+    </div>
+    <p class="copyright">&copy; 2026 Studio Style MCR. All rights reserved. <a href="terms.html" style="color: inherit;">Terms & Conditions</a></p>
+  </footer>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" onclick="closeSearch()">&times;</button>
+    <div class="search-input-wrap">
+      <input type="text" id="searchInput" placeholder="Search products..." oninput="performSearch()">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Mini Cart Overlay -->
+  <div class="mini-cart-overlay" onclick="closeMiniCart()"></div>
+
+  <!-- Mini Cart -->
+  <div class="mini-cart" id="miniCart">
+    <div class="mini-cart-header">
+      <span>Your Basket</span>
+      <button class="mini-cart-close" onclick="closeMiniCart()">&times;</button>
+    </div>
+    <div class="mini-cart-items" id="miniCartItems">
+      <div class="mini-cart-empty">Your basket is empty</div>
+    </div>
+    <div class="mini-cart-footer" id="miniCartFooter" style="display:none;">
+      <div class="mini-cart-total">
+        <span>Subtotal</span>
+        <span id="miniCartTotal">£0.00</span>
+      </div>
+      <a href="checkout.html" class="mini-cart-btn">Checkout</a>
+      <a href="cart.html" class="mini-cart-view">View Basket</a>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/auth.js?v=2"></script>
+  <script>
+    var currentProduct = null;
+    var selectedSize = 'ONE SIZE';
+
+    function selectSize(btn, size) {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSize = size;
+    }
+
+    function loadProduct() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var productId = urlParams.get('id');
+
+      if (!productId) {
+        window.location.href = 'shop.html';
+        return;
+      }
+
+      var products = getProducts();
+      currentProduct = products.find(p => p.id === productId);
+
+      if (!currentProduct) {
+        window.location.href = 'shop.html';
+        return;
+      }
+
+      // Update page
+      document.title = currentProduct.name + ' | Studio Style MCR';
+      document.getElementById('productImage').src = currentProduct.image;
+      document.getElementById('productImage').alt = currentProduct.name;
+      document.getElementById('productTitle').textContent = currentProduct.name;
+      document.getElementById('productBreadcrumb').textContent = currentProduct.name;
+
+      // Price
+      var priceEl = document.getElementById('productPrice');
+      if (currentProduct.sale && currentProduct.originalPrice) {
+        priceEl.innerHTML = '<span class="was-price">£' + currentProduct.originalPrice.toFixed(2) + '</span> <span class="sale-price">£' + currentProduct.price.toFixed(2) + '</span>';
+      } else {
+        priceEl.textContent = '£' + currentProduct.price.toFixed(2);
+      }
+
+      // Description
+      var descEl = document.getElementById('productDescription');
+      if (currentProduct.description) {
+        descEl.textContent = currentProduct.description;
+      } else {
+        descEl.textContent = 'Beautiful piece from our latest collection. Perfect for any occasion.';
+      }
+
+      // Sizes
+      var sizesContainer = document.querySelector('.size-options');
+      var sizes = currentProduct.sizes || ['One Size'];
+      sizesContainer.innerHTML = '';
+      sizes.forEach(function(size, index) {
+        var btn = document.createElement('button');
+        btn.className = 'size-btn';
+        if (index === 0) btn.classList.add('active');
+        btn.textContent = size;
+        btn.onclick = function() { selectSize(this, size); };
+        sizesContainer.appendChild(btn);
+      });
+
+      // Set default size
+      selectedSize = sizes[0] || 'One Size';
+    }
+
+    function addProductToCart() {
+      if (!currentProduct) return;
+
+      var name = currentProduct.name;
+      if (selectedSize !== 'ONE SIZE') {
+        name += ' (' + selectedSize + ')';
+      }
+
+      addToCart(currentProduct.id, name, currentProduct.price, currentProduct.image);
+
+      // Show feedback
+      var btn = document.getElementById('addToCartBtn');
+      btn.textContent = 'Added!';
+      btn.style.background = '#2c2c2c';
+      btn.style.color = '#fff';
+
+      setTimeout(function() {
+        btn.textContent = 'Add to Basket';
+        btn.style.background = '#e8e0d6';
+        btn.style.color = '#1a1a1a';
+      }, 1500);
+    }
+
+    // Load product on page load
+    loadProduct();
+  </script>
+
+</body>
+</html>

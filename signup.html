@@ -9,6 +9,7 @@
   <title>Create Account | Studio Style MCR</title>
   <meta name="description" content="Create a Studio Style MCR account to earn rewards and track your orders.">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cart.css?v=4">
   <link rel="stylesheet" href="css/auth.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -84,8 +85,8 @@
         </div>
 
         <div class="form-group">
-          <label for="phone">Phone Number <span class="optional">(optional)</span></label>
-          <input type="tel" id="phone" name="phone" placeholder="Your phone number">
+          <label for="phone">Phone Number *</label>
+          <input type="tel" id="phone" name="phone" placeholder="Your phone number" required>
         </div>
 
         <div class="form-group">
@@ -211,7 +212,7 @@
     // Check if already logged in
     auth.onAuthStateChanged(function(user) {
       if (user) {
-        window.location.href = 'account.html';
+        window.location.href = 'index.html';
       }
     });
 
@@ -255,7 +256,7 @@
             newsletter: true
           });
         }
-        window.location.href = 'account.html';
+        window.location.href = 'index.html';
       } else {
         errorEl.textContent = result.error;
         btnText.style.display = 'inline-block';
@@ -269,7 +270,7 @@
       try {
         const result = await auth.signInWithPopup(provider);
         await handleGoogleUser(result.user);
-        window.location.href = 'account.html';
+        window.location.href = 'index.html';
       } catch (error) {
         if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
           auth.signInWithRedirect(provider);
@@ -290,8 +291,8 @@
           phone: '',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           rewards: {
-            points: 100,
-            tier: 'Bronze'
+            orderCount: 0,
+            rewardAvailable: false
           },
           purchases: [],
           signInMethod: 'google'
@@ -303,7 +304,7 @@
     auth.getRedirectResult().then(async function(result) {
       if (result.user) {
         await handleGoogleUser(result.user);
-        window.location.href = 'account.html';
+        window.location.href = 'index.html';
       }
     }).catch(function(error) {
       if (error.code) {

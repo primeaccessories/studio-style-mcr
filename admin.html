@@ -583,6 +583,7 @@
         <button class="admin-tab" onclick="switchTab('last-chance')">Last Chance To Buy</button>
         <button class="admin-tab" onclick="switchTab('accessories')">Accessories</button>
         <button class="admin-tab" onclick="switchTab('bookings')">Bookings</button>
+        <button class="admin-tab" onclick="switchTab('discounts')">Discounts</button>
       </div>
 
       <!-- PRODUCT LIST -->
@@ -669,6 +670,71 @@
         </div>
       </div>
 
+      <!-- DISCOUNTS TAB -->
+      <div class="tab-content" id="discountsTab">
+        <div class="bookings-container">
+          <div class="admin-toolbar" style="margin-bottom: 20px;">
+            <div class="toolbar-left">
+              <h3 style="font-size: 0.9rem; letter-spacing: 1px;">Manage Discount Codes</h3>
+            </div>
+            <button class="add-btn" onclick="openDiscountModal()"><i class="fas fa-plus"></i> &nbsp;Add Code</button>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="product-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Discount</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="discountTableBody">
+                <tr><td colspan="5" style="text-align:center; padding: 30px; color: #999;">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DISCOUNT MODAL -->
+  <div class="modal-overlay" id="discountModalOverlay" onclick="closeDiscountModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h2 id="discountModalTitle">Add Discount Code</h2>
+
+      <div class="form-group">
+        <label>Code (e.g. SAVE10)</label>
+        <input type="text" class="form-input" id="discountCode" placeholder="STUDIO10" style="text-transform: uppercase;">
+      </div>
+
+      <div class="form-group">
+        <label>Discount Type</label>
+        <select class="form-select" id="discountType">
+          <option value="percent">Percentage (%)</option>
+          <option value="fixed">Fixed Amount (£)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Discount Value</label>
+        <input type="number" class="form-input" id="discountValue" placeholder="10" step="1" min="1">
+        <small style="color: #999; font-size: 0.7rem;">Enter 10 for 10% or £10</small>
+      </div>
+
+      <div class="form-checkbox">
+        <input type="checkbox" id="discountEnabled" checked>
+        <label for="discountEnabled">Code is active</label>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-save" onclick="saveDiscount()">Save Code</button>
+        <button class="modal-cancel" onclick="closeDiscountModal()">Cancel</button>
+      </div>
     </div>
   </div>
 
@@ -719,6 +785,12 @@
         <input type="number" class="form-input" id="formPrice" placeholder="19.99" step="0.01">
       </div>
 
+      <div class="form-group">
+        <label>Description <span style="color: #e74c3c;">*</span></label>
+        <textarea class="form-input" id="formDescription" placeholder="Describe the product - material, style, fit details..." rows="3" style="resize: vertical; min-height: 80px;"></textarea>
+        <small style="color: #999; font-size: 0.7rem;">Required - Add unique details about this product</small>
+      </div>
+
       <div class="form-checkbox">
         <input type="checkbox" id="formSale" onchange="toggleSaleFields()">
         <label for="formSale">This product is on sale</label>
@@ -735,6 +807,31 @@
             <input type="number" class="form-input" id="formSalePrice" placeholder="12.50" step="0.01">
           </div>
         </div>
+      </div>
+
+      <div class="form-group">
+        <label>Available Sizes</label>
+        <div class="sizes-checkboxes" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="sizeXS" value="XS"> XS
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="sizeS" value="S"> S
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="sizeM" value="M"> M
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="sizeL" value="L"> L
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="sizeXL" value="XL"> XL
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="sizeOneSize" value="One Size"> One Size
+          </label>
+        </div>
+        <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Select all available sizes for this product</small>
       </div>
 
       <div class="modal-actions">
@@ -755,22 +852,12 @@
     </div>
   </div>
 
-  <!-- Search Overlay -->
-  <div class="search-overlay" id="searchOverlay">
-    <button class="search-close" onclick="closeSearch()">&times;</button>
-    <div class="search-input-wrap">
-      <input type="text" id="searchInput" placeholder="Search products..." oninput="performSearch()">
-    </div>
-    <div class="search-results" id="searchResults"></div>
-  </div>
-
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="js/products.js"></script>
-  <script src="js/search.js"></script>
-  <script src="js/auth.js"></script>
+  <script src="js/auth.js?v=2"></script>
   <script>
     var ADMIN_PASSWORD = 'studio2026';
 
@@ -938,11 +1025,15 @@
       // Show/hide tabs
       document.getElementById('productList').classList.remove('active');
       document.getElementById('bookingsTab').classList.remove('active');
+      document.getElementById('discountsTab').classList.remove('active');
 
       if (tab === 'bookings') {
         document.getElementById('bookingsTab').classList.add('active');
         renderBookings();
         renderCalendar();
+      } else if (tab === 'discounts') {
+        document.getElementById('discountsTab').classList.add('active');
+        loadDiscounts();
       } else {
         document.getElementById('productList').classList.add('active');
         renderTable();
@@ -1007,6 +1098,7 @@
       document.getElementById('formImage').value = '';
       document.getElementById('formCollection').value = 'new-arrivals';
       document.getElementById('formPrice').value = '';
+      document.getElementById('formDescription').value = '';
       document.getElementById('formSale').checked = false;
       document.getElementById('formOriginalPrice').value = '';
       document.getElementById('formSalePrice').value = '';
@@ -1015,6 +1107,10 @@
       document.getElementById('uploadPreview').style.display = 'none';
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
+      // Clear all size checkboxes
+      ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
+        document.getElementById('size' + size).checked = false;
+      });
       document.getElementById('modalOverlay').classList.add('show');
     }
 
@@ -1030,9 +1126,18 @@
       document.getElementById('formImage').value = p.image || '';
       document.getElementById('formCollection').value = p.collection;
       document.getElementById('formPrice').value = p.price;
+      document.getElementById('formDescription').value = p.description || '';
       document.getElementById('formSale').checked = p.sale;
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
+
+      // Set size checkboxes
+      var productSizes = p.sizes || [];
+      ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
+        var checkbox = document.getElementById('size' + size);
+        var sizeValue = size === 'OneSize' ? 'One Size' : size;
+        checkbox.checked = productSizes.indexOf(sizeValue) > -1;
+      });
 
       if (p.image) {
         showImagePreview(p.image);
@@ -1138,10 +1243,21 @@
       var name = document.getElementById('formName').value.trim();
       var image = currentImageData || document.getElementById('formImage').value.trim();
       var collection = document.getElementById('formCollection').value;
+      var description = document.getElementById('formDescription').value.trim();
       var isSale = document.getElementById('formSale').checked;
       var price, originalPrice;
 
+      // Gather selected sizes
+      var sizes = [];
+      ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
+        var checkbox = document.getElementById('size' + size);
+        if (checkbox.checked) {
+          sizes.push(size === 'OneSize' ? 'One Size' : size);
+        }
+      });
+
       if (!name) { alert('Please enter a product name'); return; }
+      if (!description) { alert('Please enter a product description'); return; }
 
       if (isSale) {
         originalPrice = parseFloat(document.getElementById('formOriginalPrice').value);
@@ -1165,6 +1281,8 @@
           products[idx].price = price;
           products[idx].sale = isSale;
           products[idx].originalPrice = originalPrice;
+          products[idx].description = description;
+          products[idx].sizes = sizes;
         }
       } else {
         // Add new
@@ -1176,7 +1294,9 @@
           image: image,
           collection: collection,
           sale: isSale,
-          originalPrice: originalPrice
+          originalPrice: originalPrice,
+          description: description,
+          sizes: sizes
         });
       }
 
@@ -1204,13 +1324,7 @@
       { time: '15:00', label: '15:00 – 16:00' }
     ];
 
-    function getBookings() {
-      return JSON.parse(localStorage.getItem('studioBookings') || '[]');
-    }
-
-    function saveBookings(bookings) {
-      localStorage.setItem('studioBookings', JSON.stringify(bookings));
-    }
+    // getBookings() is defined above (line 812) - uses Firebase bookingsCache
 
     function formatBookingDate(dateStr) {
       var d = new Date(dateStr);
@@ -1637,6 +1751,135 @@
       } else {
         container.classList.add('collapsed');
         btn.innerHTML = 'Show All Products <i class="fas fa-chevron-down"></i>';
+      }
+    }
+
+    // ============================================
+    // DISCOUNT CODES MANAGEMENT
+    // ============================================
+    var discountsCache = [];
+    var editingDiscountId = null;
+
+    async function loadDiscounts() {
+      try {
+        var snapshot = await db.collection('discountCodes').get();
+        discountsCache = [];
+        snapshot.forEach(function(doc) {
+          discountsCache.push({ id: doc.id, ...doc.data() });
+        });
+        renderDiscountsTable();
+      } catch (error) {
+        console.error('Error loading discounts:', error);
+        document.getElementById('discountTableBody').innerHTML =
+          '<tr><td colspan="5" style="text-align:center; padding: 30px; color: #e74c3c;">Error loading discount codes</td></tr>';
+      }
+    }
+
+    function renderDiscountsTable() {
+      var tbody = document.getElementById('discountTableBody');
+
+      if (discountsCache.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px; color: #999;">No discount codes yet. Click "Add Code" to create one.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      discountsCache.forEach(function(d) {
+        var discountText = d.type === 'percent' ? d.value + '%' : '£' + d.value;
+        var typeText = d.type === 'percent' ? 'Percentage' : 'Fixed Amount';
+        var statusClass = d.enabled ? 'status-active' : 'status-sale';
+        var statusText = d.enabled ? 'Active' : 'Disabled';
+
+        var row = document.createElement('tr');
+        row.innerHTML =
+          '<td><strong style="letter-spacing: 1px;">' + d.code.toUpperCase() + '</strong></td>' +
+          '<td>' + discountText + '</td>' +
+          '<td>' + typeText + '</td>' +
+          '<td><span class="' + statusClass + '">' + statusText + '</span></td>' +
+          '<td><div class="action-btns">' +
+            '<button class="edit-btn" onclick="openDiscountModal(\'' + d.id + '\')">Edit</button>' +
+            '<button class="delete-btn" onclick="deleteDiscount(\'' + d.id + '\')">Delete</button>' +
+          '</div></td>';
+        tbody.appendChild(row);
+      });
+    }
+
+    function openDiscountModal(id) {
+      if (id) {
+        // Edit mode
+        var discount = discountsCache.find(function(d) { return d.id === id; });
+        if (!discount) return;
+        editingDiscountId = id;
+        document.getElementById('discountModalTitle').textContent = 'Edit Discount Code';
+        document.getElementById('discountCode').value = discount.code;
+        document.getElementById('discountType').value = discount.type;
+        document.getElementById('discountValue').value = discount.value;
+        document.getElementById('discountEnabled').checked = discount.enabled;
+      } else {
+        // Add mode
+        editingDiscountId = null;
+        document.getElementById('discountModalTitle').textContent = 'Add Discount Code';
+        document.getElementById('discountCode').value = '';
+        document.getElementById('discountType').value = 'percent';
+        document.getElementById('discountValue').value = '';
+        document.getElementById('discountEnabled').checked = true;
+      }
+      document.getElementById('discountModalOverlay').classList.add('show');
+    }
+
+    function closeDiscountModal() {
+      document.getElementById('discountModalOverlay').classList.remove('show');
+      editingDiscountId = null;
+    }
+
+    async function saveDiscount() {
+      var code = document.getElementById('discountCode').value.trim().toUpperCase();
+      var type = document.getElementById('discountType').value;
+      var value = parseFloat(document.getElementById('discountValue').value);
+      var enabled = document.getElementById('discountEnabled').checked;
+
+      if (!code) { alert('Please enter a discount code'); return; }
+      if (isNaN(value) || value <= 0) { alert('Please enter a valid discount value'); return; }
+
+      var discountData = {
+        code: code,
+        type: type,
+        value: value,
+        enabled: enabled,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      try {
+        if (editingDiscountId) {
+          // Update existing
+          await db.collection('discountCodes').doc(editingDiscountId).update(discountData);
+        } else {
+          // Check if code already exists
+          var existing = discountsCache.find(function(d) { return d.code.toUpperCase() === code; });
+          if (existing) {
+            alert('This discount code already exists');
+            return;
+          }
+          // Add new
+          discountData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          await db.collection('discountCodes').add(discountData);
+        }
+        closeDiscountModal();
+        loadDiscounts();
+      } catch (error) {
+        console.error('Error saving discount:', error);
+        alert('Error saving discount code. Please try again.');
+      }
+    }
+
+    async function deleteDiscount(id) {
+      if (!confirm('Are you sure you want to delete this discount code?')) return;
+      try {
+        await db.collection('discountCodes').doc(id).delete();
+        loadDiscounts();
+      } catch (error) {
+        console.error('Error deleting discount:', error);
+        alert('Error deleting discount code. Please try again.');
       }
     }
 

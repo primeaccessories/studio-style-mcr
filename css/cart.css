@@ -73,8 +73,11 @@
   color: #1a1a1a;
   border-radius: 0;
   box-shadow: none;
-  font-size: 1.1rem;
+  font-size: 1rem;
   transition: opacity 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cart-link.cart-link-header:hover {
@@ -84,13 +87,19 @@
 }
 
 .cart-link.cart-link-header .cart-count {
+  position: absolute !important;
   top: -8px;
-  right: -12px;
-  min-width: 16px;
-  height: 16px;
+  right: -10px;
+  min-width: 18px;
+  height: 18px;
   font-size: 0.6rem;
-  background: #e8e0d6;
-  color: #2c2c2c;
+  background: #c9a86c;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 /* Mini Cart Overlay - Desktop */
@@ -610,6 +619,112 @@
   color: #888;
 }
 
+/* Local Options Dropdown */
+.delivery-option-wrap {
+  margin-bottom: 10px;
+}
+
+.delivery-option-wrap .delivery-option {
+  margin-bottom: 0;
+}
+
+.local-options {
+  background: #f9f7f5;
+  border: 1px solid #e0d9d0;
+  border-top: none;
+  padding: 15px;
+}
+
+.local-select {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 0.9rem;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.local-select:focus {
+  border-color: #8b7355;
+}
+
+.local-postcode-input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.local-postcode-input:focus {
+  border-color: #8b7355;
+}
+
+.local-select-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #666;
+  margin: 12px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.local-pay-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.local-pay-buttons .pay-btn {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.pay-cash-btn {
+  background: #2c2c2c !important;
+  color: #fff !important;
+}
+
+.pay-card-btn {
+  background: #e8e0d6 !important;
+  color: #2c2c2c !important;
+}
+
+/* Delivery Message */
+.delivery-message {
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.delivery-message.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.delivery-message.error {
+  background: #fbe9e7;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.delivery-message.info {
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
 /* Pay Button */
 .pay-btn {
   width: 100%;
@@ -696,6 +811,133 @@
   padding-top: 15px;
   border-top: 1px solid #ddd;
   margin-top: 10px;
+}
+
+/* Coupon Section */
+.coupon-section {
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f6f3 0%, #f0ebe4 100%);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px dashed #d4ccc2;
+}
+
+.coupon-section::before {
+  content: '🏷️ Got a discount code?';
+  display: block;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #8b7355;
+  margin-bottom: 12px;
+}
+
+.coupon-input-wrap {
+  display: flex;
+  gap: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.coupon-input-wrap input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 1px solid #e8e0d6;
+  border-right: none;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.coupon-input-wrap input::placeholder {
+  text-transform: none;
+  letter-spacing: 0;
+  color: #aaa;
+}
+
+.coupon-input-wrap input:focus {
+  outline: none;
+  border-color: #c9a86c;
+}
+
+.coupon-input-wrap button {
+  padding: 14px 24px;
+  background: #e8e0d6;
+  color: #2c2c2c;
+  border: 1px solid #e8e0d6;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.coupon-input-wrap button:hover {
+  background: #d4ccc2;
+  border-color: #d4ccc2;
+}
+
+.coupon-input-wrap button:disabled {
+  background: #c9a86c;
+  border-color: #c9a86c;
+  color: #fff;
+  cursor: default;
+}
+
+.coupon-message {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coupon-message.success {
+  color: #2e7d32;
+}
+
+.coupon-message.success::before {
+  content: '✓';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #2e7d32;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.7rem;
+}
+
+.coupon-message.error {
+  color: #c53030;
+}
+
+.coupon-message.error::before {
+  content: '✕';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #c53030;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.65rem;
+}
+
+/* Applied coupon styling */
+.coupon-row {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 5px 0;
 }
 
 /* Mobile */

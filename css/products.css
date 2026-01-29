@@ -17,6 +17,21 @@
   position: relative;
 }
 
+.product-image-link,
+.product-name-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.product-name-link h3 {
+  transition: color 0.3s ease;
+}
+
+.product-name-link:hover h3 {
+  color: #8b7355;
+}
+
 .product-image {
   background: linear-gradient(145deg, #fafafa 0%, #f0f0f0 100%);
   aspect-ratio: 3 / 4;

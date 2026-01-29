@@ -68,29 +68,86 @@ function migrateCollections(products) {
   return migrated;
 }
 
-// Get products from localStorage or use defaults
+// Products cache - updated by real-time listener
+var _productsCache = null;
+var _productsListenerInit = false;
+
+// Initialize real-time products listener (call after Firebase is ready)
+function initProductsListener() {
+  if (_productsListenerInit) return;
+  if (typeof db === 'undefined') return;
+  _productsListenerInit = true;
+
+  db.collection('siteData').doc('products')
+    .onSnapshot(function(doc) {
+      if (doc.exists && doc.data().items) {
+        _productsCache = doc.data().items;
+        // Also update localStorage as fast cache
+        localStorage.setItem('studioProducts', JSON.stringify(_productsCache));
+        // Re-render if a render function is waiting
+        if (typeof _pendingRender === 'function') {
+          _pendingRender();
+          _pendingRender = null;
+        }
+      }
+    }, function(error) {
+      console.error('Error listening to products:', error);
+    });
+}
+
+var _pendingRender = null;
+
+// Get products - returns cached/local/default
 function getProducts() {
+  if (_productsCache) return _productsCache;
+
   var stored = localStorage.getItem('studioProducts');
   if (stored) {
     var products = JSON.parse(stored);
-    // Migrate old collection names if needed
     if (migrateCollections(products)) {
-      saveProducts(products);
+      localStorage.setItem('studioProducts', JSON.stringify(products));
     }
     return products;
   }
   return DEFAULT_PRODUCTS;
 }
 
-// Save products to localStorage
+// Save products to Firebase and localStorage
 function saveProducts(products) {
   localStorage.setItem('studioProducts', JSON.stringify(products));
+  _productsCache = products;
+
+  // Save to Firebase if available
+  if (typeof db !== 'undefined') {
+    db.collection('siteData').doc('products').set({ items: products })
+      .catch(function(error) {
+        console.error('Error saving products to Firebase:', error);
+      });
+  }
+}
+
+// Migrate localStorage products to Firebase (one-time)
+function migrateProductsToFirebase() {
+  if (typeof db === 'undefined') return;
+
+  db.collection('siteData').doc('products').get().then(function(doc) {
+    if (!doc.exists) {
+      // No products in Firebase yet - upload current products
+      var products = getProducts();
+      db.collection('siteData').doc('products').set({ items: products })
+        .then(function() { console.log('Products migrated to Firebase'); })
+        .catch(function(error) { console.error('Migration error:', error); });
+    }
+  });
 }
 
 // Render products on a collection page
 function renderCollectionProducts(collection) {
   var grid = document.querySelector('.products-grid');
   if (!grid) return;
+
+  // Set up re-render when Firebase data arrives
+  _pendingRender = function() { renderCollectionProducts(collection); };
 
   var products = getProducts().filter(function(p) {
     return p.collection === collection;
@@ -109,12 +166,14 @@ function renderCollectionProducts(collection) {
     var card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML =
-      '<div class="product-image">' +
-        (p.sale ? '<span class="sale-badge">SALE</span>' : '') +
-        '<img src="' + p.image + '" alt="' + p.name + '">' +
-      '</div>' +
+      '<a href="product.html?id=' + p.id + '" class="product-image-link">' +
+        '<div class="product-image">' +
+          (p.sale ? '<span class="sale-badge">SALE</span>' : '') +
+          '<img src="' + p.image + '" alt="' + p.name + '">' +
+        '</div>' +
+      '</a>' +
       '<div class="product-info">' +
-        '<h3>' + p.name + '</h3>' +
+        '<a href="product.html?id=' + p.id + '" class="product-name-link"><h3>' + p.name + '</h3></a>' +
         '<p class="price">' + priceHTML + '</p>' +
         '<button class="add-to-cart-btn" onclick="addToCart(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\')">Add to Cart</button>' +
       '</div>';

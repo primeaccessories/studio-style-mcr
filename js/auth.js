@@ -354,7 +354,8 @@ async function updateUserProfile(data) {
   if (!user) return false;
 
   try {
-    await db.collection('users').doc(user.uid).update(data);
+    // Use set with merge to create doc if it doesn't exist
+    await db.collection('users').doc(user.uid).set(data, { merge: true });
     return true;
   } catch (error) {
     console.error('Error updating profile:', error);

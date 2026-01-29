@@ -21,8 +21,8 @@
   <header class="header">
     <a href="index.html" class="logo">STUDIO STYLE MCR</a>
     <nav class="nav">
-      <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
-      <a href="cart.html">Back to Cart</a>
+      <a href="index.html"><i class="fas fa-home"></i></a>
+      <a href="cart.html"><i class="fas fa-shopping-bag"></i></a>
     </nav>
   </header>
 
@@ -142,6 +142,16 @@
       <div class="order-summary">
         <h2>Order Summary</h2>
         <div id="checkout-items" class="checkout-items"></div>
+
+        <!-- Coupon Code -->
+        <div class="coupon-section">
+          <div class="coupon-input-wrap">
+            <input type="text" id="couponCode" placeholder="Discount code">
+            <button type="button" id="applyCouponBtn" onclick="applyCoupon()">Apply</button>
+          </div>
+          <div id="couponMessage" class="coupon-message"></div>
+        </div>
+
         <div class="summary-totals">
           <div class="summary-row">
             <span>Subtotal</span>
@@ -150,6 +160,10 @@
           <div class="summary-row">
             <span>Delivery</span>
             <span id="checkout-delivery">£3.99</span>
+          </div>
+          <div class="summary-row coupon-row" id="coupon-row" style="display: none; color: #2e7d32;">
+            <span>Discount (<span id="coupon-code-display"></span>)</span>
+            <span id="checkout-coupon">-£0.00</span>
           </div>
           <div class="summary-row reward-row" id="reward-row" style="display: none; color: #2e7d32;">
             <span>Reward Discount</span>
@@ -205,7 +219,7 @@
         <i class="fab fa-klarna"></i>
       </div>
     </div>
-    <p class="copyright">&copy; 2026 Studio Style MCR. All rights reserved.</p>
+    <p class="copyright">&copy; 2026 Studio Style MCR. All rights reserved. <a href="terms.html" style="color: inherit;">Terms & Conditions</a></p>
   </footer>
 
   <!-- Search Overlay -->
@@ -234,6 +248,68 @@
     };
 
     let rewardAvailable = false;
+    let appliedCoupon = null;
+    let couponDiscount = 0;
+    let discountCodes = {}; // Will be loaded from Firebase
+
+    // Load discount codes from Firebase
+    async function loadDiscountCodes() {
+      try {
+        const snapshot = await db.collection('discountCodes').where('enabled', '==', true).get();
+        snapshot.forEach(function(doc) {
+          const data = doc.data();
+          discountCodes[data.code.toUpperCase()] = {
+            type: data.type,
+            value: data.value,
+            description: data.type === 'percent' ? data.value + '% off' : '£' + data.value + ' off'
+          };
+        });
+      } catch (error) {
+        console.error('Error loading discount codes:', error);
+      }
+    }
+
+    // Load discount codes on page load
+    loadDiscountCodes();
+
+    async function applyCoupon() {
+      const codeInput = document.getElementById('couponCode');
+      const messageEl = document.getElementById('couponMessage');
+      const applyBtn = document.getElementById('applyCouponBtn');
+      const code = codeInput.value.trim().toUpperCase();
+
+      if (!code) {
+        messageEl.textContent = 'Please enter a code';
+        messageEl.className = 'coupon-message error';
+        return;
+      }
+
+      applyBtn.disabled = true;
+      applyBtn.textContent = 'Checking...';
+
+      // Refresh discount codes in case new ones were added
+      await loadDiscountCodes();
+
+      if (discountCodes[code]) {
+        appliedCoupon = { code: code, ...discountCodes[code] };
+        messageEl.textContent = 'Coupon applied: ' + appliedCoupon.description;
+        messageEl.className = 'coupon-message success';
+        document.getElementById('coupon-code-display').textContent = code;
+        document.getElementById('coupon-row').style.display = 'flex';
+        codeInput.disabled = true;
+        applyBtn.textContent = 'Applied';
+        updateTotal();
+      } else {
+        messageEl.textContent = 'Invalid or expired coupon code';
+        messageEl.className = 'coupon-message error';
+        appliedCoupon = null;
+        couponDiscount = 0;
+        document.getElementById('coupon-row').style.display = 'none';
+        applyBtn.disabled = false;
+        applyBtn.textContent = 'Apply';
+        updateTotal();
+      }
+    }
 
     // Check for reward on page load
     auth.onAuthStateChanged(async function(user) {
@@ -405,6 +481,17 @@
       document.getElementById('checkout-delivery').textContent = deliveryCost === 0 ? 'FREE' : `£${deliveryCost.toFixed(2)}`;
 
       let total = subtotal + deliveryCost;
+
+      // Apply coupon discount if available
+      if (appliedCoupon) {
+        if (appliedCoupon.type === 'percent') {
+          couponDiscount = subtotal * (appliedCoupon.value / 100);
+        } else {
+          couponDiscount = Math.min(appliedCoupon.value, subtotal);
+        }
+        document.getElementById('checkout-coupon').textContent = `-£${couponDiscount.toFixed(2)}`;
+        total = total - couponDiscount;
+      }
 
       // Apply £20 reward discount if available
       const rewardDiscount = rewardAvailable ? Math.min(20, total) : 0;
@@ -600,6 +687,35 @@
     });
 
     renderCheckout();
+
+    // Reset button states when navigating back via browser history
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) {
+        // Page was loaded from cache (back button)
+        const payBtn = document.getElementById('pay-btn');
+        const payCashBtn = document.getElementById('pay-cash-btn');
+        const payCardBtn = document.getElementById('pay-card-btn');
+        const applyCouponBtn = document.getElementById('applyCouponBtn');
+
+        // Reset pay button
+        payBtn.disabled = false;
+        payBtn.innerHTML = 'Pay Now - <span id="final-total">' + document.getElementById('checkout-total').textContent + '</span>';
+
+        // Reset cash button
+        payCashBtn.disabled = false;
+        payCashBtn.innerHTML = 'Pay Cash - <span class="local-total">' + document.getElementById('checkout-total').textContent + '</span>';
+
+        // Reset card button
+        payCardBtn.disabled = false;
+        payCardBtn.innerHTML = 'Pay by Card - <span class="local-total">' + document.getElementById('checkout-total').textContent + '</span>';
+
+        // Reset coupon button if not already applied
+        if (applyCouponBtn.textContent !== 'Applied') {
+          applyCouponBtn.disabled = false;
+          applyCouponBtn.textContent = 'Apply';
+        }
+      }
+    });
   </script>
 
 </body>
