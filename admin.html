@@ -861,12 +861,12 @@
       </div>
 
       <div class="form-group">
-        <label>Collection</label>
-        <select class="form-select" id="formCollection">
-          <option value="new-arrivals">What's New</option>
-          <option value="last-chance">Last Chance To Buy</option>
-          <option value="accessories">Accessories</option>
-        </select>
+        <label>Collections</label>
+        <div class="size-checkboxes" id="collectionCheckboxes">
+          <label class="size-checkbox"><input type="checkbox" id="colNewArrivals" value="new-arrivals"> What's New</label>
+          <label class="size-checkbox"><input type="checkbox" id="colLastChance" value="last-chance"> Last Chance</label>
+          <label class="size-checkbox"><input type="checkbox" id="colAccessories" value="accessories"> Accessories</label>
+        </div>
       </div>
 
       <div class="form-group">
@@ -1161,7 +1161,8 @@
 
       // Filter
       var filtered = products.filter(function(p) {
-        var matchTab = currentTab === 'all' || p.collection === currentTab;
+        var pCols = p.collections || (p.collection ? [p.collection] : []);
+        var matchTab = currentTab === 'all' || pCols.indexOf(currentTab) > -1;
         var matchSearch = !search || p.name.toLowerCase().indexOf(search) > -1;
         return matchTab && matchSearch;
       });
@@ -1175,9 +1176,9 @@
 
       // Product counts for subtabs
       var countAll = products.length;
-      var countNew = products.filter(function(p) { return p.collection === 'new-arrivals'; }).length;
-      var countLastChance = products.filter(function(p) { return p.collection === 'last-chance'; }).length;
-      var countAccessories = products.filter(function(p) { return p.collection === 'accessories'; }).length;
+      var countNew = products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf('new-arrivals') > -1; }).length;
+      var countLastChance = products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf('last-chance') > -1; }).length;
+      var countAccessories = products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf('accessories') > -1; }).length;
 
       document.getElementById('countAll').textContent = countAll;
       document.getElementById('countNew').textContent = countNew;
@@ -1194,8 +1195,9 @@
           priceHTML = '&pound;' + p.price.toFixed(2);
         }
 
-        var badgeClass = p.collection === 'new-arrivals' ? 'badge-new' : p.collection === 'last-chance' ? 'badge-last-chance' : 'badge-accessories';
-        var collectionLabel = p.collection === 'new-arrivals' ? "What's New" : p.collection === 'last-chance' ? 'Last Chance' : 'Accessories';
+        var pCols = p.collections || (p.collection ? [p.collection] : []);
+        var badgeMap = { 'new-arrivals': { cls: 'badge-new', label: "What's New" }, 'last-chance': { cls: 'badge-last-chance', label: 'Last Chance' }, 'accessories': { cls: 'badge-accessories', label: 'Accessories' } };
+        var badgesHTML = pCols.map(function(c) { var b = badgeMap[c]; return b ? '<span class="collection-badge ' + b.cls + '">' + b.label + '</span>' : ''; }).join(' ');
 
         var row = document.createElement('tr');
         row.setAttribute('data-id', p.id);
@@ -1209,7 +1211,7 @@
             '<span class="product-name">' + p.name + '</span>' +
           '</td>' +
           '<td>' + priceHTML + '</td>' +
-          '<td><span class="collection-badge ' + badgeClass + '">' + collectionLabel + '</span></td>' +
+          '<td>' + badgesHTML + '</td>' +
           '<td>' + (p.sale ? '<span class="status-sale">Sale</span>' : '<span class="status-active">Active</span>') + '</td>' +
           '<td><div class="action-btns">' +
             '<button class="edit-btn" onclick="openEditModal(\'' + p.id + '\')">Edit</button>' +
@@ -1282,7 +1284,7 @@
       var collection = currentTab === 'all' ? null : currentTab;
 
       var viewProducts = collection
-        ? products.filter(function(p) { return p.collection === collection; })
+        ? products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf(collection) > -1; })
         : products;
 
       viewProducts.sort(function(a, b) {
@@ -1328,7 +1330,9 @@
       document.getElementById('modalTitle').textContent = 'Add Product';
       document.getElementById('formName').value = '';
       document.getElementById('formImage').value = '';
-      document.getElementById('formCollection').value = 'new-arrivals';
+      document.getElementById('colNewArrivals').checked = true;
+      document.getElementById('colLastChance').checked = false;
+      document.getElementById('colAccessories').checked = false;
       document.getElementById('formPrice').value = '';
       document.getElementById('formDescription').value = '';
       document.getElementById('formSale').checked = false;
@@ -1356,7 +1360,10 @@
       document.getElementById('modalTitle').textContent = 'Edit Product';
       document.getElementById('formName').value = p.name;
       document.getElementById('formImage').value = p.image || '';
-      document.getElementById('formCollection').value = p.collection;
+      var cols = p.collections || (p.collection ? [p.collection] : ['new-arrivals']);
+      document.getElementById('colNewArrivals').checked = cols.indexOf('new-arrivals') > -1;
+      document.getElementById('colLastChance').checked = cols.indexOf('last-chance') > -1;
+      document.getElementById('colAccessories').checked = cols.indexOf('accessories') > -1;
       document.getElementById('formPrice').value = p.price;
       document.getElementById('formDescription').value = p.description || '';
       document.getElementById('formSale').checked = p.sale;
@@ -1474,7 +1481,11 @@
     function saveProduct() {
       var name = document.getElementById('formName').value.trim();
       var image = currentImageData || document.getElementById('formImage').value.trim();
-      var collection = document.getElementById('formCollection').value;
+      var collections = [];
+      if (document.getElementById('colNewArrivals').checked) collections.push('new-arrivals');
+      if (document.getElementById('colLastChance').checked) collections.push('last-chance');
+      if (document.getElementById('colAccessories').checked) collections.push('accessories');
+      if (collections.length === 0) { alert('Please select at least one collection'); return; }
       var description = document.getElementById('formDescription').value.trim();
       var isSale = document.getElementById('formSale').checked;
       var price, originalPrice;
@@ -1509,7 +1520,8 @@
         if (idx > -1) {
           products[idx].name = name;
           products[idx].image = image;
-          products[idx].collection = collection;
+          products[idx].collections = collections;
+          delete products[idx].collection;
           products[idx].price = price;
           products[idx].sale = isSale;
           products[idx].originalPrice = originalPrice;
@@ -1517,8 +1529,11 @@
           products[idx].sizes = sizes;
         }
       } else {
-        // Add new - find lowest sortOrder in same collection and go lower (to appear first)
-        var sameCollection = products.filter(function(p) { return p.collection === collection; });
+        // Add new - find lowest sortOrder among products in any of the selected collections
+        var sameCollection = products.filter(function(p) {
+          var pCols = p.collections || (p.collection ? [p.collection] : []);
+          return collections.some(function(c) { return pCols.indexOf(c) > -1; });
+        });
         var minOrder = 0;
         sameCollection.forEach(function(p) {
           if (typeof p.sortOrder === 'number' && p.sortOrder <= minOrder) {
@@ -1532,7 +1547,7 @@
           name: name,
           price: price,
           image: image,
-          collection: collection,
+          collections: collections,
           sale: isSale,
           originalPrice: originalPrice,
           description: description,
