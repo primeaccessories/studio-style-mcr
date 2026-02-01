@@ -263,7 +263,7 @@
           </div>
         </div>
 
-        <button id="addToCartBtn" class="add-to-cart-large" onclick="addProductToCart()">
+        <button id="addToCartBtn" class="add-to-cart-large" onclick="addProductToCart(event)">
           Add to Basket
         </button>
 
@@ -425,7 +425,7 @@
       selectedSize = sizes[0] || 'One Size';
     }
 
-    function addProductToCart() {
+    function addProductToCart(e) {
       if (!currentProduct) return;
 
       var name = currentProduct.name;
@@ -433,7 +433,7 @@
         name += ' (' + selectedSize + ')';
       }
 
-      addToCart(currentProduct.id, name, currentProduct.price, currentProduct.image);
+      addToCart(currentProduct.id, name, currentProduct.price, currentProduct.image, e);
 
       // Show feedback
       var btn = document.getElementById('addToCartBtn');

@@ -153,6 +153,13 @@ function renderCollectionProducts(collection) {
     return p.collection === collection;
   });
 
+  // Sort by sortOrder (lowest first = shows first)
+  products.sort(function(a, b) {
+    var orderA = typeof a.sortOrder === 'number' ? a.sortOrder : 9999;
+    var orderB = typeof b.sortOrder === 'number' ? b.sortOrder : 9999;
+    return orderA - orderB;
+  });
+
   grid.innerHTML = '';
 
   products.forEach(function(p) {
@@ -175,7 +182,7 @@ function renderCollectionProducts(collection) {
       '<div class="product-info">' +
         '<a href="product.html?id=' + p.id + '" class="product-name-link"><h3>' + p.name + '</h3></a>' +
         '<p class="price">' + priceHTML + '</p>' +
-        '<button class="add-to-cart-btn" onclick="addToCart(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\')">Add to Cart</button>' +
+        '<button class="add-to-cart-btn" onclick="addToCart(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\', event)">Add to Cart</button>' +
       '</div>';
     grid.appendChild(card);
   });

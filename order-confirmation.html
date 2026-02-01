@@ -283,8 +283,8 @@
       // Clear the cart since payment was successful
       localStorage.removeItem('cart');
 
-      // Update rewards for logged-in user
-      await updateUserRewards();
+      // Save order to Firebase and update rewards
+      await saveOrderToFirebase();
 
       // Generate order number from session ID
       const orderNumber = 'SSM-' + sessionId.slice(-8).toUpperCase();
@@ -373,40 +373,81 @@
       `;
     }
 
-    async function updateUserRewards() {
+    async function saveOrderToFirebase() {
       try {
-        const user = auth.currentUser;
-        if (!user) return;
-
         // Check if we've already processed this session
-        const processedKey = 'processed_' + sessionId;
-        if (localStorage.getItem(processedKey)) return;
+        const processedKey = 'order_saved_' + sessionId;
+        if (localStorage.getItem(processedKey)) {
+          console.log('Order already saved');
+          return;
+        }
 
-        // Fetch session details to get metadata
+        // Fetch full session details from Stripe
         const response = await fetch('/api/get-session?session_id=' + sessionId);
         if (!response.ok) {
-          // If API doesn't exist, just increment order count
-          const userDoc = await db.collection('users').doc(user.uid).get();
-          const userData = userDoc.data();
-          const currentCount = (userData.rewards && userData.rewards.orderCount) || 0;
-          const newCount = currentCount + 1;
-
-          const rewardUpdate = { 'rewards.orderCount': newCount };
-          if (newCount % 5 === 0) {
-            rewardUpdate['rewards.rewardAvailable'] = true;
-          }
-
-          await db.collection('users').doc(user.uid).update(rewardUpdate);
-          localStorage.setItem(processedKey, 'true');
+          console.error('Could not fetch session details');
           return;
         }
 
         const session = await response.json();
-        const rewardUsed = session.metadata?.rewardUsed === 'true';
+        if (session.payment_status !== 'paid') {
+          console.log('Payment not completed');
+          return;
+        }
 
-        // Update rewards
+        const user = auth.currentUser;
+        const orderNumber = 'SSM-' + sessionId.slice(-8).toUpperCase();
+
+        // Build order data
+        const orderData = {
+          orderNumber: orderNumber,
+          sessionId: sessionId,
+          items: session.items || [],
+          customerInfo: {
+            firstName: session.metadata?.firstName || '',
+            lastName: session.metadata?.lastName || '',
+            email: session.customer_email || '',
+            phone: session.metadata?.phone || '',
+            address: session.metadata?.address || '',
+            city: session.metadata?.city || '',
+            postcode: session.metadata?.postcode || '',
+          },
+          deliveryOption: session.metadata?.delivery || 'standard',
+          paymentMethod: 'card',
+          total: (session.amount_total || 0) / 100,
+          currency: session.currency || 'gbp',
+          rewardUsed: session.metadata?.rewardUsed === 'true',
+          status: 'paid',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          stripeCreated: session.created,
+        };
+
+        // Save to user's orders if logged in
+        if (user) {
+          await db.collection('users').doc(user.uid).collection('orders').doc(sessionId).set(orderData);
+          console.log('Order saved to user account');
+
+          // Update rewards
+          await updateUserRewardsInternal(user, session.metadata?.rewardUsed === 'true');
+        }
+
+        // Also save to global orders collection for admin
+        await db.collection('orders').doc(sessionId).set({
+          ...orderData,
+          userId: user ? user.uid : null,
+        });
+        console.log('Order saved to global orders');
+
+        localStorage.setItem(processedKey, 'true');
+      } catch (error) {
+        console.error('Error saving order to Firebase:', error);
+      }
+    }
+
+    async function updateUserRewardsInternal(user, rewardUsed) {
+      try {
         const userDoc = await db.collection('users').doc(user.uid).get();
-        const userData = userDoc.data();
+        const userData = userDoc.data() || {};
         const currentCount = (userData.rewards && userData.rewards.orderCount) || 0;
         const newCount = currentCount + 1;
 
@@ -419,10 +460,14 @@
         }
 
         await db.collection('users').doc(user.uid).update(rewardUpdate);
-        localStorage.setItem(processedKey, 'true');
       } catch (error) {
         console.error('Error updating rewards:', error);
       }
+    }
+
+    async function updateUserRewards() {
+      // Now handled by saveOrderToFirebase
+      // Keeping this function for backwards compatibility
     }
 
     // Wait for auth state before loading

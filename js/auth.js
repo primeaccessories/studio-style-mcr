@@ -222,8 +222,8 @@ auth.getRedirectResult().then(function(result) {
           phone: user.phoneNumber || '',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           rewards: {
-            points: 100,
-            tier: 'Bronze'
+            orderCount: 0,
+            rewardAvailable: false
           },
           purchases: [],
           signInMethod: 'google'
@@ -318,24 +318,7 @@ async function addPurchase(orderData) {
   }
 }
 
-// Update Rewards Tier based on total points
-async function updateRewardsTier(userId) {
-  try {
-    const doc = await db.collection('users').doc(userId).get();
-    const userData = doc.data();
-    const points = userData.rewards.points;
 
-    let tier = 'Bronze';
-    if (points >= 1000) tier = 'Gold';
-    else if (points >= 500) tier = 'Silver';
-
-    await db.collection('users').doc(userId).update({
-      'rewards.tier': tier
-    });
-  } catch (error) {
-    console.error('Error updating tier:', error);
-  }
-}
 
 // Password Reset
 async function resetPassword(email) {

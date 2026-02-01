@@ -12,7 +12,7 @@ function updateCartCount() {
 }
 
 // Add item to cart
-function addToCart(id, name, price, image) {
+function addToCart(id, name, price, image, clickEvent) {
   const existing = cart.find(item => item.id === id);
 
   if (existing) {
@@ -22,16 +22,77 @@ function addToCart(id, name, price, image) {
   }
 
   localStorage.setItem('cart', JSON.stringify(cart));
+
+  // Fly to cart animation
+  if (image) {
+    flyToCart(image, clickEvent);
+  }
+
   updateCartCount();
 
-  // Open mini cart when item is added
-  const miniCart = document.getElementById('miniCart');
-  const overlay = document.querySelector('.mini-cart-overlay');
-  if (miniCart) {
-    miniCart.classList.add('show');
-    if (overlay) overlay.classList.add('show');
-    renderMiniCart();
+  // Open mini cart when item is added (after animation)
+  setTimeout(() => {
+    const miniCart = document.getElementById('miniCart');
+    const overlay = document.querySelector('.mini-cart-overlay');
+    if (miniCart) {
+      miniCart.classList.add('show');
+      if (overlay) overlay.classList.add('show');
+      renderMiniCart();
+    }
+  }, 400);
+}
+
+// Fly to cart animation
+function flyToCart(imageUrl, clickEvent) {
+  // Find cart icon position
+  const cartIcon = document.querySelector('.cart-link:not(.cart-link-header)') || document.querySelector('.cart-link');
+  if (!cartIcon) return;
+
+  const cartRect = cartIcon.getBoundingClientRect();
+  const cartX = cartRect.left + cartRect.width / 2;
+  const cartY = cartRect.top + cartRect.height / 2;
+
+  // Get start position from click event or center of screen
+  let startX, startY;
+  if (clickEvent && clickEvent.target) {
+    const btn = clickEvent.target.closest('.add-to-cart-btn') || clickEvent.target.closest('button');
+    if (btn) {
+      const btnRect = btn.getBoundingClientRect();
+      startX = btnRect.left + btnRect.width / 2;
+      startY = btnRect.top;
+    } else {
+      startX = clickEvent.clientX || window.innerWidth / 2;
+      startY = clickEvent.clientY || window.innerHeight / 2;
+    }
+  } else {
+    startX = window.innerWidth / 2;
+    startY = window.innerHeight / 2;
   }
+
+  // Create flying image element
+  const flyImg = document.createElement('img');
+  flyImg.src = imageUrl;
+  flyImg.className = 'fly-to-cart';
+  flyImg.style.left = (startX - 30) + 'px';
+  flyImg.style.top = (startY - 30) + 'px';
+  document.body.appendChild(flyImg);
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    flyImg.style.left = (cartX - 30) + 'px';
+    flyImg.style.top = (cartY - 30) + 'px';
+    flyImg.classList.add('flying');
+  });
+
+  // Remove after animation
+  setTimeout(() => {
+    flyImg.remove();
+    // Pulse the cart icon
+    cartIcon.style.transform = 'scale(1.2)';
+    setTimeout(() => {
+      cartIcon.style.transform = '';
+    }, 150);
+  }, 600);
 }
 
 // Remove item from cart

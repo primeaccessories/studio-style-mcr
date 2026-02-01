@@ -13,7 +13,7 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json();
-    const { items, customerInfo, deliveryOption, rewardUsed, userId } = body;
+    const { items, customerInfo, deliveryOption, rewardUsed, userId, couponCode, couponDiscount } = body;
 
     if (!items || items.length === 0) {
       return new Response(JSON.stringify({ error: 'No items in cart' }), {
@@ -119,6 +119,8 @@ export async function onRequestPost(context) {
         'metadata[delivery]': deliveryOption,
         'metadata[userId]': userId || '',
         'metadata[rewardUsed]': rewardUsed ? 'true' : 'false',
+        'metadata[couponCode]': couponCode || '',
+        'metadata[couponDiscount]': couponDiscount ? String(couponDiscount) : '0',
         ...discountParams,
         ...lineItems.reduce((acc, item, index) => {
           acc[`line_items[${index}][price_data][currency]`] = item.price_data.currency;

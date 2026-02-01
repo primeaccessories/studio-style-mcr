@@ -83,19 +83,35 @@
     .stat-value { font-size: 1.8rem; color: #333; }
     .stat-sub { font-size: 0.7rem; color: #aaa; margin-top: 5px; }
 
-    /* TABS */
-    .admin-tabs { display: flex; gap: 0; margin-bottom: 0; background: #fff; border: 1px solid #eee; border-bottom: none; }
+    /* MAIN TABS */
+    .admin-tabs { display: flex; gap: 0; margin-bottom: 0; background: #2c2c2c; border: none; }
     .admin-tab {
-      padding: 15px 25px; font-family: inherit; font-size: 0.7rem;
+      padding: 15px 30px; font-family: inherit; font-size: 0.7rem;
       letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer;
-      background: #fff; border: none; color: #999; transition: all 0.2s;
+      background: transparent; border: none; color: rgba(255,255,255,0.6); transition: all 0.2s;
+    }
+    .admin-tab.active { color: #fff; background: #444; }
+    .admin-tab:hover { color: #fff; }
+
+    /* SUB TABS */
+    .admin-subtabs { display: flex; gap: 0; background: #f5f5f5; border: 1px solid #eee; border-bottom: none; }
+    .admin-subtab {
+      padding: 12px 20px; font-family: inherit; font-size: 0.65rem;
+      letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+      background: transparent; border: none; color: #999; transition: all 0.2s;
       border-bottom: 2px solid transparent;
     }
-    .admin-tab.active { color: #000; border-bottom-color: #000; }
-    .admin-tab:hover { color: #333; }
+    .admin-subtab.active { color: #000; border-bottom-color: #000; background: #fff; }
+    .admin-subtab:hover { color: #333; }
+    .subtab-count {
+      display: inline-block; background: #eee; color: #666;
+      font-size: 0.6rem; padding: 2px 6px; border-radius: 10px; margin-left: 5px;
+    }
+    .admin-subtab.active .subtab-count { background: #000; color: #fff; }
 
-    .tab-content { display: none; background: #fff; border: 1px solid #eee; border-top: none; }
+    .tab-content { display: none; background: #fff; border: 1px solid #eee; }
     .tab-content.active { display: block; }
+    .tab-content.has-subtabs { border-top: none; }
 
     /* TOOLBAR */
     .admin-toolbar {
@@ -151,6 +167,18 @@
     }
     .edit-btn:hover { border-color: #000; color: #000; }
     .delete-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+
+    /* DRAG REORDER */
+    .reorder-cell { width: 40px; text-align: center; }
+    .drag-handle {
+      cursor: grab; padding: 8px; color: #ccc; font-size: 1.1rem;
+      transition: color 0.2s; display: inline-block;
+    }
+    .drag-handle:hover { color: #666; }
+    .drag-handle:active { cursor: grabbing; }
+    .product-table tr.dragging { opacity: 0.5; background: #f0f0f0; }
+    .product-table tr.drag-over { border-top: 2px solid #000; }
+    .product-table tr.drag-over-below { border-bottom: 2px solid #000; }
 
     /* MODAL */
     .modal-overlay {
@@ -331,8 +359,13 @@
     }
     .booking-action-btn:hover { border-color: #333; color: #333; }
     .booking-action-btn:focus { outline: 2px solid #333; outline-offset: 1px; }
+    .booking-action-btn.confirm { background: #e3f2fd; border-color: #bbdefb; color: #1565c0; }
+    .booking-action-btn.confirm:hover { background: #bbdefb; }
     .booking-action-btn.complete { background: #e8f5e9; border-color: #c8e6c9; color: #2e7d32; }
     .booking-action-btn.complete:hover { background: #c8e6c9; }
+    .booking-action-btn.delete { background: #ffebee; border-color: #ffcdd2; color: #c62828; }
+    .booking-action-btn.delete:hover { background: #ffcdd2; }
+    .status-confirmed { background: #e3f2fd; color: #1565c0; }
 
     /* Empty State */
     .no-bookings {
@@ -516,6 +549,8 @@
       .product-thumb { display: none; }
       .form-row { grid-template-columns: 1fr; }
       .admin-tabs { overflow-x: auto; }
+      .admin-subtabs { overflow-x: auto; }
+      .admin-subtab { padding: 10px 15px; white-space: nowrap; }
     }
     @media (max-width: 480px) {
       .stats-grid { grid-template-columns: 1fr; }
@@ -552,42 +587,48 @@
     </div>
 
     <div class="admin-body">
-      <!-- STATS -->
+      <!-- SALES STATS -->
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-label">Total Products</div>
-          <div class="stat-value" id="statTotal">0</div>
-          <div class="stat-sub">Across all collections</div>
+          <div class="stat-label">Today's Sales</div>
+          <div class="stat-value" id="statSalesToday">£0</div>
+          <div class="stat-sub">Revenue</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">What's New</div>
-          <div class="stat-value" id="statNew">0</div>
-          <div class="stat-sub">Products</div>
+          <div class="stat-label">This Week</div>
+          <div class="stat-value" id="statSalesWeek">£0</div>
+          <div class="stat-sub">Revenue</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Last Chance</div>
-          <div class="stat-value" id="statLastChance">0</div>
-          <div class="stat-sub">Products</div>
+          <div class="stat-label">This Month</div>
+          <div class="stat-value" id="statSalesMonth">£0</div>
+          <div class="stat-sub">Revenue</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Accessories</div>
-          <div class="stat-value" id="statAccessories">0</div>
-          <div class="stat-sub">Products</div>
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-value" id="statOrdersTotal">0</div>
+          <div class="stat-sub">All time</div>
         </div>
       </div>
 
-      <!-- TABS -->
+      <!-- MAIN TABS -->
       <div class="admin-tabs">
-        <button class="admin-tab active" onclick="switchTab('all')">All Products</button>
-        <button class="admin-tab" onclick="switchTab('new-arrivals')">What's New</button>
-        <button class="admin-tab" onclick="switchTab('last-chance')">Last Chance To Buy</button>
-        <button class="admin-tab" onclick="switchTab('accessories')">Accessories</button>
-        <button class="admin-tab" onclick="switchTab('bookings')">Bookings</button>
-        <button class="admin-tab" onclick="switchTab('discounts')">Discounts</button>
+        <button class="admin-tab active" onclick="switchMainTab('products', this)">Products</button>
+        <button class="admin-tab" onclick="switchMainTab('sales', this)">Sales</button>
+        <button class="admin-tab" onclick="switchMainTab('bookings', this)">Bookings</button>
+        <button class="admin-tab" onclick="switchMainTab('discounts', this)">Discounts</button>
+      </div>
+
+      <!-- PRODUCT SUB-TABS -->
+      <div class="admin-subtabs" id="productSubtabs">
+        <button class="admin-subtab active" onclick="switchSubTab('all', this)">All <span class="subtab-count" id="countAll">0</span></button>
+        <button class="admin-subtab" onclick="switchSubTab('new-arrivals', this)">What's New <span class="subtab-count" id="countNew">0</span></button>
+        <button class="admin-subtab" onclick="switchSubTab('last-chance', this)">Last Chance <span class="subtab-count" id="countLastChance">0</span></button>
+        <button class="admin-subtab" onclick="switchSubTab('accessories', this)">Accessories <span class="subtab-count" id="countAccessories">0</span></button>
       </div>
 
       <!-- PRODUCT LIST -->
-      <div class="tab-content active" id="productList">
+      <div class="tab-content active has-subtabs" id="productList">
         <div class="admin-toolbar">
           <div class="toolbar-left">
             <input type="text" class="admin-search" id="searchInput" placeholder="Search products..." oninput="renderTable()">
@@ -599,6 +640,7 @@
             <table class="product-table">
               <thead>
                 <tr>
+                  <th class="reorder-cell"></th>
                   <th>Product</th>
                   <th>Price</th>
                   <th>Collection</th>
@@ -612,6 +654,53 @@
           <button class="show-more-btn" id="showMoreBtn" onclick="toggleProductList()">
             Show All Products <i class="fas fa-chevron-down"></i>
           </button>
+        </div>
+      </div>
+
+      <!-- SALES TAB -->
+      <div class="tab-content" id="salesTab">
+        <div class="bookings-container">
+          <!-- Sales Summary -->
+          <div class="bookings-summary">
+            <div class="summary-item">
+              <div class="summary-item-label">Today</div>
+              <div class="summary-item-value" id="salesToday">£0</div>
+              <div class="summary-item-sub">revenue</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-item-label">This Week</div>
+              <div class="summary-item-value" id="salesWeek">£0</div>
+              <div class="summary-item-sub">revenue</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-item-label">Total Orders</div>
+              <div class="summary-item-value" id="salesTotal">0</div>
+              <div class="summary-item-sub">all time</div>
+            </div>
+          </div>
+
+          <!-- Orders Table -->
+          <div style="overflow-x:auto; margin-top: 20px;">
+            <table class="product-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="salesTableBody">
+                <tr><td colspan="6" style="text-align:center; padding: 30px; color: #999;">Loading orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sales-pagination" id="salesPagination" style="display: none; padding: 20px; text-align: center;">
+            <button class="add-btn" onclick="loadMorePayments()" id="loadMoreBtn">Load More Orders</button>
+          </div>
         </div>
       </div>
 
@@ -852,6 +941,30 @@
     </div>
   </div>
 
+  <!-- Order Detail Modal -->
+  <div class="modal-overlay" id="orderModalOverlay" onclick="closeOrderModal()">
+    <div onclick="event.stopPropagation()" style="background:#f6f8fa; width:860px; max-width:95vw; max-height:92vh; overflow-y:auto; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div id="orderModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Login script - isolated so nothing can break it -->
+  <script>
+    var ADMIN_PASSWORD = 'admin123';
+
+    function attemptLogin(e) {
+      e.preventDefault();
+      if (document.getElementById('loginPassword').value === ADMIN_PASSWORD) {
+        sessionStorage.setItem('adminAuth', 'true');
+        showDashboard();
+      } else {
+        document.getElementById('loginError').classList.add('show');
+        document.getElementById('loginPassword').value = '';
+        setTimeout(function() { document.getElementById('loginError').classList.remove('show'); }, 2000);
+      }
+    }
+  </script>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -859,8 +972,6 @@
   <script src="js/products.js"></script>
   <script src="js/auth.js?v=2"></script>
   <script>
-    var ADMIN_PASSWORD = 'studio2026';
-
     // ============================================
     // FIREBASE BOOKINGS - Real-time sync across all admin devices
     // ============================================
@@ -979,18 +1090,6 @@
     var currentTab = 'all';
     var editingId = null;
 
-    function attemptLogin(e) {
-      e.preventDefault();
-      if (document.getElementById('loginPassword').value === ADMIN_PASSWORD) {
-        sessionStorage.setItem('adminAuth', 'true');
-        showDashboard();
-      } else {
-        document.getElementById('loginError').classList.add('show');
-        document.getElementById('loginPassword').value = '';
-        setTimeout(function() { document.getElementById('loginError').classList.remove('show'); }, 2000);
-      }
-    }
-
     function showDashboard() {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('adminPanel').classList.add('show');
@@ -1004,6 +1103,7 @@
       }, 1000);
 
       renderTable();
+      loadSalesStats(); // Load sales stats for top cards
     }
 
     function adminLogout() {
@@ -1016,28 +1116,41 @@
       location.reload();
     }
 
-    // TABS
-    function switchTab(tab) {
-      currentTab = tab;
+    // MAIN TABS
+    function switchMainTab(tab, btn) {
       document.querySelectorAll('.admin-tab').forEach(function(t) { t.classList.remove('active'); });
-      event.target.classList.add('active');
+      btn.classList.add('active');
 
-      // Show/hide tabs
+      // Show/hide content
       document.getElementById('productList').classList.remove('active');
+      document.getElementById('salesTab').classList.remove('active');
       document.getElementById('bookingsTab').classList.remove('active');
       document.getElementById('discountsTab').classList.remove('active');
+      document.getElementById('productSubtabs').style.display = 'none';
 
-      if (tab === 'bookings') {
+      if (tab === 'products') {
+        document.getElementById('productSubtabs').style.display = 'flex';
+        document.getElementById('productList').classList.add('active');
+        renderTable();
+      } else if (tab === 'sales') {
+        document.getElementById('salesTab').classList.add('active');
+        loadPayments();
+      } else if (tab === 'bookings') {
         document.getElementById('bookingsTab').classList.add('active');
         renderBookings();
         renderCalendar();
       } else if (tab === 'discounts') {
         document.getElementById('discountsTab').classList.add('active');
         loadDiscounts();
-      } else {
-        document.getElementById('productList').classList.add('active');
-        renderTable();
       }
+    }
+
+    // PRODUCT SUB-TABS
+    function switchSubTab(tab, btn) {
+      currentTab = tab;
+      document.querySelectorAll('.admin-subtab').forEach(function(t) { t.classList.remove('active'); });
+      btn.classList.add('active');
+      renderTable();
     }
 
     // RENDER TABLE
@@ -1053,15 +1166,27 @@
         return matchTab && matchSearch;
       });
 
-      // Stats
-      document.getElementById('statTotal').textContent = products.length;
-      document.getElementById('statNew').textContent = products.filter(function(p) { return p.collection === 'new-arrivals'; }).length;
-      document.getElementById('statLastChance').textContent = products.filter(function(p) { return p.collection === 'last-chance'; }).length;
-      document.getElementById('statAccessories').textContent = products.filter(function(p) { return p.collection === 'accessories'; }).length;
+      // Sort by sortOrder (lowest first = top of list)
+      filtered.sort(function(a, b) {
+        var orderA = typeof a.sortOrder === 'number' ? a.sortOrder : 9999;
+        var orderB = typeof b.sortOrder === 'number' ? b.sortOrder : 9999;
+        return orderA - orderB;
+      });
+
+      // Product counts for subtabs
+      var countAll = products.length;
+      var countNew = products.filter(function(p) { return p.collection === 'new-arrivals'; }).length;
+      var countLastChance = products.filter(function(p) { return p.collection === 'last-chance'; }).length;
+      var countAccessories = products.filter(function(p) { return p.collection === 'accessories'; }).length;
+
+      document.getElementById('countAll').textContent = countAll;
+      document.getElementById('countNew').textContent = countNew;
+      document.getElementById('countLastChance').textContent = countLastChance;
+      document.getElementById('countAccessories').textContent = countAccessories;
 
       // Table
       tbody.innerHTML = '';
-      filtered.forEach(function(p) {
+      filtered.forEach(function(p, index) {
         var priceHTML;
         if (p.sale && p.originalPrice) {
           priceHTML = '<span class="was-price">&pound;' + p.originalPrice.toFixed(2) + '</span> &pound;' + p.price.toFixed(2);
@@ -1073,7 +1198,12 @@
         var collectionLabel = p.collection === 'new-arrivals' ? "What's New" : p.collection === 'last-chance' ? 'Last Chance' : 'Accessories';
 
         var row = document.createElement('tr');
+        row.setAttribute('data-id', p.id);
+        row.setAttribute('draggable', 'true');
         row.innerHTML =
+          '<td class="reorder-cell">' +
+            '<span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>' +
+          '</td>' +
           '<td>' +
             (p.image ? '<img src="' + p.image + '" class="product-thumb" alt="">' : '') +
             '<span class="product-name">' + p.name + '</span>' +
@@ -1088,6 +1218,108 @@
         tbody.appendChild(row);
       });
     }
+
+    // Drag and drop reordering
+    var draggedRow = null;
+    var draggedProductId = null;
+
+    document.addEventListener('dragstart', function(e) {
+      if (e.target.tagName === 'TR' && e.target.closest('#productTableBody')) {
+        draggedRow = e.target;
+        draggedProductId = e.target.getAttribute('data-id');
+        e.target.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      }
+    });
+
+    document.addEventListener('dragend', function(e) {
+      if (draggedRow) {
+        draggedRow.classList.remove('dragging');
+        document.querySelectorAll('.drag-over, .drag-over-below').forEach(function(el) {
+          el.classList.remove('drag-over', 'drag-over-below');
+        });
+        draggedRow = null;
+        draggedProductId = null;
+      }
+    });
+
+    document.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      var row = e.target.closest('tr');
+      if (row && row.closest('#productTableBody') && row !== draggedRow) {
+        e.dataTransfer.dropEffect = 'move';
+
+        // Clear previous indicators
+        document.querySelectorAll('.drag-over, .drag-over-below').forEach(function(el) {
+          el.classList.remove('drag-over', 'drag-over-below');
+        });
+
+        // Show drop indicator
+        var rect = row.getBoundingClientRect();
+        var midpoint = rect.top + rect.height / 2;
+        if (e.clientY < midpoint) {
+          row.classList.add('drag-over');
+        } else {
+          row.classList.add('drag-over-below');
+        }
+      }
+    });
+
+    document.addEventListener('drop', function(e) {
+      e.preventDefault();
+      var targetRow = e.target.closest('tr');
+      if (!targetRow || !targetRow.closest('#productTableBody') || !draggedProductId) return;
+
+      var targetId = targetRow.getAttribute('data-id');
+      if (targetId === draggedProductId) return;
+
+      // Determine if dropping above or below
+      var rect = targetRow.getBoundingClientRect();
+      var dropBelow = e.clientY > rect.top + rect.height / 2;
+
+      // Reorder products
+      var products = getProducts();
+      var collection = currentTab === 'all' ? null : currentTab;
+
+      var viewProducts = collection
+        ? products.filter(function(p) { return p.collection === collection; })
+        : products;
+
+      viewProducts.sort(function(a, b) {
+        var orderA = typeof a.sortOrder === 'number' ? a.sortOrder : 9999;
+        var orderB = typeof b.sortOrder === 'number' ? b.sortOrder : 9999;
+        return orderA - orderB;
+      });
+
+      var fromIndex = viewProducts.findIndex(function(p) { return p.id === draggedProductId; });
+      var toIndex = viewProducts.findIndex(function(p) { return p.id === targetId; });
+
+      if (fromIndex === -1 || toIndex === -1) return;
+
+      // Adjust target index based on drop position
+      if (dropBelow && fromIndex < toIndex) {
+        // No adjustment needed
+      } else if (dropBelow && fromIndex > toIndex) {
+        toIndex++;
+      } else if (!dropBelow && fromIndex > toIndex) {
+        // No adjustment needed
+      } else if (!dropBelow && fromIndex < toIndex) {
+        toIndex--;
+      }
+
+      // Move item
+      var item = viewProducts.splice(fromIndex, 1)[0];
+      viewProducts.splice(toIndex, 0, item);
+
+      // Reassign sortOrder
+      viewProducts.forEach(function(p, idx) {
+        var product = products.find(function(prod) { return prod.id === p.id; });
+        if (product) product.sortOrder = idx;
+      });
+
+      saveProducts(products);
+      renderTable();
+    });
 
     // MODAL
     function openAddModal() {
@@ -1285,7 +1517,15 @@
           products[idx].sizes = sizes;
         }
       } else {
-        // Add new
+        // Add new - find lowest sortOrder in same collection and go lower (to appear first)
+        var sameCollection = products.filter(function(p) { return p.collection === collection; });
+        var minOrder = 0;
+        sameCollection.forEach(function(p) {
+          if (typeof p.sortOrder === 'number' && p.sortOrder <= minOrder) {
+            minOrder = p.sortOrder - 1;
+          }
+        });
+
         var id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') + '-' + Date.now();
         products.push({
           id: id,
@@ -1296,7 +1536,8 @@
           sale: isSale,
           originalPrice: originalPrice,
           description: description,
-          sizes: sizes
+          sizes: sizes,
+          sortOrder: minOrder
         });
       }
 
@@ -1462,6 +1703,15 @@
             openBookingModal(b.id);
           }
         };
+        var actionBtns = '<button class="booking-action-btn" onclick="event.stopPropagation(); openBookingModal(\'' + b.id + '\')" aria-label="View quiz details">View</button>';
+        if (b.status === 'pending') {
+          actionBtns += '<button class="booking-action-btn confirm" onclick="event.stopPropagation(); updateBookingStatus(\'' + b.id + '\', \'confirmed\')" aria-label="Confirm booking">Confirm</button>';
+        }
+        if (b.status === 'confirmed') {
+          actionBtns += '<button class="booking-action-btn complete" onclick="event.stopPropagation(); updateBookingStatus(\'' + b.id + '\', \'completed\')" aria-label="Mark as completed">Complete</button>';
+        }
+        actionBtns += '<button class="booking-action-btn delete" onclick="event.stopPropagation(); deleteBooking(\'' + b.id + '\')" aria-label="Delete booking">Delete</button>';
+
         card.innerHTML =
           '<div class="booking-info">' +
             '<div class="booking-client-name">' + customerName + '</div>' +
@@ -1470,10 +1720,7 @@
           '</div>' +
           '<div class="booking-meta">' +
             '<span class="booking-status status-' + b.status + '">' + b.status + '</span>' +
-            '<div class="booking-actions">' +
-              '<button class="booking-action-btn" onclick="event.stopPropagation(); openBookingModal(\'' + b.id + '\')" aria-label="View quiz details">View</button>' +
-              (b.status !== 'completed' ? '<button class="booking-action-btn complete" onclick="event.stopPropagation(); updateBookingStatus(\'' + b.id + '\', \'completed\')" aria-label="Mark as completed">Complete</button>' : '') +
-            '</div>' +
+            '<div class="booking-actions">' + actionBtns + '</div>' +
           '</div>';
         list.appendChild(card);
       });
@@ -1755,6 +2002,414 @@
     }
 
     // ============================================
+    // SALES / PAYMENTS MANAGEMENT
+    // ============================================
+    var ordersCache = [];
+    var adminOrdersUnsubscribe = null;
+
+    async function loadPayments() {
+      try {
+        document.getElementById('salesTableBody').innerHTML =
+          '<tr><td colspan="6" style="text-align:center; padding: 30px; color: #999;">Loading orders...</td></tr>';
+
+        // Set up real-time listener for Firebase orders
+        if (adminOrdersUnsubscribe) adminOrdersUnsubscribe();
+
+        adminOrdersUnsubscribe = db.collection('orders')
+          .orderBy('createdAt', 'desc')
+          .limit(100)
+          .onSnapshot(function(snapshot) {
+            ordersCache = [];
+            snapshot.forEach(function(doc) {
+              var data = doc.data();
+              ordersCache.push({
+                id: doc.id,
+                ...data,
+                // Normalize the timestamp
+                created: data.createdAt ? data.createdAt.toDate().getTime() / 1000 : (data.stripeCreated || Date.now() / 1000)
+              });
+            });
+            renderSalesTable();
+            updateSalesSummary();
+          }, function(error) {
+            console.error('Error loading orders:', error);
+            document.getElementById('salesTableBody').innerHTML =
+              '<tr><td colspan="6" style="text-align:center; padding: 30px; color: #e74c3c;">Error loading orders: ' + error.message + '</td></tr>';
+          });
+
+        document.getElementById('salesPagination').style.display = 'none';
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        document.getElementById('salesTableBody').innerHTML =
+          '<tr><td colspan="6" style="text-align:center; padding: 30px; color: #e74c3c;">Error loading orders: ' + error.message + '</td></tr>';
+      }
+    }
+
+    function loadMorePayments() {
+      // No longer needed with real-time listener
+    }
+
+    function renderSalesTable() {
+      var tbody = document.getElementById('salesTableBody');
+
+      if (ordersCache.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 30px; color: #999;">No orders yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      ordersCache.forEach(function(order) {
+        var date = new Date(order.created * 1000);
+        var dateStr = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        var timeStr = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+        var amount = (order.total || 0).toFixed(2);
+        var customerName = order.customerInfo ? (order.customerInfo.firstName + ' ' + order.customerInfo.lastName).trim() : 'Guest';
+        var customerEmail = order.customerInfo ? order.customerInfo.email : '';
+
+        var statusClass = order.status === 'paid' ? 'status-active' : 'status-pending';
+        var statusText = order.status === 'paid' ? 'Paid' : (order.status === 'pending' ? 'Pending' : order.status);
+
+        var delivery = order.deliveryOption || 'standard';
+        var deliveryLabel = delivery === 'collection' ? 'Collection' :
+                           delivery === 'dropoff' ? 'Drop-off' :
+                           delivery === 'express' ? 'Express' :
+                           delivery === 'free' ? 'Free' : 'Standard';
+
+        var paymentBadge = order.paymentMethod === 'cash' ?
+          '<span class="collection-badge badge-last-chance">Cash</span>' :
+          '<span class="collection-badge badge-accessories">Card</span>';
+
+        var row = document.createElement('tr');
+        row.innerHTML =
+          '<td><div style="font-weight:500;">' + dateStr + '</div><div style="font-size:0.75rem;color:#999;">' + timeStr + '</div></td>' +
+          '<td><div style="font-weight:500;">' + customerName + '</div><div style="font-size:0.75rem;color:#999;">' + customerEmail + '</div></td>' +
+          '<td>' + paymentBadge + ' <span class="collection-badge badge-new">' + deliveryLabel + '</span></td>' +
+          '<td><div style="font-weight:500;">&pound;' + amount + '</div>' +
+            (order.couponCode ? '<div style="font-size:0.75rem;color:#2e7d32;">Code: ' + order.couponCode + '</div>' : '') + '</td>' +
+          '<td><span class="' + statusClass + '">' + statusText + '</span></td>' +
+          '<td><div class="action-btns">' +
+            '<button class="edit-btn" onclick="viewFirebaseOrder(\'' + order.id + '\')">View</button>' +
+            '<button class="delete-btn" onclick="deleteOrder(\'' + order.id + '\')">Delete</button>' +
+          '</div></td>';
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateSalesSummary() {
+      var now = new Date();
+      var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+      var weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay()).getTime() / 1000;
+      var monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime() / 1000;
+
+      var todayTotal = 0;
+      var weekTotal = 0;
+      var monthTotal = 0;
+      var orderCount = ordersCache.length;
+
+      ordersCache.forEach(function(order) {
+        var amount = order.total || 0;
+        if (order.created >= todayStart) todayTotal += amount;
+        if (order.created >= weekStart) weekTotal += amount;
+        if (order.created >= monthStart) monthTotal += amount;
+      });
+
+      // Update Sales tab summary
+      document.getElementById('salesToday').textContent = '£' + todayTotal.toFixed(2);
+      document.getElementById('salesWeek').textContent = '£' + weekTotal.toFixed(2);
+      document.getElementById('salesTotal').textContent = orderCount;
+
+      // Update top stats cards
+      document.getElementById('statSalesToday').textContent = '£' + todayTotal.toFixed(2);
+      document.getElementById('statSalesWeek').textContent = '£' + weekTotal.toFixed(2);
+      document.getElementById('statSalesMonth').textContent = '£' + monthTotal.toFixed(2);
+      document.getElementById('statOrdersTotal').textContent = orderCount;
+    }
+
+    // Load sales stats on page load (background)
+    async function loadSalesStats() {
+      try {
+        var snapshot = await db.collection('orders').orderBy('createdAt', 'desc').limit(100).get();
+        ordersCache = [];
+        snapshot.forEach(function(doc) {
+          var data = doc.data();
+          ordersCache.push({
+            id: doc.id,
+            ...data,
+            created: data.createdAt ? data.createdAt.toDate().getTime() / 1000 : Date.now() / 1000
+          });
+        });
+        updateSalesSummary();
+      } catch (e) {
+        console.log('Could not load sales stats:', e);
+      }
+    }
+
+    function viewFirebaseOrder(orderId) {
+      var order = ordersCache.find(function(o) { return o.id === orderId; });
+      if (!order) return;
+
+      var date = new Date(order.created * 1000);
+      var dateStr = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      var timeStr = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      var ci = order.customerInfo || {};
+      var customerName = ((ci.firstName || '') + ' ' + (ci.lastName || '')).trim() || 'Guest';
+
+      var deliveryLabels = { standard: 'Standard Delivery (3-5 days)', express: 'Express Delivery (1-2 days)', free: 'Free Delivery', collection: 'Collection', dropoff: 'Drop-off' };
+      var deliveryLabel = deliveryLabels[order.deliveryOption] || order.deliveryOption || 'Standard';
+      var paymentLabel = order.paymentMethod === 'cash' ? 'Cash' : 'Card (Stripe)';
+      var paymentIcon = order.paymentMethod === 'cash' ? '<i class="fas fa-money-bill-wave" style="color:#2e7d32;"></i>' : '<i class="fas fa-credit-card" style="color:#635bff;"></i>';
+      var statusLabel = order.status === 'paid' ? 'Succeeded' : (order.status === 'pending' ? 'Pending' : (order.status || 'Unknown'));
+      var statusColor = order.status === 'paid' ? '#2e7d32' : '#e67e22';
+      var statusBg = order.status === 'paid' ? '#e8f5e9' : '#fff3e0';
+
+      // Items table
+      var itemsHTML = '<table style="width:100%; border-collapse:collapse;">' +
+        '<thead><tr>' +
+          '<th style="text-align:left; padding:10px 0; font-size:0.6rem; letter-spacing:1.5px; text-transform:uppercase; color:#697386; border-bottom:1px solid #e3e8ee;">ITEMS</th>' +
+          '<th style="text-align:center; padding:10px 0; font-size:0.6rem; letter-spacing:1.5px; text-transform:uppercase; color:#697386; border-bottom:1px solid #e3e8ee;">QTY</th>' +
+          '<th style="text-align:right; padding:10px 0; font-size:0.6rem; letter-spacing:1.5px; text-transform:uppercase; color:#697386; border-bottom:1px solid #e3e8ee;">UNIT PRICE</th>' +
+          '<th style="text-align:right; padding:10px 0; font-size:0.6rem; letter-spacing:1.5px; text-transform:uppercase; color:#697386; border-bottom:1px solid #e3e8ee;">AMOUNT</th>' +
+        '</tr></thead><tbody>';
+      (order.items || []).forEach(function(item) {
+        var lineTotal = ((item.price || 0) * (item.quantity || 1)).toFixed(2);
+        itemsHTML += '<tr>' +
+          '<td style="padding:12px 0; border-bottom:1px solid #f0f4f8; font-size:0.85rem; font-weight:500;">' + (item.name || 'Item') + '</td>' +
+          '<td style="padding:12px 0; border-bottom:1px solid #f0f4f8; text-align:center; color:#697386;">' + (item.quantity || 1) + '</td>' +
+          '<td style="padding:12px 0; border-bottom:1px solid #f0f4f8; text-align:right; color:#697386;">&pound;' + (item.price || 0).toFixed(2) + '</td>' +
+          '<td style="padding:12px 0; border-bottom:1px solid #f0f4f8; text-align:right; font-weight:500;">&pound;' + lineTotal + '</td>' +
+        '</tr>';
+      });
+      if ((order.items || []).length === 0) {
+        itemsHTML += '<tr><td colspan="4" style="padding:20px 0; text-align:center; color:#697386;">No items recorded</td></tr>';
+      }
+      itemsHTML += '</tbody></table>';
+
+      // Discounts
+      var discountsHTML = '';
+      if (order.couponCode) {
+        discountsHTML += '<div style="display:flex; justify-content:space-between; padding:8px 0; font-size:0.85rem;">' +
+          '<div style="color:#697386;"><i class="fas fa-tag" style="margin-right:6px;"></i>Coupon: <span style="font-weight:500; color:#333;">' + order.couponCode + '</span></div>' +
+          '<div style="color:#2e7d32; font-weight:500;">-&pound;' + (order.couponDiscount || 0).toFixed(2) + '</div></div>';
+      }
+      if (order.rewardUsed) {
+        discountsHTML += '<div style="display:flex; justify-content:space-between; padding:8px 0; font-size:0.85rem;">' +
+          '<div style="color:#697386;"><i class="fas fa-gift" style="margin-right:6px;"></i>Loyalty Reward</div>' +
+          '<div style="color:#2e7d32; font-weight:500;">-&pound;' + (order.rewardDiscount || 20).toFixed(2) + '</div></div>';
+      }
+
+      // Delivery cost display
+      var deliveryPrices = { standard: 3.99, express: 5.99, free: 0, collection: 0, dropoff: 0 };
+      var delCost = deliveryPrices[order.deliveryOption] !== undefined ? deliveryPrices[order.deliveryOption] : 0;
+
+      // Address lines
+      var addressLines = [ci.address, ci.city, ci.postcode].filter(Boolean);
+
+      var body = document.getElementById('orderModalBody');
+      body.innerHTML =
+        // TOP BAR
+        '<div style="background:#fff; padding:24px 30px; border-bottom:1px solid #e3e8ee; border-radius:8px 8px 0 0; display:flex; justify-content:space-between; align-items:center;">' +
+          '<div style="font-size:0.7rem; color:#697386; letter-spacing:0.5px;">' +
+            '<a onclick="closeOrderModal()" style="color:#635bff; cursor:pointer; text-decoration:none; font-weight:500;">Orders</a>' +
+            ' <span style="margin:0 6px;">&rsaquo;</span> ' + (order.orderNumber || order.id) +
+          '</div>' +
+          '<button onclick="closeOrderModal()" style="background:none; border:1px solid #e3e8ee; border-radius:6px; width:32px; height:32px; font-size:1.1rem; cursor:pointer; color:#697386; display:flex; align-items:center; justify-content:center;">&times;</button>' +
+        '</div>' +
+
+        // MAIN CONTENT - two columns
+        '<div style="display:flex; gap:0; min-height:500px;">' +
+
+          // LEFT COLUMN
+          '<div style="flex:1; padding:30px; background:#fff; border-right:1px solid #e3e8ee;">' +
+
+            // Amount + Status
+            '<div style="margin-bottom:28px;">' +
+              '<div style="font-size:2rem; font-weight:600; color:#1a1d23; margin-bottom:6px;">&pound;' + (order.total || 0).toFixed(2) + ' <span style="font-size:0.9rem; font-weight:400; color:#697386;">GBP</span> ' +
+                '<span style="display:inline-block; background:' + statusBg + '; color:' + statusColor + '; font-size:0.65rem; font-weight:600; padding:3px 10px; border-radius:20px; vertical-align:middle; letter-spacing:0.5px;">' + statusLabel + ' <i class="fas fa-check" style="font-size:0.55rem;"></i></span>' +
+              '</div>' +
+              '<div style="font-size:0.8rem; color:#697386;">Charged to <span style="color:#635bff; font-weight:500;">' + customerName + '</span></div>' +
+            '</div>' +
+
+            // Timeline
+            '<div style="margin-bottom:28px;">' +
+              '<div style="font-size:0.95rem; font-weight:600; color:#1a1d23; margin-bottom:16px;">Recent activity</div>' +
+              '<div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:14px;">' +
+                '<div style="width:24px; height:24px; border-radius:50%; background:' + statusBg + '; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">' +
+                  '<i class="fas fa-check" style="font-size:0.55rem; color:' + statusColor + ';"></i>' +
+                '</div>' +
+                '<div>' +
+                  '<div style="font-size:0.85rem; font-weight:500; color:#1a1d23;">Payment ' + (order.status === 'paid' ? 'authorised' : 'started') + '</div>' +
+                  '<div style="font-size:0.75rem; color:#697386;">' + dateStr + ', ' + timeStr + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div style="display:flex; align-items:flex-start; gap:12px;">' +
+                '<div style="width:24px; height:24px; border-radius:50%; background:#f0f4f8; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">' +
+                  '<i class="fas fa-shopping-cart" style="font-size:0.55rem; color:#697386;"></i>' +
+                '</div>' +
+                '<div>' +
+                  '<div style="font-size:0.85rem; font-weight:500; color:#1a1d23;">Order created</div>' +
+                  '<div style="font-size:0.75rem; color:#697386;">' + dateStr + ', ' + timeStr + '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+
+            // Checkout summary
+            '<div style="margin-bottom:28px;">' +
+              '<div style="font-size:0.95rem; font-weight:600; color:#1a1d23; margin-bottom:16px;">Checkout summary</div>' +
+              '<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">' +
+                '<div>' +
+                  '<div style="font-size:0.75rem; color:#697386; margin-bottom:8px;">Customer</div>' +
+                  '<div style="font-size:0.85rem; color:#1a1d23;">' + (ci.email || 'N/A') + '</div>' +
+                  '<div style="font-size:0.85rem; color:#1a1d23; margin-top:8px;">' + customerName + '</div>' +
+                  (addressLines.length > 0 ? addressLines.map(function(l) { return '<div style="font-size:0.85rem; color:#1a1d23;">' + l + '</div>'; }).join('') : '') +
+                '</div>' +
+                '<div>' +
+                  '<div style="font-size:0.75rem; color:#697386; margin-bottom:8px;">Shipping details</div>' +
+                  '<div style="font-size:0.85rem; color:#1a1d23;">' + customerName + '</div>' +
+                  (addressLines.length > 0 ? addressLines.map(function(l) { return '<div style="font-size:0.85rem; color:#1a1d23;">' + l + '</div>'; }).join('') : '<div style="font-size:0.85rem; color:#697386;">N/A</div>') +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+
+            // Items table
+            '<div>' + itemsHTML + '</div>' +
+
+            // Delivery line
+            '<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f0f4f8; font-size:0.85rem;">' +
+              '<div style="color:#697386;"><i class="fas fa-truck" style="margin-right:6px;"></i>' + deliveryLabel + '</div>' +
+              '<div style="font-weight:500;">' + (delCost > 0 ? '&pound;' + delCost.toFixed(2) : 'Free') + '</div>' +
+            '</div>' +
+
+            // Discounts
+            (discountsHTML ? '<div style="border-bottom:1px solid #f0f4f8;">' + discountsHTML + '</div>' : '') +
+
+            // Total
+            '<div style="display:flex; justify-content:space-between; padding:14px 0; font-size:1.05rem; font-weight:600; color:#1a1d23;">' +
+              '<div>Total</div><div>&pound;' + (order.total || 0).toFixed(2) + '</div>' +
+            '</div>' +
+
+          '</div>' +
+
+          // RIGHT COLUMN - Details sidebar
+          '<div style="width:280px; padding:30px 24px; background:#f6f8fa; flex-shrink:0; border-radius:0 0 8px 0;">' +
+
+            '<div style="font-size:0.95rem; font-weight:600; color:#1a1d23; margin-bottom:20px;">Details</div>' +
+
+            '<div style="margin-bottom:18px;">' +
+              '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">Order ID</div>' +
+              '<div style="font-size:0.8rem; color:#697386; word-break:break-all;">' + (order.orderNumber || order.id) + '</div>' +
+            '</div>' +
+
+            '<div style="margin-bottom:18px;">' +
+              '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">Payment method</div>' +
+              '<div style="font-size:0.8rem; color:#697386;">' + paymentIcon + ' &nbsp;' + paymentLabel + '</div>' +
+            '</div>' +
+
+            '<div style="margin-bottom:18px;">' +
+              '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">Delivery method</div>' +
+              '<div style="font-size:0.8rem; color:#697386;">' + deliveryLabel + '</div>' +
+            '</div>' +
+
+            '<div style="margin-bottom:18px;">' +
+              '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">Last updated</div>' +
+              '<div style="font-size:0.8rem; color:#697386;">' + dateStr + ', ' + timeStr + '</div>' +
+            '</div>' +
+
+            '<div style="border-top:1px solid #e3e8ee; padding-top:20px; margin-top:20px;">' +
+              '<div style="font-size:0.95rem; font-weight:600; color:#1a1d23; margin-bottom:16px;">Customer</div>' +
+
+              '<div style="margin-bottom:14px;">' +
+                '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">Name</div>' +
+                '<div style="font-size:0.8rem; color:#697386;">' + customerName + '</div>' +
+              '</div>' +
+
+              '<div style="margin-bottom:14px;">' +
+                '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">Email address</div>' +
+                '<div style="font-size:0.8rem; color:#697386; word-break:break-all;">' + (ci.email || 'N/A') + '</div>' +
+              '</div>' +
+
+              '<div style="margin-bottom:14px;">' +
+                '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">Phone number</div>' +
+                '<div style="font-size:0.8rem; color:#697386;">' + (ci.phone || 'N/A') + '</div>' +
+              '</div>' +
+
+              '<div style="margin-bottom:14px;">' +
+                '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">Address</div>' +
+                (addressLines.length > 0 ? addressLines.map(function(l) { return '<div style="font-size:0.8rem; color:#697386;">' + l + '</div>'; }).join('') : '<div style="font-size:0.8rem; color:#697386;">N/A</div>') +
+              '</div>' +
+
+            '</div>' +
+
+            (order.userId ? '<div style="border-top:1px solid #e3e8ee; padding-top:14px; margin-top:14px;">' +
+              '<div style="font-size:0.75rem; font-weight:600; color:#1a1d23; margin-bottom:4px;">User ID</div>' +
+              '<div style="font-size:0.7rem; color:#697386; word-break:break-all;">' + order.userId + '</div>' +
+            '</div>' : '') +
+
+          '</div>' +
+
+        '</div>';
+
+      document.getElementById('orderModalOverlay').classList.add('show');
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModalOverlay').classList.remove('show');
+    }
+
+    async function deleteOrder(orderId) {
+      if (!confirm('Are you sure you want to delete this order?')) return;
+      try {
+        await db.collection('orders').doc(orderId).delete();
+        // Real-time listener will update the UI
+      } catch (error) {
+        alert('Error deleting order: ' + error.message);
+      }
+    }
+
+    function viewOrder(sessionId) {
+      // Legacy function for Stripe orders - redirect to Firebase view
+      viewFirebaseOrder(sessionId);
+    }
+
+    async function refundOrder(paymentIntentId, maxAmount) {
+      var amountStr = prompt('Enter refund amount in pence (max ' + maxAmount + ' = £' + (maxAmount/100).toFixed(2) + ')\\nLeave blank for full refund:', '');
+
+      if (amountStr === null) return; // Cancelled
+
+      var amount = amountStr.trim() === '' ? null : parseInt(amountStr);
+      if (amount !== null && (isNaN(amount) || amount <= 0 || amount > maxAmount)) {
+        alert('Invalid refund amount');
+        return;
+      }
+
+      if (!confirm('Are you sure you want to refund ' + (amount ? '£' + (amount/100).toFixed(2) : 'the full amount') + '?')) {
+        return;
+      }
+
+      try {
+        var response = await fetch('/api/create-refund', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paymentIntentId: paymentIntentId,
+            amount: amount,
+            reason: 'requested_by_customer'
+          })
+        });
+
+        var data = await response.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        alert('Refund processed successfully!\\nRefund ID: ' + data.refund.id);
+        loadPayments(); // Refresh the list
+      } catch (error) {
+        alert('Error processing refund: ' + error.message);
+      }
+    }
+
+    // ============================================
     // DISCOUNT CODES MANAGEMENT
     // ============================================
     var discountsCache = [];
@@ -1868,7 +2523,7 @@
         loadDiscounts();
       } catch (error) {
         console.error('Error saving discount:', error);
-        alert('Error saving discount code. Please try again.');
+        alert('Error saving discount code: ' + error.message);
       }
     }
 

@@ -560,18 +560,29 @@
 
       try {
         const user = auth.currentUser;
+        const orderNumber = 'SSM-' + Date.now().toString(36).toUpperCase();
         const orderData = {
+          orderNumber: orderNumber,
           items: cart,
           customerInfo: getCustomerInfo(),
           deliveryOption: activeType,
           paymentMethod: 'cash',
+          subtotal: subtotal,
           total: finalTotal,
+          couponCode: appliedCoupon ? appliedCoupon.code : null,
+          couponDiscount: appliedCoupon ? couponDiscount : 0,
           rewardUsed: rewardAvailable,
+          rewardDiscount: rewardAvailable ? Math.min(20, subtotal) : 0,
           status: 'pending',
+          userId: user ? user.uid : null,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
+        // Always save to global orders collection
+        await db.collection('orders').add(orderData);
+
         if (user) {
+          // Also save to user's orders
           await db.collection('users').doc(user.uid).collection('orders').add(orderData);
 
           // Update rewards: increment count and reset reward if used
@@ -625,7 +636,9 @@
             customerInfo: getCustomerInfo(),
             deliveryOption: activeType,
             rewardUsed: rewardAvailable,
-            userId: user ? user.uid : null
+            userId: user ? user.uid : null,
+            couponCode: appliedCoupon ? appliedCoupon.code : null,
+            couponDiscount: appliedCoupon ? couponDiscount : 0
           })
         });
 
@@ -667,7 +680,9 @@
             customerInfo: getCustomerInfo(),
             deliveryOption: activeType,
             rewardUsed: rewardAvailable,
-            userId: user ? user.uid : null
+            userId: user ? user.uid : null,
+            couponCode: appliedCoupon ? appliedCoupon.code : null,
+            couponDiscount: appliedCoupon ? couponDiscount : 0
           })
         });
 

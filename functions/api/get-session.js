@@ -20,7 +20,8 @@ export async function onRequestGet(context) {
       });
     }
 
-    const stripeResponse = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
+    // Fetch session with line items expanded
+    const stripeResponse = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}?expand[]=line_items`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
@@ -36,10 +37,24 @@ export async function onRequestGet(context) {
       });
     }
 
-    // Only return the metadata we need
+    // Format line items
+    const items = session.line_items?.data?.map(item => ({
+      name: item.description,
+      quantity: item.quantity,
+      price: item.amount_total / 100,
+    })) || [];
+
+    // Return full order details
     return new Response(JSON.stringify({
+      id: session.id,
       metadata: session.metadata,
       payment_status: session.payment_status,
+      amount_total: session.amount_total,
+      currency: session.currency,
+      customer_email: session.customer_email || session.customer_details?.email,
+      customer_name: session.customer_details?.name,
+      created: session.created,
+      items: items,
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', ...corsHeaders },
