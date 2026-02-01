@@ -1207,7 +1207,7 @@
             '<span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>' +
           '</td>' +
           '<td>' +
-            (p.image ? '<img src="' + p.image + '" class="product-thumb" alt="">' : '') +
+            (p.image ? '<img src="' + p.image + '" class="product-thumb" alt="" onerror="this.onerror=null;this.src=\'/images/placeholder-product.svg\'">' : '') +
             '<span class="product-name">' + p.name + '</span>' +
           '</td>' +
           '<td>' + priceHTML + '</td>' +

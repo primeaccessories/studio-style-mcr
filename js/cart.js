@@ -198,7 +198,7 @@ function renderMiniCart() {
   miniCartItems.innerHTML = cart.map(item => `
     <div class="mini-cart-item">
       <div class="mini-cart-item-image">
-        ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ''}
+        ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='/images/placeholder-product.svg'">` : ''}
       </div>
       <div class="mini-cart-item-details">
         <h4>${item.name}</h4>
@@ -233,7 +233,7 @@ function renderCart() {
   cartItems.innerHTML = cart.map(item => `
     <div class="cart-item">
       <div class="cart-item-image">
-        ${item.image ? `<img src="${item.image}" alt="${item.name}">` : '<span>No image</span>'}
+        ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='/images/placeholder-product.svg'">` : '<span>No image</span>'}
       </div>
       <div class="cart-item-details">
         <h3>${item.name}</h3>

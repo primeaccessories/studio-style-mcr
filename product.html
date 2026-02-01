@@ -387,8 +387,10 @@
 
       // Update page
       document.title = currentProduct.name + ' | Studio Style MCR';
-      document.getElementById('productImage').src = currentProduct.image;
-      document.getElementById('productImage').alt = currentProduct.name;
+      var imgEl = document.getElementById('productImage');
+      imgEl.onerror = function() { this.onerror = null; this.src = '/images/placeholder-product.svg'; };
+      imgEl.src = currentProduct.image;
+      imgEl.alt = currentProduct.name;
       document.getElementById('productTitle').textContent = currentProduct.name;
       document.getElementById('productBreadcrumb').textContent = currentProduct.name;
 

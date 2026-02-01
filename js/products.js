@@ -183,7 +183,7 @@ function renderCollectionProducts(collection) {
       '<a href="product.html?id=' + p.id + '" class="product-image-link">' +
         '<div class="product-image">' +
           (p.sale ? '<span class="sale-badge">SALE</span>' : '') +
-          '<img src="' + p.image + '" alt="' + p.name + '">' +
+          '<img src="' + p.image + '" alt="' + p.name + '" onerror="this.onerror=null;this.src=\'/images/placeholder-product.svg\'">' +
         '</div>' +
       '</a>' +
       '<div class="product-info">' +
