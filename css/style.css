@@ -892,12 +892,14 @@ img {
   }
 
   .shop-sections {
-    padding: 0;
+    padding: 12px;
   }
 
   .sections-grid.four-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
+    gap: 4px;
+    border-radius: 8px;
+    overflow: hidden;
   }
 
   .card-overlay h3 {
