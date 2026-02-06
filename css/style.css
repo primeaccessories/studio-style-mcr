@@ -891,12 +891,16 @@ img {
 
   .shop-sections {
     padding: 0;
-    height: calc(100vh - 60px);
+    height: auto;
   }
 
   .sections-grid.four-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1px;
+  }
+
+  .sections-grid.four-grid .section-card {
+    aspect-ratio: 1;
   }
 
   .card-overlay h3 {
