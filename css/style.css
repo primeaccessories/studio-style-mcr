@@ -295,7 +295,6 @@ img {
 
 /* Shop Sections */
 .shop-sections {
-  height: calc(100vh - 95px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -316,7 +315,10 @@ img {
   gap: 1px;
   background: rgba(0,0,0,0.08);
   width: 100%;
-  height: 100%;
+}
+
+.sections-grid.four-grid .section-card {
+  aspect-ratio: 1;
 }
 
 .section-card {
@@ -891,16 +893,11 @@ img {
 
   .shop-sections {
     padding: 0;
-    height: auto;
   }
 
   .sections-grid.four-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1px;
-  }
-
-  .sections-grid.four-grid .section-card {
-    aspect-ratio: 1;
   }
 
   .card-overlay h3 {
