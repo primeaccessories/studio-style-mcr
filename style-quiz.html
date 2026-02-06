@@ -46,18 +46,7 @@
       justify-content: center;
       padding: 20px;
       background: linear-gradient(180deg, #f8f6f3 0%, #ebe6df 100%);
-      position: relative;
     }
-
-    .back-arrow {
-      position: fixed; top: 16px; left: 16px; z-index: 100;
-      width: 36px; height: 36px; border-radius: 50%;
-      background: rgba(255,255,255,0.85); border: 1px solid rgba(0,0,0,0.08);
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none; color: #333; font-size: 1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.2s;
-    }
-    .back-arrow:hover { background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
 
     .panel {
       background: #ffffff;
@@ -747,7 +736,6 @@
   </style>
 </head>
 <body>
-  <a href="index.html" class="back-arrow">&#8592;</a>
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useCallback, useMemo } = React;

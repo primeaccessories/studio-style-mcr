@@ -160,48 +160,13 @@
     .status-sale { display: inline-block; padding: 3px 10px; background: #fff3e0; color: #e65100; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; }
     .was-price { text-decoration: line-through; color: #bbb; margin-right: 5px; }
     .action-btns { display: flex; gap: 8px; }
-    .edit-btn, .delete-btn, .dupe-btn {
+    .edit-btn, .delete-btn {
       padding: 5px 12px; font-family: inherit; font-size: 0.6rem;
       letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border: 1px solid #ddd;
       background: #fff; color: #555; transition: all 0.2s;
     }
     .edit-btn:hover { border-color: #000; color: #000; }
-    .dupe-btn:hover { border-color: #1565c0; color: #1565c0; }
     .delete-btn:hover { border-color: #e74c3c; color: #e74c3c; }
-    .actions-menu-btn {
-      display: none; padding: 6px 14px; font-family: inherit; font-size: 0.65rem;
-      letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
-      border: 1px solid #ddd; background: #fff; color: #555;
-    }
-    .action-popup {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5); z-index: 600; align-items: flex-end; justify-content: center;
-    }
-    .action-popup.show { display: flex; }
-    .action-popup-menu {
-      background: #fff; width: 100%; max-width: 500px; padding: 0;
-      border-radius: 12px 12px 0 0; overflow: hidden;
-    }
-    .action-popup-title {
-      padding: 16px 20px; font-size: 0.7rem; letter-spacing: 2px;
-      text-transform: uppercase; color: #999; border-bottom: 1px solid #eee;
-    }
-    .action-popup-item {
-      display: flex; align-items: center; gap: 12px; width: 100%;
-      padding: 16px 20px; font-family: inherit; font-size: 0.85rem;
-      border: none; background: #fff; color: #333; cursor: pointer;
-      text-align: left; border-bottom: 1px solid #f5f5f5;
-    }
-    .action-popup-item:active { background: #f5f5f5; }
-    .action-popup-item i { width: 20px; text-align: center; color: #999; }
-    .action-popup-item.danger { color: #e74c3c; }
-    .action-popup-item.danger i { color: #e74c3c; }
-    .action-popup-cancel {
-      display: block; width: 100%; padding: 16px; font-family: inherit;
-      font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase;
-      border: none; background: #f5f5f5; color: #555; cursor: pointer;
-      text-align: center;
-    }
 
     /* DRAG REORDER */
     .reorder-cell { width: 40px; text-align: center; }
@@ -283,23 +248,6 @@
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       line-height: 1;
     }
-    .upload-preview img { cursor: zoom-in; }
-    .image-lightbox {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); display: none; align-items: center;
-      justify-content: center; z-index: 2000; cursor: zoom-out;
-    }
-    .image-lightbox.show { display: flex; }
-    .image-lightbox img {
-      max-width: 90vw; max-height: 90vh; object-fit: contain;
-      border: 2px solid rgba(255,255,255,0.1); border-radius: 4px;
-    }
-    .lightbox-close {
-      position: absolute; top: 20px; right: 25px;
-      background: none; border: none; color: #fff; font-size: 2rem;
-      cursor: pointer; opacity: 0.7; transition: opacity 0.2s;
-    }
-    .lightbox-close:hover { opacity: 1; }
     .url-toggle { text-align: center; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .url-toggle span { font-size: 0.7rem; color: #bbb; }
     .url-toggle-btn {
@@ -592,45 +540,20 @@
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
-      .stat-card { padding: 12px; }
-      .stat-value { font-size: 1.2rem; }
-      .stat-label { font-size: 0.55rem; margin-bottom: 4px; }
-      .stat-sub { font-size: 0.6rem; margin-top: 2px; }
-      .admin-header { flex-direction: column; gap: 8px; text-align: center; padding: 12px; }
-      .admin-header-right { gap: 12px; }
-      .admin-body { padding: 10px 8px; }
-      .admin-toolbar { flex-direction: column; gap: 8px; padding: 10px 12px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .admin-header { flex-direction: column; gap: 15px; text-align: center; }
+      .admin-body { padding: 20px 15px; }
+      .admin-toolbar { flex-direction: column; gap: 10px; }
       .toolbar-left { flex-direction: column; width: 100%; }
       .admin-search { width: 100%; }
-      .add-btn { width: 100%; text-align: center; }
-      .product-thumb { width: 30px; height: 30px; margin-right: 6px; border-radius: 3px; }
+      .product-thumb { display: none; }
       .form-row { grid-template-columns: 1fr; }
-      .admin-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .admin-tab { padding: 10px 14px; white-space: nowrap; font-size: 0.6rem; }
-      .admin-subtabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .admin-subtab { padding: 8px 12px; white-space: nowrap; font-size: 0.6rem; }
-      .reorder-cell, .product-table th:first-child { display: none; }
-      .product-table th { padding: 8px 6px; font-size: 0.55rem; letter-spacing: 1px; }
-      .product-table td { padding: 8px 6px; font-size: 0.75rem; }
-      .action-btns .edit-btn, .action-btns .delete-btn, .action-btns .dupe-btn { display: none; }
-      .actions-menu-btn { display: inline-block; }
-      .collection-badge { font-size: 0.5rem; padding: 2px 5px; }
-      .status-active, .status-sale { font-size: 0.55rem; padding: 2px 6px; }
-      .modal { padding: 20px 15px; max-width: 100%; width: 100%; max-height: 100vh; border-radius: 0; }
-      .modal-overlay { align-items: flex-start; }
-      .modal h2 { font-size: 0.75rem; }
-      .modal-save, .modal-cancel { width: 100%; }
-      .modal-actions { flex-direction: column; gap: 8px; }
-      .image-upload-area { padding: 15px 10px; }
-      .tab-content { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .admin-tabs { overflow-x: auto; }
+      .admin-subtabs { overflow-x: auto; }
+      .admin-subtab { padding: 10px 15px; white-space: nowrap; }
     }
     @media (max-width: 480px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .admin-header-logo { font-size: 0.85rem; }
-      .admin-badge { font-size: 0.5rem; }
-      .product-table td { padding: 6px 4px; font-size: 0.7rem; }
-      .product-table th { padding: 6px 4px; }
+      .stats-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -923,7 +846,7 @@
             <span>JPG, PNG up to 5MB</span>
           </div>
           <div class="upload-preview" id="uploadPreview" style="display:none;">
-            <img id="previewImg" src="" alt="Preview" onclick="event.stopPropagation(); openLightbox(this.src);">
+            <img id="previewImg" src="" alt="Preview">
             <button type="button" class="remove-image" onclick="event.stopPropagation(); removeImage();">&times;</button>
           </div>
         </div>
@@ -1292,9 +1215,7 @@
           '<td>' + (p.sale ? '<span class="status-sale">Sale</span>' : '<span class="status-active">Active</span>') + '</td>' +
           '<td><div class="action-btns">' +
             '<button class="edit-btn" onclick="openEditModal(\'' + p.id + '\')">Edit</button>' +
-            '<button class="dupe-btn" onclick="duplicateProduct(\'' + p.id + '\')">Dupe</button>' +
             '<button class="delete-btn" onclick="deleteProduct(\'' + p.id + '\')">Delete</button>' +
-            '<button class="actions-menu-btn" onclick="openActionMenu(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\')"><i class="fas fa-ellipsis-v"></i></button>' +
           '</div></td>';
         tbody.appendChild(row);
       });
@@ -1556,23 +1477,6 @@
       }
     }
 
-    function openLightbox(src) {
-      if (!src) return;
-      document.getElementById('lightboxImg').src = src;
-      document.getElementById('imageLightbox').classList.add('show');
-    }
-
-    function closeLightbox() {
-      document.getElementById('imageLightbox').classList.remove('show');
-      document.getElementById('lightboxImg').src = '';
-    }
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && document.getElementById('imageLightbox').classList.contains('show')) {
-        closeLightbox();
-      }
-    });
-
     // SAVE
     function saveProduct() {
       var name = document.getElementById('formName').value.trim();
@@ -1663,88 +1567,6 @@
       var products = getProducts().filter(function(p) { return p.id !== id; });
       saveProducts(products);
       renderTable();
-    }
-
-    function duplicateProduct(id) {
-      var products = getProducts();
-      var original = products.find(function(p) { return p.id === id; });
-      if (!original) return;
-      var copy = JSON.parse(JSON.stringify(original));
-      copy.id = Date.now().toString();
-      copy.name = original.name + ' (Copy)';
-      products.push(copy);
-      saveProducts(products);
-      renderTable();
-    }
-
-    // Mobile action menu
-    var actionMenuProductId = null;
-
-    function openActionMenu(id, name) {
-      actionMenuProductId = id;
-      document.getElementById('actionPopupTitle').textContent = name;
-      document.getElementById('actionPopup').classList.add('show');
-    }
-
-    function closeActionMenu() {
-      document.getElementById('actionPopup').classList.remove('show');
-      actionMenuProductId = null;
-    }
-
-    function actionMenuEdit() {
-      var id = actionMenuProductId;
-      closeActionMenu();
-      openEditModal(id);
-    }
-
-    function actionMenuDupe() {
-      var id = actionMenuProductId;
-      closeActionMenu();
-      duplicateProduct(id);
-    }
-
-    function actionMenuDelete() {
-      var id = actionMenuProductId;
-      closeActionMenu();
-      deleteProduct(id);
-    }
-
-    function moveProduct(id, direction) {
-      var products = getProducts();
-      var collection = currentTab === 'all' ? null : currentTab;
-      var viewProducts = collection
-        ? products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf(collection) > -1; })
-        : products;
-      viewProducts.sort(function(a, b) {
-        var oa = typeof a.sortOrder === 'number' ? a.sortOrder : 9999;
-        var ob = typeof b.sortOrder === 'number' ? b.sortOrder : 9999;
-        return oa - ob;
-      });
-      var idx = viewProducts.findIndex(function(p) { return p.id === id; });
-      if (idx === -1) return;
-      var swapIdx = idx + direction;
-      if (swapIdx < 0 || swapIdx >= viewProducts.length) return;
-      var temp = viewProducts[idx];
-      viewProducts[idx] = viewProducts[swapIdx];
-      viewProducts[swapIdx] = temp;
-      viewProducts.forEach(function(p, i) {
-        var prod = products.find(function(pr) { return pr.id === p.id; });
-        if (prod) prod.sortOrder = i;
-      });
-      saveProducts(products);
-      renderTable();
-    }
-
-    function actionMenuMoveUp() {
-      var id = actionMenuProductId;
-      closeActionMenu();
-      moveProduct(id, -1);
-    }
-
-    function actionMenuMoveDown() {
-      var id = actionMenuProductId;
-      closeActionMenu();
-      moveProduct(id, 1);
     }
 
     // BOOKINGS
@@ -2736,25 +2558,6 @@
       showDashboard();
     }
   </script>
-
-<!-- Mobile Action Menu -->
-<div class="action-popup" id="actionPopup" onclick="closeActionMenu()">
-  <div class="action-popup-menu" onclick="event.stopPropagation()">
-    <div class="action-popup-title" id="actionPopupTitle">Product</div>
-    <button class="action-popup-item" onclick="actionMenuEdit()"><i class="fas fa-pen"></i> Edit</button>
-    <button class="action-popup-item" onclick="actionMenuDupe()"><i class="fas fa-copy"></i> Duplicate</button>
-    <button class="action-popup-item" onclick="actionMenuMoveUp()"><i class="fas fa-arrow-up"></i> Move Up</button>
-    <button class="action-popup-item" onclick="actionMenuMoveDown()"><i class="fas fa-arrow-down"></i> Move Down</button>
-    <button class="action-popup-item danger" onclick="actionMenuDelete()"><i class="fas fa-trash"></i> Delete</button>
-    <button class="action-popup-cancel" onclick="closeActionMenu()">Cancel</button>
-  </div>
-</div>
-
-<!-- Image Review Lightbox -->
-<div class="image-lightbox" id="imageLightbox" onclick="closeLightbox()">
-  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-  <img id="lightboxImg" src="" alt="Image Review">
-</div>
 
 </body>
 </html>

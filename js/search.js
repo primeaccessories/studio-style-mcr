@@ -45,7 +45,7 @@ function performSearch() {
   };
 
   var html = matches.map(function(p) {
-    var page = collectionPages[p.collection] || 'new-arrivals.html';
+    var page = collectionPages[p.collection] || 'shop.html';
     var priceText = p.sale && p.originalPrice
       ? '<span class="search-was">&pound;' + p.originalPrice.toFixed(2) + '</span> &pound;' + p.price.toFixed(2)
       : '&pound;' + p.price.toFixed(2);
