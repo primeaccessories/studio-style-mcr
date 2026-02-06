@@ -74,6 +74,13 @@ function migrateCollections(products) {
   return migrated;
 }
 
+// Clear stale localStorage cache — bump version to force refresh from Firebase
+var _productsCacheVersion = 2;
+if (parseInt(localStorage.getItem('studioProductsVersion')) !== _productsCacheVersion) {
+  localStorage.removeItem('studioProducts');
+  localStorage.setItem('studioProductsVersion', _productsCacheVersion);
+}
+
 // Products cache - updated by real-time listener
 var _productsCache = null;
 var _productsListenerInit = false;
