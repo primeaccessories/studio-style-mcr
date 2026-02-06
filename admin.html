@@ -619,8 +619,8 @@
       .actions-menu-btn { display: inline-block; }
       .collection-badge { font-size: 0.5rem; padding: 2px 5px; }
       .status-active, .status-sale { font-size: 0.55rem; padding: 2px 6px; }
-      .modal { padding: 20px 15px; max-width: 100%; width: 100%; max-height: 100vh; border-radius: 0; }
-      .modal-overlay { align-items: flex-start; }
+      .modal { padding: 20px 15px; max-width: 100%; width: 100%; max-height: 100vh; border-radius: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+      .modal-overlay { align-items: flex-start; overflow-y: auto; touch-action: pan-y; }
       .modal h2 { font-size: 0.75rem; }
       .modal-save, .modal-cancel { width: 100%; }
       .modal-actions { flex-direction: column; gap: 8px; }
@@ -1429,6 +1429,7 @@
         document.getElementById('size' + size).checked = false;
       });
       document.getElementById('modalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
     }
 
     function openEditModal(id) {
@@ -1477,10 +1478,12 @@
       }
 
       document.getElementById('modalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
       document.getElementById('modalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
       editingId = null;
     }
 
@@ -2675,10 +2678,12 @@
         document.getElementById('discountEnabled').checked = true;
       }
       document.getElementById('discountModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
     }
 
     function closeDiscountModal() {
       document.getElementById('discountModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
       editingDiscountId = null;
     }
 
