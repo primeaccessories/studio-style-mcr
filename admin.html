@@ -557,20 +557,42 @@
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .admin-header { flex-direction: column; gap: 15px; text-align: center; }
-      .admin-body { padding: 20px 15px; }
-      .admin-toolbar { flex-direction: column; gap: 10px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-card { padding: 15px; }
+      .stat-value { font-size: 1.4rem; }
+      .admin-header { flex-direction: column; gap: 10px; text-align: center; padding: 15px; }
+      .admin-header-right { gap: 12px; }
+      .admin-body { padding: 15px 10px; }
+      .admin-toolbar { flex-direction: column; gap: 10px; padding: 12px 15px; }
       .toolbar-left { flex-direction: column; width: 100%; }
       .admin-search { width: 100%; }
+      .add-btn { width: 100%; text-align: center; }
       .product-thumb { display: none; }
       .form-row { grid-template-columns: 1fr; }
-      .admin-tabs { overflow-x: auto; }
-      .admin-subtabs { overflow-x: auto; }
+      .admin-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .admin-tab { padding: 12px 18px; white-space: nowrap; font-size: 0.6rem; }
+      .admin-subtabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
       .admin-subtab { padding: 10px 15px; white-space: nowrap; }
+      .product-table th { padding: 10px 12px; font-size: 0.6rem; }
+      .product-table td { padding: 10px 12px; font-size: 0.75rem; }
+      .action-btns { flex-direction: column; gap: 5px; }
+      .edit-btn, .delete-btn { padding: 6px 10px; font-size: 0.55rem; width: 100%; text-align: center; }
+      .collection-badge { font-size: 0.5rem; padding: 2px 6px; }
+      .modal { padding: 20px 15px; max-width: 100%; width: 100%; max-height: 100vh; border-radius: 0; }
+      .modal-overlay { align-items: flex-start; }
+      .modal h2 { font-size: 0.75rem; }
+      .modal-save, .modal-cancel { width: 100%; }
+      .modal-actions { flex-direction: column; gap: 8px; }
+      .image-upload-area { padding: 20px 10px; }
+      .tab-content { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     }
     @media (max-width: 480px) {
       .stats-grid { grid-template-columns: 1fr; }
+      .admin-header-logo { font-size: 0.85rem; }
+      .admin-badge { font-size: 0.5rem; }
+      .product-table { font-size: 0.7rem; }
+      .product-table th:nth-child(n+4), .product-table td:nth-child(n+4) { display: none; }
+      .admin-tab { padding: 10px 14px; font-size: 0.55rem; letter-spacing: 1px; }
     }
   </style>
 </head>
