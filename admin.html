@@ -1771,12 +1771,13 @@
     // BOOKINGS
     var currentCalendarDate = new Date();
     var selectedCalendarDate = null;
-    var AVAILABLE_DAYS = [1, 2, 3]; // Mon, Tue, Wed
+    var AVAILABLE_DAYS = [1, 3, 5]; // Mon, Wed, Fri
     var TIME_SLOTS = [
+      { time: '10:00', label: '10:00 – 11:00' },
+      { time: '11:00', label: '11:00 – 12:00' },
       { time: '12:00', label: '12:00 – 13:00' },
       { time: '13:00', label: '13:00 – 14:00' },
-      { time: '14:00', label: '14:00 – 15:00' },
-      { time: '15:00', label: '15:00 – 16:00' }
+      { time: '14:00', label: '14:00 – 15:00' }
     ];
 
     // getBookings() is defined above (line 812) - uses Firebase bookingsCache
@@ -1795,7 +1796,7 @@
     }
 
     function formatTime(time) {
-      var labels = { "12:00": "12pm", "13:00": "1pm", "14:00": "2pm", "15:00": "3pm" };
+      var labels = { "10:00": "10am", "11:00": "11am", "12:00": "12pm", "13:00": "1pm", "14:00": "2pm" };
       return labels[time] || time;
     }
 
