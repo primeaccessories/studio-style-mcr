@@ -1914,67 +1914,56 @@
     }
 
     function showGoLiveCollectionPicker() {
-      // Build a mini picker in the confirm dialog
-      var count = goLiveProductIds.length || 'all';
-      var title = goLiveProductIds.length === 1 ? 'Push Product Live' : 'Push All Products Live';
-      var msg = 'Which collection should ' + (goLiveProductIds.length === 1 ? 'this product' : 'these products') + ' go to?';
+      var isSingle = goLiveProductIds.length === 1;
+      var title = isSingle ? 'Push Product Live' : 'Push All Products Live';
+      var collectionLabels = { 'new-arrivals': "What's New", 'last-chance': 'Last Chance', 'accessories': 'Accessories' };
 
       document.getElementById('confirmTitle').textContent = title;
       document.getElementById('confirmMessage').innerHTML =
-        '<div style="margin-top:8px;">' +
-          '<div style="display:flex; flex-direction:column; gap:6px; text-align:left;">' +
-            '<label style="display:flex; align-items:center; gap:8px; padding:8px 10px; background:#f8f8f8; border-radius:6px; cursor:pointer; font-size:0.8rem;">' +
-              '<input type="radio" name="goLiveCollection" value="new-arrivals" checked> What\'s New' +
-            '</label>' +
-            '<label style="display:flex; align-items:center; gap:8px; padding:8px 10px; background:#f8f8f8; border-radius:6px; cursor:pointer; font-size:0.8rem;">' +
-              '<input type="radio" name="goLiveCollection" value="last-chance"> Last Chance' +
-            '</label>' +
-            '<label style="display:flex; align-items:center; gap:8px; padding:8px 10px; background:#f8f8f8; border-radius:6px; cursor:pointer; font-size:0.8rem;">' +
-              '<input type="radio" name="goLiveCollection" value="accessories"> Accessories' +
-            '</label>' +
-          '</div>' +
+        '<div style="color:#666; font-size:0.78rem; margin-bottom:10px;">' +
+          (isSingle ? 'This product' : 'These products') + ' will become visible to customers.' +
+        '</div>' +
+        '<div style="font-size:0.78rem; color:#333; font-weight:600; margin-bottom:6px; text-align:left;">Move to:</div>' +
+        '<div style="display:flex; flex-direction:column; gap:6px; text-align:left;">' +
+          '<label style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:#f8f8f8; border-radius:8px; cursor:pointer; font-size:0.82rem;">' +
+            '<input type="radio" name="goLiveCollection" value="new-arrivals" checked> What\'s New' +
+          '</label>' +
+          '<label style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:#f8f8f8; border-radius:8px; cursor:pointer; font-size:0.82rem;">' +
+            '<input type="radio" name="goLiveCollection" value="last-chance"> Last Chance' +
+          '</label>' +
+          '<label style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:#f8f8f8; border-radius:8px; cursor:pointer; font-size:0.82rem;">' +
+            '<input type="radio" name="goLiveCollection" value="accessories"> Accessories' +
+          '</label>' +
         '</div>';
 
       var btn = document.getElementById('confirmAction');
-      btn.textContent = 'Go Live';
+      btn.textContent = 'Push Live';
       btn.className = 'confirm-btn primary';
       confirmCallback = function() {
         var selected = document.querySelector('input[name="goLiveCollection"]:checked');
         if (!selected) return;
-        executeGoLive(selected.value);
+        var targetCollection = selected.value;
+
+        var products = getProducts();
+        var moved = 0;
+        products.forEach(function(p) {
+          var cols = p.collections || (p.collection ? [p.collection] : []);
+          var idx = cols.indexOf('yet-to-go-live');
+          if (idx === -1) return;
+          if (goLiveProductIds.length > 0 && goLiveProductIds.indexOf(p.id) === -1) return;
+          cols.splice(idx, 1);
+          if (cols.indexOf(targetCollection) === -1) cols.push(targetCollection);
+          p.collections = cols;
+          delete p.collection;
+          moved++;
+        });
+        if (moved > 0) {
+          saveProducts(products);
+          renderTable();
+          showToast(moved + ' product' + (moved !== 1 ? 's' : '') + ' now live in ' + collectionLabels[targetCollection]);
+        }
       };
       document.getElementById('confirmOverlay').classList.add('show');
-    }
-
-    function executeGoLive(targetCollection) {
-      var collectionLabels = { 'new-arrivals': "What's New", 'last-chance': 'Last Chance', 'accessories': 'Accessories' };
-
-      showConfirm(
-        'Are you sure?',
-        (goLiveProductIds.length === 1 ? 'This product' : 'All products') + ' will be moved to ' + collectionLabels[targetCollection] + ' and become visible to customers.',
-        'Push Live',
-        function() {
-          var products = getProducts();
-          var moved = 0;
-          products.forEach(function(p) {
-            var cols = p.collections || (p.collection ? [p.collection] : []);
-            var idx = cols.indexOf('yet-to-go-live');
-            if (idx === -1) return;
-            if (goLiveProductIds.length > 0 && goLiveProductIds.indexOf(p.id) === -1) return;
-            cols.splice(idx, 1);
-            if (cols.indexOf(targetCollection) === -1) cols.push(targetCollection);
-            p.collections = cols;
-            delete p.collection;
-            moved++;
-          });
-          if (moved > 0) {
-            saveProducts(products);
-            renderTable();
-            showToast(moved + ' product' + (moved !== 1 ? 's' : '') + ' now live in ' + collectionLabels[targetCollection]);
-          }
-        },
-        false
-      );
     }
 
     function duplicateProduct(id) {
