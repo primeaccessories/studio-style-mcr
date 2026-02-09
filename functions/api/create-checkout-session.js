@@ -126,7 +126,15 @@ export async function onRequestPost(context) {
           acc[`line_items[${index}][price_data][currency]`] = item.price_data.currency;
           acc[`line_items[${index}][price_data][product_data][name]`] = item.price_data.product_data.name;
           if (item.price_data.product_data.images && item.price_data.product_data.images[0]) {
-            acc[`line_items[${index}][price_data][product_data][images][0]`] = item.price_data.product_data.images[0];
+            let imgUrl = item.price_data.product_data.images[0];
+            // Stripe requires absolute URLs — convert relative paths
+            if (imgUrl.startsWith('/')) {
+              imgUrl = origin + imgUrl;
+            }
+            // Only include if it's a valid absolute URL
+            if (imgUrl.startsWith('http')) {
+              acc[`line_items[${index}][price_data][product_data][images][0]`] = imgUrl;
+            }
           }
           acc[`line_items[${index}][price_data][unit_amount]`] = item.price_data.unit_amount;
           acc[`line_items[${index}][quantity]`] = item.quantity;
