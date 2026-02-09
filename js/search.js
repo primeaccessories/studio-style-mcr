@@ -29,6 +29,9 @@ function performSearch() {
 
   var products = getProducts();
   var matches = products.filter(function(p) {
+    // Hide products that are yet to go live
+    var cols = p.collections || (p.collection ? [p.collection] : []);
+    if (cols.indexOf('yet-to-go-live') > -1) return false;
     return p.name.toLowerCase().indexOf(query) !== -1;
   });
 

@@ -164,6 +164,8 @@ function renderCollectionProducts(collection) {
 
   var products = getProducts().filter(function(p) {
     var cols = p.collections || (p.collection ? [p.collection] : []);
+    // Hide products that are yet to go live
+    if (cols.indexOf('yet-to-go-live') > -1) return false;
     return cols.indexOf(collection) > -1;
   });
 

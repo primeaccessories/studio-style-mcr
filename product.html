@@ -410,6 +410,13 @@
         return;
       }
 
+      // Block access to products that are yet to go live
+      var pCols = currentProduct.collections || (currentProduct.collection ? [currentProduct.collection] : []);
+      if (pCols.indexOf('yet-to-go-live') > -1) {
+        window.location.href = 'new-arrivals.html';
+        return;
+      }
+
       // Update page
       document.title = currentProduct.name + ' | Studio Style MCR';
       var imgEl = document.getElementById('productImage');

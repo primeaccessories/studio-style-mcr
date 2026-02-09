@@ -1054,8 +1054,12 @@
           <label class="size-checkbox"><input type="checkbox" id="colNewArrivals" value="new-arrivals"> What's New</label>
           <label class="size-checkbox"><input type="checkbox" id="colLastChance" value="last-chance"> Last Chance</label>
           <label class="size-checkbox"><input type="checkbox" id="colAccessories" value="accessories"> Accessories</label>
-          <label class="size-checkbox"><input type="checkbox" id="colYetToGoLive" value="yet-to-go-live"> Yet to go Live</label>
         </div>
+      </div>
+
+      <div class="form-checkbox" style="margin-top:4px; margin-bottom:12px; padding:10px 14px; background:#fffbe6; border:1px solid #f0e6b0; border-radius:8px;">
+        <input type="checkbox" id="formYetToGoLive">
+        <label for="formYetToGoLive" style="font-weight:600; color:#b8860b;">Yet to go Live <span style="font-weight:400; color:#999; font-size:0.75rem;">&mdash; hidden from customers until pushed live</span></label>
       </div>
 
       <div class="form-group">
@@ -1570,7 +1574,7 @@
       document.getElementById('colNewArrivals').checked = false;
       document.getElementById('colLastChance').checked = false;
       document.getElementById('colAccessories').checked = false;
-      document.getElementById('colYetToGoLive').checked = false;
+      document.getElementById('formYetToGoLive').checked = true;
       document.getElementById('formPrice').value = '';
       document.getElementById('formDescription').value = '';
       document.getElementById('formSale').checked = false;
@@ -1606,7 +1610,7 @@
       document.getElementById('colNewArrivals').checked = cols.indexOf('new-arrivals') > -1;
       document.getElementById('colLastChance').checked = cols.indexOf('last-chance') > -1;
       document.getElementById('colAccessories').checked = cols.indexOf('accessories') > -1;
-      document.getElementById('colYetToGoLive').checked = cols.indexOf('yet-to-go-live') > -1;
+      document.getElementById('formYetToGoLive').checked = cols.indexOf('yet-to-go-live') > -1;
       document.getElementById('formPrice').value = p.price;
       document.getElementById('formDescription').value = p.description || '';
       document.getElementById('formSale').checked = p.sale;
@@ -1807,8 +1811,12 @@
       if (document.getElementById('colNewArrivals').checked) collections.push('new-arrivals');
       if (document.getElementById('colLastChance').checked) collections.push('last-chance');
       if (document.getElementById('colAccessories').checked) collections.push('accessories');
-      if (document.getElementById('colYetToGoLive').checked) collections.push('yet-to-go-live');
       if (collections.length === 0) { alert('Please select at least one collection'); return; }
+
+      // Yet to go Live toggle
+      if (document.getElementById('formYetToGoLive').checked) {
+        collections.push('yet-to-go-live');
+      }
       var description = document.getElementById('formDescription').value.trim();
       var isSale = document.getElementById('formSale').checked;
       var price, originalPrice;
@@ -1899,51 +1907,35 @@
       renderTable();
     }
 
-    // Go Live - pick target collection dialog
-    var goLiveTarget = null;
+    // Go Live - remove yet-to-go-live flag (products already have their target categories)
     var goLiveProductIds = []; // empty = all yet-to-go-live
 
     function goLive() {
       goLiveProductIds = [];
-      showGoLiveCollectionPicker();
+      pushLive();
     }
 
     function goLiveSingle(id) {
       goLiveProductIds = [id];
-      showGoLiveCollectionPicker();
+      pushLive();
     }
 
-    function showGoLiveCollectionPicker() {
+    function pushLive() {
       var isSingle = goLiveProductIds.length === 1;
       var title = isSingle ? 'Push Product Live' : 'Push All Products Live';
       var collectionLabels = { 'new-arrivals': "What's New", 'last-chance': 'Last Chance', 'accessories': 'Accessories' };
 
       document.getElementById('confirmTitle').textContent = title;
       document.getElementById('confirmMessage').innerHTML =
-        '<div style="color:#666; font-size:0.78rem; margin-bottom:10px;">' +
-          (isSingle ? 'This product' : 'These products') + ' will become visible to customers.' +
-        '</div>' +
-        '<div style="font-size:0.78rem; color:#333; font-weight:600; margin-bottom:6px; text-align:left;">Move to:</div>' +
-        '<div style="display:flex; flex-direction:column; gap:6px; text-align:left;">' +
-          '<label style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:#f8f8f8; border-radius:8px; cursor:pointer; font-size:0.82rem;">' +
-            '<input type="radio" name="goLiveCollection" value="new-arrivals" checked> What\'s New' +
-          '</label>' +
-          '<label style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:#f8f8f8; border-radius:8px; cursor:pointer; font-size:0.82rem;">' +
-            '<input type="radio" name="goLiveCollection" value="last-chance"> Last Chance' +
-          '</label>' +
-          '<label style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:#f8f8f8; border-radius:8px; cursor:pointer; font-size:0.82rem;">' +
-            '<input type="radio" name="goLiveCollection" value="accessories"> Accessories' +
-          '</label>' +
+        '<div style="color:#666; font-size:0.78rem;">' +
+          (isSingle ? 'This product' : 'These products') + ' will become visible to customers in ' +
+          (isSingle ? 'its' : 'their') + ' assigned categories.' +
         '</div>';
 
       var btn = document.getElementById('confirmAction');
       btn.textContent = 'Push Live';
       btn.className = 'confirm-btn primary';
       confirmCallback = function() {
-        var selected = document.querySelector('input[name="goLiveCollection"]:checked');
-        if (!selected) return;
-        var targetCollection = selected.value;
-
         var products = getProducts();
         var moved = 0;
         products.forEach(function(p) {
@@ -1952,7 +1944,6 @@
           if (idx === -1) return;
           if (goLiveProductIds.length > 0 && goLiveProductIds.indexOf(p.id) === -1) return;
           cols.splice(idx, 1);
-          if (cols.indexOf(targetCollection) === -1) cols.push(targetCollection);
           p.collections = cols;
           delete p.collection;
           moved++;
@@ -1960,7 +1951,14 @@
         if (moved > 0) {
           saveProducts(products);
           renderTable();
-          showToast(moved + ' product' + (moved !== 1 ? 's' : '') + ' now live in ' + collectionLabels[targetCollection]);
+          var catNames = [];
+          products.forEach(function(p) {
+            if (goLiveProductIds.length > 0 && goLiveProductIds.indexOf(p.id) === -1) return;
+            (p.collections || []).forEach(function(c) {
+              if (collectionLabels[c] && catNames.indexOf(collectionLabels[c]) === -1) catNames.push(collectionLabels[c]);
+            });
+          });
+          showToast(moved + ' product' + (moved !== 1 ? 's' : '') + ' now live' + (catNames.length ? ' in ' + catNames.join(', ') : ''));
         }
       };
       document.getElementById('confirmOverlay').classList.add('show');
