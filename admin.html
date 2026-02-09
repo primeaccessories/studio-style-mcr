@@ -831,6 +831,7 @@
                   <th class="reorder-cell"></th>
                   <th>Product</th>
                   <th>Price</th>
+                  <th>Qty</th>
                   <th>Collection</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -1062,9 +1063,15 @@
         <label for="formYetToGoLive" style="font-weight:600; color:#b8860b;">Yet to go Live <span style="font-weight:400; color:#999; font-size:0.75rem;">&mdash; hidden from customers until pushed live</span></label>
       </div>
 
-      <div class="form-group">
-        <label>Price (&pound;)</label>
-        <input type="number" class="form-input" id="formPrice" placeholder="19.99" step="0.01">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (&pound;)</label>
+          <input type="number" class="form-input" id="formPrice" placeholder="19.99" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" class="form-input" id="formQuantity" placeholder="1" min="0" step="1">
+        </div>
       </div>
 
       <div class="form-group">
@@ -1449,6 +1456,7 @@
             '<span class="product-name">' + p.name + '</span>' +
           '</td>' +
           '<td>' + priceHTML + '</td>' +
+          '<td>' + (typeof p.quantity === 'number' ? p.quantity : '&mdash;') + '</td>' +
           '<td>' + badgesHTML + '</td>' +
           '<td>' + (p.sale ? '<span class="status-sale">Sale</span>' : '<span class="status-active">Active</span>') + '</td>' +
           '<td><div class="action-btns">' +
@@ -1576,6 +1584,7 @@
       document.getElementById('colAccessories').checked = false;
       document.getElementById('formYetToGoLive').checked = true;
       document.getElementById('formPrice').value = '';
+      document.getElementById('formQuantity').value = '';
       document.getElementById('formDescription').value = '';
       document.getElementById('formSale').checked = false;
       document.getElementById('formOriginalPrice').value = '';
@@ -1612,6 +1621,7 @@
       document.getElementById('colAccessories').checked = cols.indexOf('accessories') > -1;
       document.getElementById('formYetToGoLive').checked = cols.indexOf('yet-to-go-live') > -1;
       document.getElementById('formPrice').value = p.price;
+      document.getElementById('formQuantity').value = typeof p.quantity === 'number' ? p.quantity : '';
       document.getElementById('formDescription').value = p.description || '';
       document.getElementById('formSale').checked = p.sale;
       document.getElementById('urlInputWrap').style.display = 'none';
@@ -1835,6 +1845,9 @@
         }
       });
 
+      var quantityVal = document.getElementById('formQuantity').value.trim();
+      var quantity = quantityVal !== '' ? parseInt(quantityVal, 10) : null;
+
       if (!name) { alert('Please enter a product name'); return; }
       if (!description) { alert('Please enter a product description'); return; }
 
@@ -1864,6 +1877,7 @@
           products[idx].originalPrice = originalPrice;
           products[idx].description = description;
           products[idx].sizes = sizes;
+          products[idx].quantity = quantity;
         }
       } else {
         // Add new - find lowest sortOrder among products in any of the selected collections
@@ -1890,6 +1904,7 @@
           originalPrice: originalPrice,
           description: description,
           sizes: sizes,
+          quantity: quantity,
           sortOrder: minOrder
         });
       }
