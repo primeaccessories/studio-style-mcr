@@ -297,6 +297,107 @@
       max-width: 90vw; max-height: 90vh; object-fit: contain;
       border: 2px solid rgba(255,255,255,0.1); border-radius: 4px;
     }
+
+    /* TOAST NOTIFICATION */
+    .admin-toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: #333; color: #fff; padding: 14px 28px; border-radius: 10px;
+      font-family: inherit; font-size: 0.8rem; letter-spacing: 0.5px;
+      z-index: 3000; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15); pointer-events: none;
+    }
+    .admin-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .admin-toast i { margin-right: 8px; }
+
+    /* APPLE-STYLE CONFIRMATION DIALOG */
+    .confirm-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4); z-index: 2500;
+      display: none; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .confirm-overlay.show { display: flex; }
+    .confirm-dialog {
+      background: rgba(255,255,255,0.95); border-radius: 14px;
+      width: 300px; max-width: 90%; text-align: center;
+      overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: confirmPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes confirmPop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confirm-body { padding: 22px 20px 10px; }
+    .confirm-title {
+      font-size: 1rem; font-weight: 600; color: #1a1a1a;
+      margin-bottom: 6px; letter-spacing: 0.3px;
+    }
+    .confirm-message {
+      font-size: 0.8rem; color: #666; line-height: 1.5;
+      font-weight: 400; letter-spacing: 0;
+    }
+    .confirm-actions {
+      display: flex; border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    .confirm-btn {
+      flex: 1; padding: 14px; border: none; background: none;
+      font-family: inherit; font-size: 0.9rem; cursor: pointer;
+      transition: background 0.15s; letter-spacing: 0;
+    }
+    .confirm-btn:first-child { border-right: 1px solid rgba(0,0,0,0.1); }
+    .confirm-btn.cancel { color: #007aff; font-weight: 400; }
+    .confirm-btn.cancel:hover { background: rgba(0,0,0,0.04); }
+    .confirm-btn.destructive { color: #ff3b30; font-weight: 600; }
+    .confirm-btn.destructive:hover { background: rgba(255,59,48,0.06); }
+    .confirm-btn.primary { color: #007aff; font-weight: 600; }
+    .confirm-btn.primary:hover { background: rgba(0,122,255,0.06); }
+
+    /* MULTI-IMAGE UPLOAD */
+    .multi-image-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px; margin-top: 10px;
+    }
+    .multi-image-item {
+      position: relative; aspect-ratio: 1; border: 1px solid #eee;
+      border-radius: 6px; overflow: hidden; cursor: pointer;
+    }
+    .multi-image-item img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .multi-image-item .remove-img-btn {
+      position: absolute; top: 4px; right: 4px;
+      width: 20px; height: 20px; background: rgba(231,76,60,0.9); color: #fff;
+      border: none; border-radius: 50%; font-size: 0.75rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      line-height: 1; opacity: 0; transition: opacity 0.2s;
+    }
+    .multi-image-item:hover .remove-img-btn { opacity: 1; }
+    .multi-image-item.primary { border: 2px solid #007aff; }
+    .multi-image-item .primary-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,122,255,0.85); color: #fff;
+      font-size: 0.55rem; text-align: center; padding: 2px;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .add-image-slot {
+      aspect-ratio: 1; border: 2px dashed #ddd; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; background: #fafafa;
+    }
+    .add-image-slot:hover { border-color: #999; background: #f0f0f0; }
+    .add-image-slot i { font-size: 1.2rem; color: #ccc; }
+
+    /* GO LIVE INDIVIDUAL BUTTON */
+    .go-live-btn {
+      padding: 4px 10px; background: #2e7d32; color: #fff; border: none;
+      font-family: inherit; font-size: 0.55rem; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer; border-radius: 3px;
+      transition: background 0.2s;
+    }
+    .go-live-btn:hover { background: #1b5e20; }
     .lightbox-close {
       position: absolute; top: 20px; right: 25px;
       background: none; border: none; color: #fff; font-size: 2rem;
@@ -617,6 +718,7 @@
       .product-table th { padding: 8px 6px; font-size: 0.55rem; letter-spacing: 1px; }
       .product-table td { padding: 8px 6px; font-size: 0.75rem; }
       .action-btns .edit-btn, .action-btns .delete-btn, .action-btns .dupe-btn { display: none; }
+      .action-btns .go-live-btn { display: inline-block; }
       .actions-menu-btn { display: inline-block; }
       .collection-badge { font-size: 0.5rem; padding: 2px 5px; }
       .status-active, .status-sale { font-size: 0.55rem; padding: 2px 6px; }
@@ -718,8 +820,8 @@
           <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> &nbsp;Add Product</button>
         </div>
         <div id="goLiveBar" style="display:none; background:#2e7d32; color:#fff; padding:14px 20px; margin-bottom:10px; align-items:center; justify-content:space-between; border-radius:4px;">
-          <span style="font-size:0.8rem; letter-spacing:1px;">These products are hidden from customers until you go live.</span>
-          <button onclick="goLive()" style="background:#fff; color:#2e7d32; border:none; padding:10px 24px; font-family:inherit; font-size:0.75rem; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; font-weight:bold;">GO LIVE</button>
+          <span style="font-size:0.8rem; letter-spacing:1px;">These products are hidden until you go live. Use the <strong>Live</strong> button on each product or push all at once.</span>
+          <button onclick="goLive()" style="background:#fff; color:#2e7d32; border:none; padding:10px 24px; font-family:inherit; font-size:0.75rem; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; font-weight:bold;">GO LIVE ALL</button>
         </div>
         <div class="table-container collapsed" id="tableContainer">
           <div style="overflow-x:auto;">
@@ -924,25 +1026,25 @@
       </div>
 
       <div class="form-group">
-        <label>Product Image</label>
-        <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click();" ondragover="event.preventDefault(); this.classList.add('dragover');" ondragleave="this.classList.remove('dragover');" ondrop="handleDrop(event);">
+        <label>Product Images</label>
+        <div class="multi-image-grid" id="multiImageGrid">
+          <!-- Images populated dynamically -->
+        </div>
+        <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click();" ondragover="event.preventDefault(); this.classList.add('dragover');" ondragleave="this.classList.remove('dragover');" ondrop="handleDrop(event);" style="margin-top:10px;">
           <div class="upload-placeholder" id="uploadPlaceholder">
             <i class="fas fa-cloud-upload-alt"></i>
             <p>Click to upload or drag & drop</p>
-            <span>JPG, PNG up to 5MB</span>
-          </div>
-          <div class="upload-preview" id="uploadPreview" style="display:none;">
-            <img id="previewImg" src="" alt="Preview" onclick="event.stopPropagation(); openLightbox(this.src);">
-            <button type="button" class="remove-image" onclick="event.stopPropagation(); removeImage();">&times;</button>
+            <span>JPG, PNG up to 5MB &bull; Add multiple images</span>
           </div>
         </div>
-        <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(this)">
+        <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(this)" multiple>
         <div class="url-toggle">
           <span>or</span>
           <button type="button" class="url-toggle-btn" onclick="toggleUrlInput()">Paste image URL instead</button>
         </div>
         <div class="url-input-wrap" id="urlInputWrap" style="display:none;">
-          <input type="text" class="form-input" id="formImage" placeholder="https://..." oninput="previewFromUrl()">
+          <input type="text" class="form-input" id="formImage" placeholder="https://..." onkeydown="if(event.key==='Enter'){event.preventDefault();addUrlImage();}">
+          <button type="button" style="margin-top:6px; padding:6px 14px; background:#000; color:#fff; border:none; font-family:inherit; font-size:0.65rem; letter-spacing:1px; text-transform:uppercase; cursor:pointer;" onclick="addUrlImage()">Add Image</button>
         </div>
       </div>
 
@@ -1346,6 +1448,7 @@
           '<td>' + badgesHTML + '</td>' +
           '<td>' + (p.sale ? '<span class="status-sale">Sale</span>' : '<span class="status-active">Active</span>') + '</td>' +
           '<td><div class="action-btns">' +
+            (currentTab === 'yet-to-go-live' ? '<button class="go-live-btn" onclick="goLiveSingle(\'' + p.id + '\')"><i class="fas fa-rocket"></i> Live</button>' : '') +
             '<button class="edit-btn" onclick="openEditModal(\'' + p.id + '\')">Edit</button>' +
             '<button class="dupe-btn" onclick="duplicateProduct(\'' + p.id + '\')">Dupe</button>' +
             '<button class="delete-btn" onclick="deleteProduct(\'' + p.id + '\')">Delete</button>' +
@@ -1460,7 +1563,7 @@
     // MODAL
     function openAddModal() {
       editingId = null;
-      currentImageData = '';
+      currentImages = [];
       document.getElementById('modalTitle').textContent = 'Add Product';
       document.getElementById('formName').value = '';
       document.getElementById('formImage').value = '';
@@ -1474,10 +1577,9 @@
       document.getElementById('formOriginalPrice').value = '';
       document.getElementById('formSalePrice').value = '';
       document.getElementById('saleFields').classList.remove('show');
-      document.getElementById('uploadPlaceholder').style.display = '';
-      document.getElementById('uploadPreview').style.display = 'none';
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
+      renderImageGrid();
       // Clear all size checkboxes
       ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
         document.getElementById('size' + size).checked = false;
@@ -1495,10 +1597,11 @@
       if (!p) return;
 
       editingId = id;
-      currentImageData = p.image || '';
+      // Load images array (backward compat: single image -> array)
+      currentImages = p.images ? p.images.slice() : (p.image ? [p.image] : []);
       document.getElementById('modalTitle').textContent = 'Edit Product';
       document.getElementById('formName').value = p.name;
-      document.getElementById('formImage').value = p.image || '';
+      document.getElementById('formImage').value = '';
       var cols = p.collections || (p.collection ? [p.collection] : ['new-arrivals']);
       document.getElementById('colNewArrivals').checked = cols.indexOf('new-arrivals') > -1;
       document.getElementById('colLastChance').checked = cols.indexOf('last-chance') > -1;
@@ -1509,6 +1612,7 @@
       document.getElementById('formSale').checked = p.sale;
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
+      renderImageGrid();
 
       // Set size checkboxes
       var productSizes = p.sizes || [];
@@ -1520,13 +1624,6 @@
       [3,4,5,6,7,8].forEach(function(s) {
         document.getElementById('shoe' + s).checked = productSizes.indexOf(String(s)) > -1;
       });
-
-      if (p.image) {
-        showImagePreview(p.image);
-      } else {
-        document.getElementById('uploadPlaceholder').style.display = '';
-        document.getElementById('uploadPreview').style.display = 'none';
-      }
 
       if (p.sale && p.originalPrice) {
         document.getElementById('formOriginalPrice').value = p.originalPrice;
@@ -1553,30 +1650,71 @@
       document.getElementById('saleFields').classList.toggle('show', checked);
     }
 
-    var currentImageData = '';
+    // ============================================
+    // MULTI-IMAGE SUPPORT
+    // ============================================
+    var currentImages = []; // Array of image data URLs or external URLs
+
+    function renderImageGrid() {
+      var grid = document.getElementById('multiImageGrid');
+      grid.innerHTML = '';
+      currentImages.forEach(function(src, index) {
+        var item = document.createElement('div');
+        item.className = 'multi-image-item' + (index === 0 ? ' primary' : '');
+        item.innerHTML =
+          '<img src="' + src + '" alt="Image ' + (index + 1) + '" onclick="event.stopPropagation(); openLightbox(this.src);">' +
+          '<button type="button" class="remove-img-btn" onclick="event.stopPropagation(); removeImageAt(' + index + ');">&times;</button>' +
+          (index === 0 ? '<div class="primary-label">Main</div>' : '');
+        item.setAttribute('draggable', 'true');
+        item.ondragstart = function(e) { e.dataTransfer.setData('text/plain', index); e.dataTransfer.effectAllowed = 'move'; };
+        item.ondragover = function(e) { e.preventDefault(); };
+        item.ondrop = function(e) {
+          e.preventDefault(); e.stopPropagation();
+          var fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+          if (fromIdx !== index) {
+            var moved = currentImages.splice(fromIdx, 1)[0];
+            currentImages.splice(index, 0, moved);
+            renderImageGrid();
+          }
+        };
+        grid.appendChild(item);
+      });
+      // Show/hide the upload area placeholder text
+      document.getElementById('uploadPlaceholder').querySelector('p').textContent =
+        currentImages.length > 0 ? 'Add another image' : 'Click to upload or drag & drop';
+    }
+
+    function removeImageAt(index) {
+      currentImages.splice(index, 1);
+      renderImageGrid();
+    }
 
     function handleFileUpload(input) {
-      if (!input.files || !input.files[0]) return;
-      processFile(input.files[0]);
+      if (!input.files || !input.files.length) return;
+      for (var i = 0; i < input.files.length; i++) {
+        processFile(input.files[i]);
+      }
+      input.value = '';
     }
 
     function handleDrop(e) {
       e.preventDefault();
       e.currentTarget.classList.remove('dragover');
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        processFile(e.dataTransfer.files[0]);
+      if (e.dataTransfer.files && e.dataTransfer.files.length) {
+        for (var i = 0; i < e.dataTransfer.files.length; i++) {
+          processFile(e.dataTransfer.files[i]);
+        }
       }
     }
 
     function processFile(file) {
-      if (!file.type.startsWith('image/')) { alert('Please upload an image file'); return; }
-      if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return; }
+      if (!file.type.startsWith('image/')) { showToast('Please upload an image file', 'error'); return; }
+      if (file.size > 5 * 1024 * 1024) { showToast('Image must be under 5MB', 'error'); return; }
 
       var reader = new FileReader();
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          // Resize to max 800px
           var maxSize = 800;
           var w = img.width, h = img.height;
           if (w > maxSize || h > maxSize) {
@@ -1586,27 +1724,12 @@
           var canvas = document.createElement('canvas');
           canvas.width = w; canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          currentImageData = canvas.toDataURL('image/jpeg', 0.8);
-          showImagePreview(currentImageData);
+          currentImages.push(canvas.toDataURL('image/jpeg', 0.8));
+          renderImageGrid();
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
-    }
-
-    function showImagePreview(src) {
-      document.getElementById('uploadPlaceholder').style.display = 'none';
-      document.getElementById('uploadPreview').style.display = 'inline-block';
-      document.getElementById('previewImg').src = src;
-    }
-
-    function removeImage() {
-      currentImageData = '';
-      document.getElementById('uploadPlaceholder').style.display = '';
-      document.getElementById('uploadPreview').style.display = 'none';
-      document.getElementById('previewImg').src = '';
-      document.getElementById('fileInput').value = '';
-      document.getElementById('formImage').value = '';
     }
 
     function toggleUrlInput() {
@@ -1614,12 +1737,48 @@
       wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
     }
 
-    function previewFromUrl() {
+    function addUrlImage() {
       var url = document.getElementById('formImage').value.trim();
       if (url) {
-        currentImageData = url;
-        showImagePreview(url);
+        currentImages.push(url);
+        renderImageGrid();
+        document.getElementById('formImage').value = '';
       }
+    }
+
+    // ============================================
+    // TOAST NOTIFICATION
+    // ============================================
+    var toastTimer = null;
+    function showToast(message, type) {
+      var toast = document.getElementById('adminToast');
+      toast.innerHTML = (type === 'error' ? '<i class="fas fa-exclamation-circle"></i>' : '<i class="fas fa-check-circle"></i>') + ' ' + message;
+      toast.style.background = type === 'error' ? '#c53030' : '#333';
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 2500);
+    }
+
+    // ============================================
+    // APPLE-STYLE CONFIRMATION DIALOG
+    // ============================================
+    var confirmCallback = null;
+    function showConfirm(title, message, actionLabel, callback, isDestructive) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      var btn = document.getElementById('confirmAction');
+      btn.textContent = actionLabel;
+      btn.className = 'confirm-btn ' + (isDestructive ? 'destructive' : 'primary');
+      confirmCallback = callback;
+      document.getElementById('confirmOverlay').classList.add('show');
+    }
+    function executeConfirm() {
+      document.getElementById('confirmOverlay').classList.remove('show');
+      if (confirmCallback) { confirmCallback(); confirmCallback = null; }
+    }
+    function cancelConfirm() {
+      document.getElementById('confirmOverlay').classList.remove('show');
+      confirmCallback = null;
     }
 
     function openLightbox(src) {
@@ -1642,7 +1801,8 @@
     // SAVE
     function saveProduct() {
       var name = document.getElementById('formName').value.trim();
-      var image = currentImageData || document.getElementById('formImage').value.trim();
+      var images = currentImages.slice();
+      var image = images.length > 0 ? images[0] : '';
       var collections = [];
       if (document.getElementById('colNewArrivals').checked) collections.push('new-arrivals');
       if (document.getElementById('colLastChance').checked) collections.push('last-chance');
@@ -1688,6 +1848,7 @@
         if (idx > -1) {
           products[idx].name = name;
           products[idx].image = image;
+          products[idx].images = images;
           products[idx].collections = collections;
           delete products[idx].collection;
           products[idx].price = price;
@@ -1715,6 +1876,7 @@
           name: name,
           price: price,
           image: image,
+          images: images,
           collections: collections,
           sale: isSale,
           originalPrice: originalPrice,
@@ -1737,33 +1899,82 @@
       renderTable();
     }
 
+    // Go Live - pick target collection dialog
+    var goLiveTarget = null;
+    var goLiveProductIds = []; // empty = all yet-to-go-live
+
     function goLive() {
-      var target = prompt("Move all 'Yet to go Live' products to which collection?\n\n1 = What's New\n2 = Last Chance\n3 = Accessories\n\nEnter 1, 2 or 3:");
-      var collectionMap = { '1': 'new-arrivals', '2': 'last-chance', '3': 'accessories' };
-      var targetCollection = collectionMap[target];
-      if (!targetCollection) { alert('Invalid choice. Please enter 1, 2 or 3.'); return; }
+      goLiveProductIds = [];
+      showGoLiveCollectionPicker();
+    }
 
-      var products = getProducts();
-      var moved = 0;
-      products.forEach(function(p) {
-        var cols = p.collections || (p.collection ? [p.collection] : []);
-        var idx = cols.indexOf('yet-to-go-live');
-        if (idx > -1) {
-          cols.splice(idx, 1);
-          if (cols.indexOf(targetCollection) === -1) {
-            cols.push(targetCollection);
+    function goLiveSingle(id) {
+      goLiveProductIds = [id];
+      showGoLiveCollectionPicker();
+    }
+
+    function showGoLiveCollectionPicker() {
+      // Build a mini picker in the confirm dialog
+      var count = goLiveProductIds.length || 'all';
+      var title = goLiveProductIds.length === 1 ? 'Push Product Live' : 'Push All Products Live';
+      var msg = 'Which collection should ' + (goLiveProductIds.length === 1 ? 'this product' : 'these products') + ' go to?';
+
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').innerHTML =
+        '<div style="margin-top:8px;">' +
+          '<div style="display:flex; flex-direction:column; gap:6px; text-align:left;">' +
+            '<label style="display:flex; align-items:center; gap:8px; padding:8px 10px; background:#f8f8f8; border-radius:6px; cursor:pointer; font-size:0.8rem;">' +
+              '<input type="radio" name="goLiveCollection" value="new-arrivals" checked> What\'s New' +
+            '</label>' +
+            '<label style="display:flex; align-items:center; gap:8px; padding:8px 10px; background:#f8f8f8; border-radius:6px; cursor:pointer; font-size:0.8rem;">' +
+              '<input type="radio" name="goLiveCollection" value="last-chance"> Last Chance' +
+            '</label>' +
+            '<label style="display:flex; align-items:center; gap:8px; padding:8px 10px; background:#f8f8f8; border-radius:6px; cursor:pointer; font-size:0.8rem;">' +
+              '<input type="radio" name="goLiveCollection" value="accessories"> Accessories' +
+            '</label>' +
+          '</div>' +
+        '</div>';
+
+      var btn = document.getElementById('confirmAction');
+      btn.textContent = 'Go Live';
+      btn.className = 'confirm-btn primary';
+      confirmCallback = function() {
+        var selected = document.querySelector('input[name="goLiveCollection"]:checked');
+        if (!selected) return;
+        executeGoLive(selected.value);
+      };
+      document.getElementById('confirmOverlay').classList.add('show');
+    }
+
+    function executeGoLive(targetCollection) {
+      var collectionLabels = { 'new-arrivals': "What's New", 'last-chance': 'Last Chance', 'accessories': 'Accessories' };
+
+      showConfirm(
+        'Are you sure?',
+        (goLiveProductIds.length === 1 ? 'This product' : 'All products') + ' will be moved to ' + collectionLabels[targetCollection] + ' and become visible to customers.',
+        'Push Live',
+        function() {
+          var products = getProducts();
+          var moved = 0;
+          products.forEach(function(p) {
+            var cols = p.collections || (p.collection ? [p.collection] : []);
+            var idx = cols.indexOf('yet-to-go-live');
+            if (idx === -1) return;
+            if (goLiveProductIds.length > 0 && goLiveProductIds.indexOf(p.id) === -1) return;
+            cols.splice(idx, 1);
+            if (cols.indexOf(targetCollection) === -1) cols.push(targetCollection);
+            p.collections = cols;
+            delete p.collection;
+            moved++;
+          });
+          if (moved > 0) {
+            saveProducts(products);
+            renderTable();
+            showToast(moved + ' product' + (moved !== 1 ? 's' : '') + ' now live in ' + collectionLabels[targetCollection]);
           }
-          p.collections = cols;
-          delete p.collection;
-          moved++;
-        }
-      });
-
-      if (moved > 0) {
-        saveProducts(products);
-        renderTable();
-        alert(moved + ' product' + (moved !== 1 ? 's' : '') + ' moved to ' + (target === '1' ? "What's New" : target === '2' ? 'Last Chance' : 'Accessories') + ' and are now live!');
-      }
+        },
+        false
+      );
     }
 
     function duplicateProduct(id) {
@@ -1773,9 +1984,26 @@
       var copy = JSON.parse(JSON.stringify(original));
       copy.id = Date.now().toString();
       copy.name = original.name + ' (Copy)';
+      // Place copy right after original with same sortOrder + 0.5
+      copy.sortOrder = (typeof original.sortOrder === 'number' ? original.sortOrder : 9999) + 0.5;
       products.push(copy);
       saveProducts(products);
+      // Expand the table so the duplicate is visible
+      var container = document.getElementById('tableContainer');
+      container.classList.remove('collapsed');
+      var btn = document.getElementById('showMoreBtn');
+      btn.innerHTML = 'Show Less <i class="fas fa-chevron-down"></i>';
       renderTable();
+      // Scroll to the duplicated row and highlight it
+      setTimeout(function() {
+        var newRow = document.querySelector('tr[data-id="' + copy.id + '"]');
+        if (newRow) {
+          newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          newRow.style.background = '#e3f2fd';
+          setTimeout(function() { newRow.style.transition = 'background 1s'; newRow.style.background = ''; }, 1500);
+        }
+      }, 100);
+      showToast('Product duplicated successfully');
     }
 
     // Mobile action menu
@@ -1784,6 +2012,19 @@
     function openActionMenu(id, name) {
       actionMenuProductId = id;
       document.getElementById('actionPopupTitle').textContent = name;
+      // Show/hide Go Live vs Move Up/Down based on tab
+      var goLiveItem = document.getElementById('actionMenuGoLiveItem');
+      var moveUpItem = document.getElementById('actionMenuMoveUpItem');
+      var moveDownItem = document.getElementById('actionMenuMoveDownItem');
+      if (currentTab === 'yet-to-go-live') {
+        goLiveItem.style.display = '';
+        moveUpItem.style.display = 'none';
+        moveDownItem.style.display = 'none';
+      } else {
+        goLiveItem.style.display = 'none';
+        moveUpItem.style.display = '';
+        moveDownItem.style.display = '';
+      }
       document.getElementById('actionPopup').classList.add('show');
     }
 
@@ -1846,6 +2087,12 @@
       var id = actionMenuProductId;
       closeActionMenu();
       moveProduct(id, 1);
+    }
+
+    function actionMenuGoLive() {
+      var id = actionMenuProductId;
+      closeActionMenu();
+      goLiveSingle(id);
     }
 
     // BOOKINGS
@@ -2847,8 +3094,9 @@
     <div class="action-popup-title" id="actionPopupTitle">Product</div>
     <button class="action-popup-item" onclick="actionMenuEdit()"><i class="fas fa-pen"></i> Edit</button>
     <button class="action-popup-item" onclick="actionMenuDupe()"><i class="fas fa-copy"></i> Duplicate</button>
-    <button class="action-popup-item" onclick="actionMenuMoveUp()"><i class="fas fa-arrow-up"></i> Move Up</button>
-    <button class="action-popup-item" onclick="actionMenuMoveDown()"><i class="fas fa-arrow-down"></i> Move Down</button>
+    <button class="action-popup-item" id="actionMenuGoLiveItem" style="display:none; color:#2e7d32;" onclick="actionMenuGoLive()"><i class="fas fa-rocket" style="color:#2e7d32;"></i> Go Live</button>
+    <button class="action-popup-item" id="actionMenuMoveUpItem" onclick="actionMenuMoveUp()"><i class="fas fa-arrow-up"></i> Move Up</button>
+    <button class="action-popup-item" id="actionMenuMoveDownItem" onclick="actionMenuMoveDown()"><i class="fas fa-arrow-down"></i> Move Down</button>
     <button class="action-popup-item danger" onclick="actionMenuDelete()"><i class="fas fa-trash"></i> Delete</button>
     <button class="action-popup-cancel" onclick="closeActionMenu()">Cancel</button>
   </div>
@@ -2858,6 +3106,23 @@
 <div class="image-lightbox" id="imageLightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
   <img id="lightboxImg" src="" alt="Image Review">
+</div>
+
+<!-- Toast Notification -->
+<div class="admin-toast" id="adminToast"></div>
+
+<!-- Apple-style Confirmation Dialog -->
+<div class="confirm-overlay" id="confirmOverlay" onclick="cancelConfirm()">
+  <div class="confirm-dialog" onclick="event.stopPropagation()">
+    <div class="confirm-body">
+      <div class="confirm-title" id="confirmTitle">Are you sure?</div>
+      <div class="confirm-message" id="confirmMessage">This action cannot be undone.</div>
+    </div>
+    <div class="confirm-actions">
+      <button class="confirm-btn cancel" onclick="cancelConfirm()">Cancel</button>
+      <button class="confirm-btn primary" id="confirmAction" onclick="executeConfirm()">Confirm</button>
+    </div>
+  </div>
 </div>
 
 </body>

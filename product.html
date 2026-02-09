@@ -43,6 +43,30 @@
       background: #fff;
     }
 
+    .product-thumbnails {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+
+    .product-thumb-btn {
+      width: 70px; height: 70px;
+      border: 2px solid transparent;
+      padding: 0; cursor: pointer;
+      background: #fff; flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+
+    .product-thumb-btn.active {
+      border-color: #2c2c2c;
+    }
+
+    .product-thumb-btn img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
     .product-details {
       padding: 20px 0;
     }
@@ -241,6 +265,7 @@
     <div class="product-container">
       <div class="product-gallery">
         <img id="productImage" class="product-main-image" src="" alt="">
+        <div class="product-thumbnails" id="productThumbnails"></div>
       </div>
       <div class="product-details">
         <a href="javascript:history.back()" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
@@ -389,8 +414,29 @@
       document.title = currentProduct.name + ' | Studio Style MCR';
       var imgEl = document.getElementById('productImage');
       imgEl.onerror = function() { this.onerror = null; this.src = '/images/placeholder-product.svg'; };
-      imgEl.src = currentProduct.image;
+      // Support multi-image: use images array if available, fallback to single image
+      var allImages = currentProduct.images && currentProduct.images.length > 0
+        ? currentProduct.images
+        : (currentProduct.image ? [currentProduct.image] : []);
+      imgEl.src = allImages[0] || '';
       imgEl.alt = currentProduct.name;
+
+      // Render thumbnails if multiple images
+      var thumbContainer = document.getElementById('productThumbnails');
+      thumbContainer.innerHTML = '';
+      if (allImages.length > 1) {
+        allImages.forEach(function(src, idx) {
+          var btn = document.createElement('button');
+          btn.className = 'product-thumb-btn' + (idx === 0 ? ' active' : '');
+          btn.innerHTML = '<img src="' + src + '" alt="View ' + (idx + 1) + '">';
+          btn.onclick = function() {
+            imgEl.src = src;
+            document.querySelectorAll('.product-thumb-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+          };
+          thumbContainer.appendChild(btn);
+        });
+      }
       document.getElementById('productTitle').textContent = currentProduct.name;
       document.getElementById('productBreadcrumb').textContent = currentProduct.name;
 
