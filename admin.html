@@ -158,6 +158,7 @@
     .badge-new { background: #e3f2fd; color: #1565c0; }
     .badge-last-chance { background: #fff3e0; color: #e65100; }
     .badge-accessories { background: #f3e5f5; color: #7b1fa2; }
+    .badge-yet-live { background: #fff3e0; color: #e65100; }
     .status-active { display: inline-block; padding: 3px 10px; background: #e8f5e9; color: #2e7d32; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; }
     .status-sale { display: inline-block; padding: 3px 10px; background: #fff3e0; color: #e65100; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; }
     .was-price { text-decoration: line-through; color: #bbb; margin-right: 5px; }
@@ -705,6 +706,7 @@
         <button class="admin-subtab" onclick="switchSubTab('new-arrivals', this)">What's New <span class="subtab-count" id="countNew">0</span></button>
         <button class="admin-subtab" onclick="switchSubTab('last-chance', this)">Last Chance <span class="subtab-count" id="countLastChance">0</span></button>
         <button class="admin-subtab" onclick="switchSubTab('accessories', this)">Accessories <span class="subtab-count" id="countAccessories">0</span></button>
+        <button class="admin-subtab" onclick="switchSubTab('yet-to-go-live', this)">Yet to go Live <span class="subtab-count" id="countYetToGoLive">0</span></button>
       </div>
 
       <!-- PRODUCT LIST -->
@@ -714,6 +716,10 @@
             <input type="text" class="admin-search" id="searchInput" placeholder="Search products..." oninput="renderTable()">
           </div>
           <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> &nbsp;Add Product</button>
+        </div>
+        <div id="goLiveBar" style="display:none; background:#2e7d32; color:#fff; padding:14px 20px; margin-bottom:10px; align-items:center; justify-content:space-between; border-radius:4px;">
+          <span style="font-size:0.8rem; letter-spacing:1px;">These products are hidden from customers until you go live.</span>
+          <button onclick="goLive()" style="background:#fff; color:#2e7d32; border:none; padding:10px 24px; font-family:inherit; font-size:0.75rem; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; font-weight:bold;">GO LIVE</button>
         </div>
         <div class="table-container collapsed" id="tableContainer">
           <div style="overflow-x:auto;">
@@ -946,6 +952,7 @@
           <label class="size-checkbox"><input type="checkbox" id="colNewArrivals" value="new-arrivals"> What's New</label>
           <label class="size-checkbox"><input type="checkbox" id="colLastChance" value="last-chance"> Last Chance</label>
           <label class="size-checkbox"><input type="checkbox" id="colAccessories" value="accessories"> Accessories</label>
+          <label class="size-checkbox"><input type="checkbox" id="colYetToGoLive" value="yet-to-go-live"> Yet to go Live</label>
         </div>
       </div>
 
@@ -1274,11 +1281,16 @@
       var countNew = products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf('new-arrivals') > -1; }).length;
       var countLastChance = products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf('last-chance') > -1; }).length;
       var countAccessories = products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf('accessories') > -1; }).length;
+      var countYetToGoLive = products.filter(function(p) { var c = p.collections || (p.collection ? [p.collection] : []); return c.indexOf('yet-to-go-live') > -1; }).length;
 
       document.getElementById('countAll').textContent = countAll;
       document.getElementById('countNew').textContent = countNew;
       document.getElementById('countLastChance').textContent = countLastChance;
       document.getElementById('countAccessories').textContent = countAccessories;
+      document.getElementById('countYetToGoLive').textContent = countYetToGoLive;
+
+      // Show/hide GO LIVE bar
+      document.getElementById('goLiveBar').style.display = currentTab === 'yet-to-go-live' && countYetToGoLive > 0 ? 'flex' : 'none';
 
       // Table
       tbody.innerHTML = '';
@@ -1291,7 +1303,7 @@
         }
 
         var pCols = p.collections || (p.collection ? [p.collection] : []);
-        var badgeMap = { 'new-arrivals': { cls: 'badge-new', label: "What's New" }, 'last-chance': { cls: 'badge-last-chance', label: 'Last Chance' }, 'accessories': { cls: 'badge-accessories', label: 'Accessories' } };
+        var badgeMap = { 'new-arrivals': { cls: 'badge-new', label: "What's New" }, 'last-chance': { cls: 'badge-last-chance', label: 'Last Chance' }, 'accessories': { cls: 'badge-accessories', label: 'Accessories' }, 'yet-to-go-live': { cls: 'badge-yet-live', label: 'Yet to go Live' } };
         var badgesHTML = pCols.map(function(c) { var b = badgeMap[c]; return b ? '<span class="collection-badge ' + b.cls + '">' + b.label + '</span>' : ''; }).join(' ');
 
         var row = document.createElement('tr');
@@ -1427,9 +1439,10 @@
       document.getElementById('modalTitle').textContent = 'Add Product';
       document.getElementById('formName').value = '';
       document.getElementById('formImage').value = '';
-      document.getElementById('colNewArrivals').checked = true;
+      document.getElementById('colNewArrivals').checked = false;
       document.getElementById('colLastChance').checked = false;
       document.getElementById('colAccessories').checked = false;
+      document.getElementById('colYetToGoLive').checked = false;
       document.getElementById('formPrice').value = '';
       document.getElementById('formDescription').value = '';
       document.getElementById('formSale').checked = false;
@@ -1462,6 +1475,7 @@
       document.getElementById('colNewArrivals').checked = cols.indexOf('new-arrivals') > -1;
       document.getElementById('colLastChance').checked = cols.indexOf('last-chance') > -1;
       document.getElementById('colAccessories').checked = cols.indexOf('accessories') > -1;
+      document.getElementById('colYetToGoLive').checked = cols.indexOf('yet-to-go-live') > -1;
       document.getElementById('formPrice').value = p.price;
       document.getElementById('formDescription').value = p.description || '';
       document.getElementById('formSale').checked = p.sale;
@@ -1602,6 +1616,7 @@
       if (document.getElementById('colNewArrivals').checked) collections.push('new-arrivals');
       if (document.getElementById('colLastChance').checked) collections.push('last-chance');
       if (document.getElementById('colAccessories').checked) collections.push('accessories');
+      if (document.getElementById('colYetToGoLive').checked) collections.push('yet-to-go-live');
       if (collections.length === 0) { alert('Please select at least one collection'); return; }
       var description = document.getElementById('formDescription').value.trim();
       var isSale = document.getElementById('formSale').checked;
@@ -1684,6 +1699,35 @@
       var products = getProducts().filter(function(p) { return p.id !== id; });
       saveProducts(products);
       renderTable();
+    }
+
+    function goLive() {
+      var target = prompt("Move all 'Yet to go Live' products to which collection?\n\n1 = What's New\n2 = Last Chance\n3 = Accessories\n\nEnter 1, 2 or 3:");
+      var collectionMap = { '1': 'new-arrivals', '2': 'last-chance', '3': 'accessories' };
+      var targetCollection = collectionMap[target];
+      if (!targetCollection) { alert('Invalid choice. Please enter 1, 2 or 3.'); return; }
+
+      var products = getProducts();
+      var moved = 0;
+      products.forEach(function(p) {
+        var cols = p.collections || (p.collection ? [p.collection] : []);
+        var idx = cols.indexOf('yet-to-go-live');
+        if (idx > -1) {
+          cols.splice(idx, 1);
+          if (cols.indexOf(targetCollection) === -1) {
+            cols.push(targetCollection);
+          }
+          p.collections = cols;
+          delete p.collection;
+          moved++;
+        }
+      });
+
+      if (moved > 0) {
+        saveProducts(products);
+        renderTable();
+        alert(moved + ' product' + (moved !== 1 ? 's' : '') + ' moved to ' + (target === '1' ? "What's New" : target === '2' ? 'Last Chance' : 'Accessories') + ' and are now live!');
+      }
     }
 
     function duplicateProduct(id) {
