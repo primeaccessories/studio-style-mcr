@@ -512,7 +512,7 @@
         msg.id = 'delivery-error-msg';
         msg.style.cssText = 'color:#c53030;font-size:14px;margin-top:8px;font-weight:600;';
         msg.textContent = 'Please select a delivery method to continue';
-        deliveryOptions.parentNode.insertBefore(msg, deliveryOptions.nextSibling);
+        deliveryOptions.parentNode.insertBefore(msg, deliveryOptions);
       }
 
       deliveryOptions.scrollIntoView({ behavior: 'smooth', block: 'center' });
