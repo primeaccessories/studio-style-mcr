@@ -1010,6 +1010,31 @@
         <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Select all available sizes for this product</small>
       </div>
 
+      <div class="form-group">
+        <label>Shoe Sizes</label>
+        <div class="sizes-checkboxes" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="shoe3" value="3"> 3
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="shoe4" value="4"> 4
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="shoe5" value="5"> 5
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="shoe6" value="6"> 6
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="shoe7" value="7"> 7
+          </label>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
+            <input type="checkbox" id="shoe8" value="8"> 8
+          </label>
+        </div>
+        <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Select shoe sizes if this is a footwear product</small>
+      </div>
+
       <div class="modal-actions">
         <button class="modal-save" onclick="saveProduct()">Save Product</button>
         <button class="modal-cancel" onclick="closeModal()">Cancel</button>
@@ -1457,6 +1482,9 @@
       ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
         document.getElementById('size' + size).checked = false;
       });
+      [3,4,5,6,7,8].forEach(function(s) {
+        document.getElementById('shoe' + s).checked = false;
+      });
       document.getElementById('modalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
     }
@@ -1488,6 +1516,9 @@
         var checkbox = document.getElementById('size' + size);
         var sizeValue = size === 'OneSize' ? 'One Size' : size;
         checkbox.checked = productSizes.indexOf(sizeValue) > -1;
+      });
+      [3,4,5,6,7,8].forEach(function(s) {
+        document.getElementById('shoe' + s).checked = productSizes.indexOf(String(s)) > -1;
       });
 
       if (p.image) {
@@ -1628,6 +1659,11 @@
         var checkbox = document.getElementById('size' + size);
         if (checkbox.checked) {
           sizes.push(size === 'OneSize' ? 'One Size' : size);
+        }
+      });
+      [3,4,5,6,7,8].forEach(function(s) {
+        if (document.getElementById('shoe' + s).checked) {
+          sizes.push(String(s));
         }
       });
 
