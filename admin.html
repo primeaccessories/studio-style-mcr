@@ -1777,6 +1777,7 @@
     // APPLE-STYLE CONFIRMATION DIALOG
     // ============================================
     var confirmCallback = null;
+    var confirmIsAlert = false;
     function showConfirm(title, message, actionLabel, callback, isDestructive) {
       document.getElementById('confirmTitle').textContent = title;
       document.getElementById('confirmMessage').textContent = message;
@@ -1784,6 +1785,19 @@
       btn.textContent = actionLabel;
       btn.className = 'confirm-btn ' + (isDestructive ? 'destructive' : 'primary');
       confirmCallback = callback;
+      confirmIsAlert = false;
+      document.getElementById('confirmCancel').style.display = '';
+      document.getElementById('confirmOverlay').classList.add('show');
+    }
+    function showAlert(title, message) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      var btn = document.getElementById('confirmAction');
+      btn.textContent = 'OK';
+      btn.className = 'confirm-btn primary';
+      confirmCallback = null;
+      confirmIsAlert = true;
+      document.getElementById('confirmCancel').style.display = 'none';
       document.getElementById('confirmOverlay').classList.add('show');
     }
     function executeConfirm() {
@@ -1821,7 +1835,7 @@
       if (document.getElementById('colNewArrivals').checked) collections.push('new-arrivals');
       if (document.getElementById('colLastChance').checked) collections.push('last-chance');
       if (document.getElementById('colAccessories').checked) collections.push('accessories');
-      if (collections.length === 0) { alert('Please select at least one collection'); return; }
+      if (collections.length === 0) { showAlert('Missing Collection', 'Please select at least one collection'); return; }
 
       // Yet to go Live toggle
       if (document.getElementById('formYetToGoLive').checked) {
@@ -1848,17 +1862,17 @@
       var quantityVal = document.getElementById('formQuantity').value.trim();
       var quantity = quantityVal !== '' ? parseInt(quantityVal, 10) : null;
 
-      if (!name) { alert('Please enter a product name'); return; }
-      if (!description) { alert('Please enter a product description'); return; }
+      if (!name) { showAlert('Missing Name', 'Please enter a product name'); return; }
+      if (!description) { showAlert('Missing Description', 'Please enter a product description'); return; }
 
       if (isSale) {
         originalPrice = parseFloat(document.getElementById('formOriginalPrice').value);
         price = parseFloat(document.getElementById('formSalePrice').value);
-        if (isNaN(originalPrice) || isNaN(price)) { alert('Please enter both original and sale prices'); return; }
+        if (isNaN(originalPrice) || isNaN(price)) { showAlert('Missing Prices', 'Please enter both original and sale prices'); return; }
       } else {
         price = parseFloat(document.getElementById('formPrice').value);
         originalPrice = null;
-        if (isNaN(price)) { alert('Please enter a price'); return; }
+        if (isNaN(price)) { showAlert('Missing Price', 'Please enter a price'); return; }
       }
 
       var products = getProducts();
@@ -1916,10 +1930,11 @@
 
     // DELETE
     function deleteProduct(id) {
-      if (!confirm('Are you sure you want to delete this product?')) return;
-      var products = getProducts().filter(function(p) { return p.id !== id; });
-      saveProducts(products);
-      renderTable();
+      showConfirm('Delete Product', 'Are you sure you want to delete this product?', 'Delete', function() {
+        var products = getProducts().filter(function(p) { return p.id !== id; });
+        saveProducts(products);
+        renderTable();
+      }, true);
     }
 
     // Go Live - remove yet-to-go-live flag (products already have their target categories)
@@ -2276,10 +2291,10 @@
     }
 
     async function deleteBooking(id) {
-      if (!confirm('Delete this booking?')) return;
-      // Delete from Firebase - real-time listener will update UI automatically
-      await deleteBookingFromFirebase(id);
-      closeBookingModal();
+      showConfirm('Delete Booking', 'Are you sure you want to delete this booking?', 'Delete', async function() {
+        await deleteBookingFromFirebase(id);
+        closeBookingModal();
+      }, true);
     }
 
     function openBookingModal(id) {
@@ -2901,13 +2916,13 @@
     }
 
     async function deleteOrder(orderId) {
-      if (!confirm('Are you sure you want to delete this order?')) return;
-      try {
-        await db.collection('orders').doc(orderId).delete();
-        // Real-time listener will update the UI
-      } catch (error) {
-        alert('Error deleting order: ' + error.message);
-      }
+      showConfirm('Delete Order', 'Are you sure you want to delete this order?', 'Delete', async function() {
+        try {
+          await db.collection('orders').doc(orderId).delete();
+        } catch (error) {
+          showAlert('Error', 'Error deleting order: ' + error.message);
+        }
+      }, true);
     }
 
     function viewOrder(sessionId) {
@@ -2922,35 +2937,34 @@
 
       var amount = amountStr.trim() === '' ? null : parseInt(amountStr);
       if (amount !== null && (isNaN(amount) || amount <= 0 || amount > maxAmount)) {
-        alert('Invalid refund amount');
+        showAlert('Invalid Amount', 'Invalid refund amount');
         return;
       }
 
-      if (!confirm('Are you sure you want to refund ' + (amount ? '£' + (amount/100).toFixed(2) : 'the full amount') + '?')) {
-        return;
-      }
+      var refundLabel = amount ? '£' + (amount/100).toFixed(2) : 'the full amount';
+      showConfirm('Confirm Refund', 'Are you sure you want to refund ' + refundLabel + '?', 'Refund', async function() {
+        try {
+          var response = await fetch('/api/create-refund', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              paymentIntentId: paymentIntentId,
+              amount: amount,
+              reason: 'requested_by_customer'
+            })
+          });
 
-      try {
-        var response = await fetch('/api/create-refund', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            paymentIntentId: paymentIntentId,
-            amount: amount,
-            reason: 'requested_by_customer'
-          })
-        });
+          var data = await response.json();
+          if (data.error) {
+            throw new Error(data.error);
+          }
 
-        var data = await response.json();
-        if (data.error) {
-          throw new Error(data.error);
+          showAlert('Refund Successful', 'Refund processed successfully! Refund ID: ' + data.refund.id);
+          loadPayments();
+        } catch (error) {
+          showAlert('Error', 'Error processing refund: ' + error.message);
         }
-
-        alert('Refund processed successfully!\\nRefund ID: ' + data.refund.id);
-        loadPayments(); // Refresh the list
-      } catch (error) {
-        alert('Error processing refund: ' + error.message);
-      }
+      }, true);
     }
 
     // ============================================
@@ -3039,8 +3053,8 @@
       var value = parseFloat(document.getElementById('discountValue').value);
       var enabled = document.getElementById('discountEnabled').checked;
 
-      if (!code) { alert('Please enter a discount code'); return; }
-      if (isNaN(value) || value <= 0) { alert('Please enter a valid discount value'); return; }
+      if (!code) { showAlert('Missing Code', 'Please enter a discount code'); return; }
+      if (isNaN(value) || value <= 0) { showAlert('Invalid Value', 'Please enter a valid discount value'); return; }
 
       var discountData = {
         code: code,
@@ -3058,7 +3072,7 @@
           // Check if code already exists
           var existing = discountsCache.find(function(d) { return d.code.toUpperCase() === code; });
           if (existing) {
-            alert('This discount code already exists');
+            showAlert('Duplicate Code', 'This discount code already exists');
             return;
           }
           // Add new
@@ -3069,19 +3083,20 @@
         loadDiscounts();
       } catch (error) {
         console.error('Error saving discount:', error);
-        alert('Error saving discount code: ' + error.message);
+        showAlert('Error', 'Error saving discount code: ' + error.message);
       }
     }
 
     async function deleteDiscount(id) {
-      if (!confirm('Are you sure you want to delete this discount code?')) return;
-      try {
-        await db.collection('discountCodes').doc(id).delete();
-        loadDiscounts();
-      } catch (error) {
-        console.error('Error deleting discount:', error);
-        alert('Error deleting discount code. Please try again.');
-      }
+      showConfirm('Delete Discount', 'Are you sure you want to delete this discount code?', 'Delete', async function() {
+        try {
+          await db.collection('discountCodes').doc(id).delete();
+          loadDiscounts();
+        } catch (error) {
+          console.error('Error deleting discount:', error);
+          showAlert('Error', 'Error deleting discount code. Please try again.');
+        }
+      }, true);
     }
 
     // INIT
@@ -3121,7 +3136,7 @@
       <div class="confirm-message" id="confirmMessage">This action cannot be undone.</div>
     </div>
     <div class="confirm-actions">
-      <button class="confirm-btn cancel" onclick="cancelConfirm()">Cancel</button>
+      <button class="confirm-btn cancel" id="confirmCancel" onclick="cancelConfirm()">Cancel</button>
       <button class="confirm-btn primary" id="confirmAction" onclick="executeConfirm()">Confirm</button>
     </div>
   </div>
