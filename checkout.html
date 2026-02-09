@@ -14,6 +14,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+  <style>
+    .delivery-options.delivery-error {
+      border: 2px solid #c53030;
+      border-radius: 8px;
+      padding: 12px;
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+  </style>
 </head>
 <body>
 
@@ -58,7 +71,7 @@
               </div>
             </div>
             <label class="delivery-option">
-              <input type="radio" name="delivery" value="standard" checked>
+              <input type="radio" name="delivery" value="standard">
               <span class="option-content">
                 <span class="option-name">Standard Delivery</span>
                 <span class="option-price">£3.99</span>
@@ -149,7 +162,7 @@
         <div class="coupon-section">
           <div class="coupon-input-wrap">
             <input type="text" id="couponCode" placeholder="Discount code">
-            <button type="button" id="applyCouponBtn" onclick="applyCoupon()">Apply</button>
+            <button type="button" id="applyCouponBtn">Apply</button>
           </div>
           <div id="couponMessage" class="coupon-message"></div>
         </div>
@@ -161,7 +174,7 @@
           </div>
           <div class="summary-row">
             <span>Delivery</span>
-            <span id="checkout-delivery">£3.99</span>
+            <span id="checkout-delivery">—</span>
           </div>
           <div class="summary-row coupon-row" id="coupon-row" style="display: none; color: #2e7d32;">
             <span>Discount (<span id="coupon-code-display"></span>)</span>
@@ -275,6 +288,11 @@
     // Load discount codes on page load
     loadDiscountCodes();
 
+    // Bind coupon button in JS (not inline onclick, which can't see this scope)
+    document.getElementById('applyCouponBtn').addEventListener('click', function() {
+      applyCoupon();
+    });
+
     async function applyCoupon() {
       const codeInput = document.getElementById('couponCode');
       const messageEl = document.getElementById('couponMessage');
@@ -353,10 +371,18 @@
     }
 
     function handleDeliveryChange() {
-      const delivery = document.querySelector('input[name="delivery"]:checked').value;
+      const checked = document.querySelector('input[name="delivery"]:checked');
+      if (!checked) return;
+      const delivery = checked.value;
       const messageEl = document.getElementById('delivery-message');
       const localOptions = document.getElementById('local-options');
       const payBtn = document.getElementById('pay-btn');
+      const deliveryOptions = document.querySelector('.delivery-options');
+
+      // Clear any error styling
+      deliveryOptions.classList.remove('delivery-error');
+      var errorMsg = document.getElementById('delivery-error-msg');
+      if (errorMsg) errorMsg.remove();
 
       if (delivery === 'local') {
         localOptions.style.display = 'block';
@@ -456,30 +482,74 @@
 
       if (subtotal >= 100) {
         document.getElementById('free-delivery-label').style.display = '';
-        freeDelivery.checked = true;
       } else {
         document.getElementById('free-delivery-label').style.display = 'none';
-        if (freeDelivery.checked) {
-          document.querySelector('input[name="delivery"][value="standard"]').checked = true;
-        }
       }
 
       updateTotal();
-      handleDeliveryChange();
     }
 
     function getActiveDeliveryType() {
-      const delivery = document.querySelector('input[name="delivery"]:checked').value;
-      if (delivery === 'local') {
+      const checked = document.querySelector('input[name="delivery"]:checked');
+      if (!checked) return null;
+      if (checked.value === 'local') {
         return document.getElementById('localTypeSelect').value || 'collection';
       }
-      return delivery;
+      return checked.value;
+    }
+
+    // Validate delivery is selected — scrolls to section with error if not
+    function validateDelivery() {
+      const checked = document.querySelector('input[name="delivery"]:checked');
+      if (checked) return true;
+
+      const deliveryOptions = document.querySelector('.delivery-options');
+      deliveryOptions.classList.add('delivery-error');
+
+      // Add error message if not already there
+      if (!document.getElementById('delivery-error-msg')) {
+        const msg = document.createElement('div');
+        msg.id = 'delivery-error-msg';
+        msg.style.cssText = 'color:#c53030;font-size:14px;margin-top:8px;font-weight:600;';
+        msg.textContent = 'Please select a delivery method to continue';
+        deliveryOptions.parentNode.insertBefore(msg, deliveryOptions.nextSibling);
+      }
+
+      deliveryOptions.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
     }
 
     function updateTotal() {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const delivery = document.querySelector('input[name="delivery"]:checked').value;
+      const checked = document.querySelector('input[name="delivery"]:checked');
+
+      // If no delivery selected yet, show subtotal only
+      if (!checked) {
+        document.getElementById('checkout-delivery').textContent = '—';
+        let total = subtotal;
+        if (appliedCoupon) {
+          if (appliedCoupon.type === 'percent') {
+            couponDiscount = subtotal * (appliedCoupon.value / 100);
+          } else {
+            couponDiscount = Math.min(appliedCoupon.value, subtotal);
+          }
+          document.getElementById('checkout-coupon').textContent = `-£${couponDiscount.toFixed(2)}`;
+          total = total - couponDiscount;
+        }
+        if (rewardAvailable) {
+          const rewardDiscount = Math.min(20, total);
+          document.getElementById('checkout-reward').textContent = `-£${rewardDiscount.toFixed(2)}`;
+          total = Math.max(0, total - 20);
+        }
+        document.getElementById('checkout-total').textContent = `£${total.toFixed(2)}`;
+        document.getElementById('final-total').textContent = `£${total.toFixed(2)}`;
+        document.getElementById('pay-buttons').style.display = 'block';
+        document.getElementById('local-pay-buttons').style.display = 'none';
+        return;
+      }
+
+      const delivery = checked.value;
       const deliveryCost = deliveryPrices[delivery];
 
       document.getElementById('checkout-delivery').textContent = deliveryCost === 0 ? 'FREE' : `£${deliveryCost.toFixed(2)}`;
@@ -507,13 +577,10 @@
       document.getElementById('checkout-total').textContent = `£${total.toFixed(2)}`;
       document.getElementById('final-total').textContent = `£${total.toFixed(2)}`;
 
-      const payBtn = document.getElementById('pay-btn');
-      const activeType = getActiveDeliveryType();
       const payButtons = document.getElementById('pay-buttons');
       const localPayButtons = document.getElementById('local-pay-buttons');
 
-      const delivery2 = document.querySelector('input[name="delivery"]:checked').value;
-      if (delivery2 === 'local') {
+      if (delivery === 'local') {
         payButtons.style.display = 'none';
         const localType = document.getElementById('localTypeSelect').value;
         if (localType === 'collection' || localType === 'dropoff') {
@@ -551,6 +618,7 @@
 
     // Pay Cash button
     document.getElementById('pay-cash-btn').addEventListener('click', async function() {
+      if (!validateDelivery()) return;
       const form = document.getElementById('checkout-form');
       if (!form.reportValidity()) return;
 
@@ -621,6 +689,7 @@
 
     // Pay Card button (local collection/dropoff)
     document.getElementById('pay-card-btn').addEventListener('click', async function() {
+      if (!validateDelivery()) return;
       const form = document.getElementById('checkout-form');
       if (!form.reportValidity()) return;
 
@@ -664,6 +733,8 @@
     // Pay Now button (standard/express/free delivery)
     document.getElementById('checkout-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+
+      if (!validateDelivery()) return;
 
       const activeType = getActiveDeliveryType();
       if (activeType === 'collection' || activeType === 'dropoff') return;
