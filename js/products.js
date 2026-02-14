@@ -162,9 +162,21 @@ function saveProducts(products) {
   // Save to Firebase if available
   if (typeof db !== 'undefined') {
     db.collection('siteData').doc('products').set({ items: products })
+      .then(function() {
+        if (typeof updateFirebaseStatus === 'function') updateFirebaseStatus(true);
+      })
       .catch(function(error) {
         console.error('Error saving products to Firebase:', error);
+        if (typeof showAlert === 'function') {
+          showAlert('Sync Error', 'Product saved locally but failed to sync to the cloud. Changes may not appear on other devices. Please check your internet connection and try again.');
+        }
+        if (typeof updateFirebaseStatus === 'function') updateFirebaseStatus(false);
       });
+  } else {
+    if (typeof showAlert === 'function') {
+      showAlert('Offline Mode', 'Firebase is not connected. Product saved locally only — it will NOT appear on the live site or other devices.');
+    }
+    if (typeof updateFirebaseStatus === 'function') updateFirebaseStatus(false);
   }
 }
 

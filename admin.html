@@ -769,6 +769,7 @@
       <div class="admin-header-left">
         <div class="admin-header-logo">STUDIO STYLE MCR</div>
         <span class="admin-badge">Admin</span>
+        <span id="firebaseStatus" style="font-size: 0.55rem; letter-spacing: 1px; padding: 3px 8px; border-radius: 10px; background: #555; color: #999;">CONNECTING...</span>
       </div>
       <div class="admin-header-right">
         <a href="index.html">View Site</a>
@@ -1257,6 +1258,35 @@
   <script src="js/products.js"></script>
   <script src="js/auth.js?v=2"></script>
   <script>
+    // ============================================
+    // FIREBASE STATUS INDICATOR
+    // ============================================
+    function updateFirebaseStatus(connected) {
+      var el = document.getElementById('firebaseStatus');
+      if (!el) return;
+      if (connected) {
+        el.textContent = 'SYNCED';
+        el.style.background = '#1b5e20';
+        el.style.color = '#4caf50';
+      } else {
+        el.textContent = 'OFFLINE';
+        el.style.background = '#b71c1c';
+        el.style.color = '#ef9a9a';
+      }
+    }
+
+    // Check Firebase connection on load
+    (function() {
+      if (typeof db === 'undefined') {
+        updateFirebaseStatus(false);
+        return;
+      }
+      // Test connection with a simple read
+      db.collection('siteData').doc('products').get()
+        .then(function() { updateFirebaseStatus(true); })
+        .catch(function() { updateFirebaseStatus(false); });
+    })();
+
     // ============================================
     // FIREBASE BOOKINGS - Real-time sync across all admin devices
     // ============================================
