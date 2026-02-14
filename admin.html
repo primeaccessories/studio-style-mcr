@@ -717,9 +717,12 @@
       .reorder-cell, .product-table th:first-child { display: none; }
       .product-table th { padding: 8px 6px; font-size: 0.55rem; letter-spacing: 1px; }
       .product-table td { padding: 8px 6px; font-size: 0.75rem; }
-      .action-btns .edit-btn, .action-btns .delete-btn, .action-btns .dupe-btn { display: none; }
-      .action-btns .go-live-btn { display: inline-block; }
+      #productsTab .action-btns .edit-btn, #productsTab .action-btns .delete-btn, #productsTab .action-btns .dupe-btn { display: none; }
+      #productsTab .action-btns .go-live-btn { display: inline-block; }
       .actions-menu-btn { display: inline-block; }
+      #discountsTab .action-btns, #ordersTab .action-btns { flex-wrap: wrap; }
+      #discountsTab .action-btns .edit-btn, #discountsTab .action-btns .delete-btn,
+      #ordersTab .action-btns .edit-btn, #ordersTab .action-btns .delete-btn { display: inline-block; font-size: 0.6rem; padding: 4px 8px; }
       .collection-badge { font-size: 0.5rem; padding: 2px 5px; }
       .status-active, .status-sale { font-size: 0.55rem; padding: 2px 6px; }
       .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 500; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: 0; }
