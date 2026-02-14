@@ -1243,6 +1243,12 @@
       e.preventDefault();
       if (document.getElementById('loginPassword').value === ADMIN_PASSWORD) {
         sessionStorage.setItem('adminAuth', 'true');
+        // Ensure Firebase Auth session exists (anonymous sign-in if not already signed in)
+        if (typeof auth !== 'undefined' && !auth.currentUser) {
+          auth.signInAnonymously().catch(function(err) {
+            console.warn('Anonymous sign-in failed:', err);
+          });
+        }
         showDashboard();
       } else {
         document.getElementById('loginError').classList.add('show');
@@ -1276,16 +1282,29 @@
       }
     }
 
-    // Check Firebase connection on load
+    // Ensure Firebase Auth session on load (anonymous if needed)
     (function() {
-      if (typeof db === 'undefined') {
+      if (typeof auth === 'undefined' || typeof db === 'undefined') {
         updateFirebaseStatus(false);
         return;
       }
-      // Test connection with a simple read
-      db.collection('siteData').doc('products').get()
-        .then(function() { updateFirebaseStatus(true); })
-        .catch(function() { updateFirebaseStatus(false); });
+
+      function checkConnection() {
+        db.collection('siteData').doc('products').get()
+          .then(function() { updateFirebaseStatus(true); })
+          .catch(function() { updateFirebaseStatus(false); });
+      }
+
+      if (!auth.currentUser) {
+        auth.signInAnonymously()
+          .then(function() { checkConnection(); })
+          .catch(function(err) {
+            console.warn('Anonymous sign-in failed:', err);
+            checkConnection();
+          });
+      } else {
+        checkConnection();
+      }
     })();
 
     // Force sync: pull latest from Firebase, overwrite localStorage, re-render
@@ -1834,7 +1853,7 @@
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var maxSize = 800;
+          var maxSize = 600;
           var w = img.width, h = img.height;
           if (w > maxSize || h > maxSize) {
             if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
@@ -1843,7 +1862,15 @@
           var canvas = document.createElement('canvas');
           canvas.width = w; canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          currentImages.push(canvas.toDataURL('image/jpeg', 0.8));
+          // Compress aggressively to keep Firestore doc under 1MB
+          var quality = 0.5;
+          var dataUrl = canvas.toDataURL('image/jpeg', quality);
+          // If still over 50KB, compress further
+          while (dataUrl.length > 50000 && quality > 0.2) {
+            quality -= 0.1;
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+          }
+          currentImages.push(dataUrl);
           renderImageGrid();
         };
         img.src = e.target.result;
