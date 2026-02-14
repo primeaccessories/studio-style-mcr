@@ -733,6 +733,10 @@
       .modal-actions { flex-direction: column; gap: 8px; }
       .image-upload-area { padding: 15px 10px; }
       .tab-content { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .size-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
+      .size-grid .size-cell { padding: 6px 8px !important; }
+      .size-grid .size-cell span { min-width: 40px !important; font-size: 0.75rem !important; }
+      .size-grid .size-cell input { width: 50px !important; padding: 5px 4px !important; font-size: 0.8rem !important; }
     }
     @media (max-width: 480px) {
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1097,62 +1101,62 @@
 
       <div class="form-group">
         <label>Clothing Sizes & Stock</label>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+        <div class="size-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XS</span>
             <input type="number" class="form-input" id="sizeQtyXS" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">S</span>
             <input type="number" class="form-input" id="sizeQtyS" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">M</span>
             <input type="number" class="form-input" id="sizeQtyM" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">L</span>
             <input type="number" class="form-input" id="sizeQtyL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XL</span>
             <input type="number" class="form-input" id="sizeQtyXL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XXL</span>
             <input type="number" class="form-input" id="sizeQtyXXL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">8</span>
             <input type="number" class="form-input" id="sizeQtyC8" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">10</span>
             <input type="number" class="form-input" id="sizeQtyC10" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">12</span>
             <input type="number" class="form-input" id="sizeQtyC12" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">14</span>
             <input type="number" class="form-input" id="sizeQtyC14" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">16</span>
             <input type="number" class="form-input" id="sizeQtyC16" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">18</span>
             <input type="number" class="form-input" id="sizeQtyC18" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">Free Size</span>
-            <input type="number" class="form-input" id="sizeQtyFreeSize" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">One Size</span>
             <input type="number" class="form-input" id="sizeQtyOneSize" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">Free Size</span>
+            <input type="number" class="form-input" id="sizeQtyFreeSize" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
         </div>
         <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Enter stock quantity per size. 0 or empty = not available.</small>
@@ -1160,28 +1164,28 @@
 
       <div class="form-group">
         <label>Shoe Sizes & Stock</label>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+        <div class="size-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">3</span>
             <input type="number" class="form-input" id="sizeQtyShoe3" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">4</span>
             <input type="number" class="form-input" id="sizeQtyShoe4" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">5</span>
             <input type="number" class="form-input" id="sizeQtyShoe5" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">6</span>
             <input type="number" class="form-input" id="sizeQtyShoe6" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">7</span>
             <input type="number" class="form-input" id="sizeQtyShoe7" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">8</span>
             <input type="number" class="form-input" id="sizeQtyShoe8" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
