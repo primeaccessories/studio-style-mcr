@@ -918,7 +918,7 @@
           <!-- Calendar -->
           <div class="calendar-view" role="region" aria-label="Booking calendar">
             <div class="availability-note">
-              <i class="fas fa-info-circle"></i> Available Mon–Wed, 12pm–4pm (4 sessions per day)
+              <i class="fas fa-info-circle"></i> Available Mon, Wed, Fri — 10am–2pm (4 sessions per day)
             </div>
             <div class="calendar-nav">
               <button onclick="prevMonth()" aria-label="Previous month">&larr; Prev</button>
@@ -2138,8 +2138,7 @@
       { time: '10:00', label: '10:00 – 11:00' },
       { time: '11:00', label: '11:00 – 12:00' },
       { time: '12:00', label: '12:00 – 13:00' },
-      { time: '13:00', label: '13:00 – 14:00' },
-      { time: '14:00', label: '14:00 – 15:00' }
+      { time: '13:00', label: '13:00 – 14:00' }
     ];
 
     // getBookings() is defined above (line 812) - uses Firebase bookingsCache
@@ -2158,7 +2157,7 @@
     }
 
     function formatTime(time) {
-      var labels = { "10:00": "10am", "11:00": "11am", "12:00": "12pm", "13:00": "1pm", "14:00": "2pm" };
+      var labels = { "10:00": "10am", "11:00": "11am", "12:00": "12pm", "13:00": "1pm" };
       return labels[time] || time;
     }
 
@@ -2211,7 +2210,7 @@
         bDate.setHours(0, 0, 0, 0);
         return bDate >= startOfWeek && bDate <= endOfWeek;
       });
-      document.getElementById('summaryWeek').textContent = weekBookings.length + ' / 12';
+      document.getElementById('summaryWeek').textContent = weekBookings.length + ' / ' + (AVAILABLE_DAYS.length * TIME_SLOTS.length);
 
       // Next booking
       var futureBookings = bookings.filter(function(b) {
@@ -2506,11 +2505,11 @@
         var bookingCount = dayBookings.length;
 
         if (isAvailable && !isPast) {
-          if (bookingCount >= 4) {
+          if (bookingCount >= TIME_SLOTS.length) {
             dayEl.classList.add('fully-booked');
           }
-          dayEl.setAttribute('data-tooltip', bookingCount + ' / 4 slots booked');
-          dayEl.setAttribute('aria-label', d + ' ' + months[month] + ', ' + bookingCount + ' of 4 slots booked');
+          dayEl.setAttribute('data-tooltip', bookingCount + ' / ' + TIME_SLOTS.length + ' slots booked');
+          dayEl.setAttribute('aria-label', d + ' ' + months[month] + ', ' + bookingCount + ' of ' + TIME_SLOTS.length + ' slots booked');
         }
 
         var dayContent = '<div class="calendar-day-number">' + d + '</div>';
