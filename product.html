@@ -158,6 +158,27 @@
       color: #fff;
     }
 
+    .size-btn.out-of-stock {
+      opacity: 0.35;
+      cursor: not-allowed;
+      text-decoration: line-through;
+      border-color: #eee;
+      background: #f5f5f5;
+      color: #bbb;
+    }
+
+    .size-btn.out-of-stock:hover {
+      border-color: #eee;
+      background: #f5f5f5;
+      color: #bbb;
+    }
+
+    .add-to-cart-large.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #ccc;
+    }
+
     .add-to-cart-large {
       width: 100%;
       padding: 18px 40px;
@@ -463,32 +484,60 @@
         descEl.textContent = 'Beautiful piece from our latest collection. Perfect for any occasion.';
       }
 
-      // Sizes
+      // Sizes with stock awareness
       var sizesContainer = document.querySelector('.size-options');
+      var sizeQuantities = currentProduct.sizeQuantities || {};
       var sizes = currentProduct.sizes || ['One Size'];
+      var hasSizeQty = Object.keys(sizeQuantities).length > 0;
+
       sizesContainer.innerHTML = '';
-      sizes.forEach(function(size, index) {
+      var firstAvailable = null;
+
+      sizes.forEach(function(size) {
+        var qty = hasSizeQty ? (sizeQuantities[size] || 0) : 1;
         var btn = document.createElement('button');
         btn.className = 'size-btn';
-        if (index === 0) btn.classList.add('active');
         btn.textContent = size;
-        btn.onclick = function() { selectSize(this, size); };
+
+        if (qty <= 0 && hasSizeQty) {
+          btn.classList.add('out-of-stock');
+          btn.disabled = true;
+          btn.title = 'Out of stock';
+        } else {
+          if (!firstAvailable) firstAvailable = size;
+          btn.onclick = function() { selectSize(this, size); };
+        }
         sizesContainer.appendChild(btn);
       });
 
-      // Set default size
-      selectedSize = sizes[0] || 'One Size';
+      // Auto-select first available size
+      var addBtn = document.getElementById('addToCartBtn');
+      if (firstAvailable) {
+        var firstBtn = sizesContainer.querySelector('.size-btn:not(.out-of-stock)');
+        if (firstBtn) firstBtn.classList.add('active');
+        selectedSize = firstAvailable;
+        addBtn.disabled = false;
+        addBtn.classList.remove('disabled');
+      } else if (hasSizeQty) {
+        selectedSize = null;
+        addBtn.disabled = true;
+        addBtn.classList.add('disabled');
+        addBtn.textContent = 'Out of Stock';
+      } else {
+        selectedSize = sizes[0] || 'One Size';
+      }
     }
 
     function addProductToCart(e) {
       if (!currentProduct) return;
+      if (!selectedSize) return;
 
       var name = currentProduct.name;
-      if (selectedSize !== 'ONE SIZE') {
+      if (selectedSize !== 'ONE SIZE' && selectedSize !== 'One Size') {
         name += ' (' + selectedSize + ')';
       }
 
-      addToCart(currentProduct.id, name, currentProduct.price, currentProduct.image, e);
+      addToCart(currentProduct.id, name, currentProduct.price, currentProduct.image, e, selectedSize);
 
       // Show feedback
       var btn = document.getElementById('addToCartBtn');

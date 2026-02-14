@@ -11,14 +11,15 @@ function updateCartCount() {
   });
 }
 
-// Add item to cart
-function addToCart(id, name, price, image, clickEvent) {
-  const existing = cart.find(item => item.id === id);
+// Add item to cart (size-aware: same product in different sizes = separate items)
+function addToCart(id, name, price, image, clickEvent, size) {
+  var cartId = size ? id + '-size-' + size : id;
+  const existing = cart.find(item => item.id === cartId);
 
   if (existing) {
     existing.quantity += 1;
   } else {
-    cart.push({ id, name, price, image, quantity: 1 });
+    cart.push({ id: cartId, productId: id, name: name, price: price, image: image, quantity: 1, size: size || null });
   }
 
   localStorage.setItem('cart', JSON.stringify(cart));

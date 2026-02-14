@@ -74,6 +74,31 @@ function migrateCollections(products) {
   return migrated;
 }
 
+// Migrate old sizes[] + quantity to sizeQuantities{}
+function migrateSizeQuantities(product) {
+  if (product.sizeQuantities) return false;
+  var sq = {};
+  var sizes = product.sizes || [];
+  var totalQty = typeof product.quantity === 'number' ? product.quantity : 0;
+  if (sizes.length > 0) {
+    var perSize = Math.floor(totalQty / sizes.length);
+    var remainder = totalQty - (perSize * sizes.length);
+    sizes.forEach(function(s, i) {
+      sq[s] = perSize + (i < remainder ? 1 : 0);
+    });
+  }
+  product.sizeQuantities = sq;
+  return true;
+}
+
+// Get total stock from sizeQuantities
+function getTotalStock(product) {
+  if (product.sizeQuantities) {
+    return Object.values(product.sizeQuantities).reduce(function(sum, qty) { return sum + (qty || 0); }, 0);
+  }
+  return typeof product.quantity === 'number' ? product.quantity : null;
+}
+
 // Clear stale localStorage cache — bump version to force refresh from Firebase
 var _productsCacheVersion = 2;
 if (parseInt(localStorage.getItem('studioProductsVersion')) !== _productsCacheVersion) {
@@ -117,7 +142,11 @@ function getProducts() {
   var stored = localStorage.getItem('studioProducts');
   if (stored) {
     var products = JSON.parse(stored);
-    if (migrateCollections(products)) {
+    var migrated = migrateCollections(products);
+    products.forEach(function(p) {
+      if (migrateSizeQuantities(p)) migrated = true;
+    });
+    if (migrated) {
       localStorage.setItem('studioProducts', JSON.stringify(products));
     }
     return products;

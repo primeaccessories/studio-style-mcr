@@ -1063,15 +1063,9 @@
         <label for="formYetToGoLive" style="font-weight:600; color:#b8860b;">Yet to go Live <span style="font-weight:400; color:#999; font-size:0.75rem;">&mdash; hidden from customers until pushed live</span></label>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Price (&pound;)</label>
-          <input type="number" class="form-input" id="formPrice" placeholder="19.99" step="0.01">
-        </div>
-        <div class="form-group">
-          <label>Quantity</label>
-          <input type="number" class="form-input" id="formQuantity" placeholder="1" min="0" step="1">
-        </div>
+      <div class="form-group">
+        <label>Price (&pound;)</label>
+        <input type="number" class="form-input" id="formPrice" placeholder="19.99" step="0.01">
       </div>
 
       <div class="form-group">
@@ -1099,53 +1093,65 @@
       </div>
 
       <div class="form-group">
-        <label>Available Sizes</label>
-        <div class="sizes-checkboxes" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="sizeXS" value="XS"> XS
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="sizeS" value="S"> S
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="sizeM" value="M"> M
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="sizeL" value="L"> L
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="sizeXL" value="XL"> XL
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="sizeOneSize" value="One Size"> One Size
-          </label>
+        <label>Clothing Sizes & Stock</label>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XS</span>
+            <input type="number" class="form-input" id="sizeQtyXS" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">S</span>
+            <input type="number" class="form-input" id="sizeQtyS" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">M</span>
+            <input type="number" class="form-input" id="sizeQtyM" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">L</span>
+            <input type="number" class="form-input" id="sizeQtyL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XL</span>
+            <input type="number" class="form-input" id="sizeQtyXL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">One Size</span>
+            <input type="number" class="form-input" id="sizeQtyOneSize" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
         </div>
-        <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Select all available sizes for this product</small>
+        <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Enter stock quantity per size. 0 or empty = not available.</small>
       </div>
 
       <div class="form-group">
-        <label>Shoe Sizes</label>
-        <div class="sizes-checkboxes" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="shoe3" value="3"> 3
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="shoe4" value="4"> 4
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="shoe5" value="5"> 5
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="shoe6" value="6"> 6
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="shoe7" value="7"> 7
-          </label>
-          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #555; cursor: pointer;">
-            <input type="checkbox" id="shoe8" value="8"> 8
-          </label>
+        <label>Shoe Sizes & Stock</label>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">3</span>
+            <input type="number" class="form-input" id="sizeQtyShoe3" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">4</span>
+            <input type="number" class="form-input" id="sizeQtyShoe4" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">5</span>
+            <input type="number" class="form-input" id="sizeQtyShoe5" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">6</span>
+            <input type="number" class="form-input" id="sizeQtyShoe6" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">7</span>
+            <input type="number" class="form-input" id="sizeQtyShoe7" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">8</span>
+            <input type="number" class="form-input" id="sizeQtyShoe8" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
         </div>
-        <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Select shoe sizes if this is a footwear product</small>
+        <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Enter stock for each shoe size. Leave at 0 for non-footwear.</small>
       </div>
 
       <div class="modal-actions">
@@ -1456,7 +1462,7 @@
             '<span class="product-name">' + p.name + '</span>' +
           '</td>' +
           '<td>' + priceHTML + '</td>' +
-          '<td>' + (typeof p.quantity === 'number' ? p.quantity : '&mdash;') + '</td>' +
+          '<td>' + (p.sizeQuantities ? Object.values(p.sizeQuantities).reduce(function(s,q){return s+(q||0);},0) : (typeof p.quantity === 'number' ? p.quantity : '&mdash;')) + '</td>' +
           '<td>' + badgesHTML + '</td>' +
           '<td>' + (p.sale ? '<span class="status-sale">Sale</span>' : '<span class="status-active">Active</span>') + '</td>' +
           '<td><div class="action-btns">' +
@@ -1584,7 +1590,6 @@
       document.getElementById('colAccessories').checked = false;
       document.getElementById('formYetToGoLive').checked = false;
       document.getElementById('formPrice').value = '';
-      document.getElementById('formQuantity').value = '';
       document.getElementById('formDescription').value = '';
       document.getElementById('formSale').checked = false;
       document.getElementById('formOriginalPrice').value = '';
@@ -1593,12 +1598,12 @@
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
       renderImageGrid();
-      // Clear all size checkboxes
+      // Clear all size quantity inputs
       ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
-        document.getElementById('size' + size).checked = false;
+        document.getElementById('sizeQty' + size).value = '';
       });
       [3,4,5,6,7,8].forEach(function(s) {
-        document.getElementById('shoe' + s).checked = false;
+        document.getElementById('sizeQtyShoe' + s).value = '';
       });
       document.getElementById('modalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
@@ -1621,22 +1626,26 @@
       document.getElementById('colAccessories').checked = cols.indexOf('accessories') > -1;
       document.getElementById('formYetToGoLive').checked = cols.indexOf('yet-to-go-live') > -1;
       document.getElementById('formPrice').value = p.price;
-      document.getElementById('formQuantity').value = typeof p.quantity === 'number' ? p.quantity : '';
       document.getElementById('formDescription').value = p.description || '';
       document.getElementById('formSale').checked = p.sale;
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
       renderImageGrid();
 
-      // Set size checkboxes
-      var productSizes = p.sizes || [];
+      // Set size quantity inputs from sizeQuantities (with backward compat)
+      var sq = p.sizeQuantities || {};
+      if (!p.sizeQuantities && p.sizes) {
+        var perSize = p.sizes.length > 0 && typeof p.quantity === 'number' ? Math.floor(p.quantity / p.sizes.length) : 0;
+        p.sizes.forEach(function(s) { sq[s] = perSize; });
+      }
       ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
-        var checkbox = document.getElementById('size' + size);
         var sizeValue = size === 'OneSize' ? 'One Size' : size;
-        checkbox.checked = productSizes.indexOf(sizeValue) > -1;
+        var input = document.getElementById('sizeQty' + size);
+        input.value = sq[sizeValue] > 0 ? sq[sizeValue] : '';
       });
       [3,4,5,6,7,8].forEach(function(s) {
-        document.getElementById('shoe' + s).checked = productSizes.indexOf(String(s)) > -1;
+        var input = document.getElementById('sizeQtyShoe' + s);
+        input.value = sq[String(s)] > 0 ? sq[String(s)] : '';
       });
 
       if (p.sale && p.originalPrice) {
@@ -1845,22 +1854,29 @@
       var isSale = document.getElementById('formSale').checked;
       var price, originalPrice;
 
-      // Gather selected sizes
+      // Gather sizeQuantities from inputs
+      var sizeQuantities = {};
       var sizes = [];
       ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
-        var checkbox = document.getElementById('size' + size);
-        if (checkbox.checked) {
-          sizes.push(size === 'OneSize' ? 'One Size' : size);
+        var input = document.getElementById('sizeQty' + size);
+        var val = parseInt(input.value, 10);
+        var sizeValue = size === 'OneSize' ? 'One Size' : size;
+        if (val > 0) {
+          sizeQuantities[sizeValue] = val;
+          sizes.push(sizeValue);
         }
       });
       [3,4,5,6,7,8].forEach(function(s) {
-        if (document.getElementById('shoe' + s).checked) {
+        var input = document.getElementById('sizeQtyShoe' + s);
+        var val = parseInt(input.value, 10);
+        if (val > 0) {
+          sizeQuantities[String(s)] = val;
           sizes.push(String(s));
         }
       });
 
-      var quantityVal = document.getElementById('formQuantity').value.trim();
-      var quantity = quantityVal !== '' ? parseInt(quantityVal, 10) : null;
+      // Total quantity = sum of all size quantities
+      var quantity = Object.values(sizeQuantities).reduce(function(sum, q) { return sum + q; }, 0) || null;
 
       if (!name) { showAlert('Missing Name', 'Please enter a product name'); return; }
       if (!description) { showAlert('Missing Description', 'Please enter a product description'); return; }
@@ -1892,6 +1908,7 @@
           products[idx].description = description;
           products[idx].sizes = sizes;
           products[idx].quantity = quantity;
+          products[idx].sizeQuantities = sizeQuantities;
         }
       } else {
         // Add new - find lowest sortOrder among products in any of the selected collections
@@ -1919,6 +1936,7 @@
           description: description,
           sizes: sizes,
           quantity: quantity,
+          sizeQuantities: sizeQuantities,
           sortOrder: minOrder
         });
       }
