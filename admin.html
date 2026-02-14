@@ -1116,6 +1116,38 @@
             <input type="number" class="form-input" id="sizeQtyXL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
           <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XXL</span>
+            <input type="number" class="form-input" id="sizeQtyXXL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">8</span>
+            <input type="number" class="form-input" id="sizeQtyC8" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">10</span>
+            <input type="number" class="form-input" id="sizeQtyC10" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">12</span>
+            <input type="number" class="form-input" id="sizeQtyC12" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">14</span>
+            <input type="number" class="form-input" id="sizeQtyC14" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">16</span>
+            <input type="number" class="form-input" id="sizeQtyC16" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">18</span>
+            <input type="number" class="form-input" id="sizeQtyC18" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">Free Size</span>
+            <input type="number" class="form-input" id="sizeQtyFreeSize" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">One Size</span>
             <input type="number" class="form-input" id="sizeQtyOneSize" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
@@ -1599,7 +1631,7 @@
       document.getElementById('fileInput').value = '';
       renderImageGrid();
       // Clear all size quantity inputs
-      ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
+      ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
         document.getElementById('sizeQty' + size).value = '';
       });
       [3,4,5,6,7,8].forEach(function(s) {
@@ -1638,8 +1670,9 @@
         var perSize = p.sizes.length > 0 && typeof p.quantity === 'number' ? Math.floor(p.quantity / p.sizes.length) : 0;
         p.sizes.forEach(function(s) { sq[s] = perSize; });
       }
-      ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
-        var sizeValue = size === 'OneSize' ? 'One Size' : size;
+      ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
+        var sizeMap = { 'OneSize': 'One Size', 'FreeSize': 'Free Size', 'C8': '8', 'C10': '10', 'C12': '12', 'C14': '14', 'C16': '16', 'C18': '18' };
+        var sizeValue = sizeMap[size] || size;
         var input = document.getElementById('sizeQty' + size);
         input.value = sq[sizeValue] > 0 ? sq[sizeValue] : '';
       });
@@ -1857,10 +1890,11 @@
       // Gather sizeQuantities from inputs
       var sizeQuantities = {};
       var sizes = [];
-      ['XS', 'S', 'M', 'L', 'XL', 'OneSize'].forEach(function(size) {
+      ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
         var input = document.getElementById('sizeQty' + size);
         var val = parseInt(input.value, 10);
-        var sizeValue = size === 'OneSize' ? 'One Size' : size;
+        var sizeMap = { 'OneSize': 'One Size', 'FreeSize': 'Free Size', 'C8': '8', 'C10': '10', 'C12': '12', 'C14': '14', 'C16': '16', 'C18': '18' };
+        var sizeValue = sizeMap[size] || size;
         if (val > 0) {
           sizeQuantities[sizeValue] = val;
           sizes.push(sizeValue);
