@@ -770,6 +770,7 @@
         <div class="admin-header-logo">STUDIO STYLE MCR</div>
         <span class="admin-badge">Admin</span>
         <span id="firebaseStatus" style="font-size: 0.55rem; letter-spacing: 1px; padding: 3px 8px; border-radius: 10px; background: #555; color: #999;">CONNECTING...</span>
+        <button onclick="forceSync()" style="font-size: 0.5rem; letter-spacing: 1px; padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,0.1); color: #999; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-family: inherit; text-transform: uppercase;">Sync</button>
       </div>
       <div class="admin-header-right">
         <a href="index.html">View Site</a>
@@ -1255,8 +1256,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src="js/products.js"></script>
-  <script src="js/auth.js?v=2"></script>
+  <script src="js/products.js?v=3"></script>
+  <script src="js/auth.js?v=3"></script>
   <script>
     // ============================================
     // FIREBASE STATUS INDICATOR
@@ -1286,6 +1287,31 @@
         .then(function() { updateFirebaseStatus(true); })
         .catch(function() { updateFirebaseStatus(false); });
     })();
+
+    // Force sync: pull latest from Firebase, overwrite localStorage, re-render
+    function forceSync() {
+      if (typeof db === 'undefined') {
+        showAlert('No Connection', 'Firebase is not loaded. Try refreshing the page or check your internet connection.');
+        return;
+      }
+      db.collection('siteData').doc('products').get()
+        .then(function(doc) {
+          if (doc.exists && doc.data().items) {
+            var products = doc.data().items;
+            localStorage.setItem('studioProducts', JSON.stringify(products));
+            _productsCache = products;
+            renderTable();
+            updateFirebaseStatus(true);
+            showToast('Synced ' + products.length + ' products from cloud');
+          } else {
+            showAlert('No Data', 'No products found in Firebase. If you have products locally, try saving one to push them to the cloud.');
+          }
+        })
+        .catch(function(error) {
+          updateFirebaseStatus(false);
+          showAlert('Sync Failed', 'Could not reach Firebase: ' + error.message + '. Check your internet connection.');
+        });
+    }
 
     // ============================================
     // FIREBASE BOOKINGS - Real-time sync across all admin devices

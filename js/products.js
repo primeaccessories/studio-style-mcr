@@ -100,7 +100,7 @@ function getTotalStock(product) {
 }
 
 // Clear stale localStorage cache — bump version to force refresh from Firebase
-var _productsCacheVersion = 2;
+var _productsCacheVersion = 3;
 if (parseInt(localStorage.getItem('studioProductsVersion')) !== _productsCacheVersion) {
   localStorage.removeItem('studioProducts');
   localStorage.setItem('studioProductsVersion', _productsCacheVersion);
