@@ -13,7 +13,7 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json();
-    const { items, customerInfo, deliveryOption, rewardUsed, userId, couponCode, couponDiscount } = body;
+    const { items, customerInfo, deliveryOption, rewardUsed, userId, couponCode, couponDiscount, firstOrderDiscountUsed, firstOrderDiscountAmount } = body;
 
     if (!items || items.length === 0) {
       return new Response(JSON.stringify({ error: 'No items in cart' }), {
@@ -59,21 +59,46 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Calculate discount amount (capped at order total)
+    // Calculate combined discount (first-order + coupon + reward) as a single Stripe coupon
     let discountParams = {};
-    if (rewardUsed) {
-      const subtotal = items.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0) + deliveryCost;
-      const discountAmount = Math.min(2000, subtotal); // £20 max, capped at subtotal
+    const subtotalPence = items.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0);
+    const orderTotalPence = subtotalPence + deliveryCost;
+    let totalDiscountPence = 0;
+    let discountParts = [];
 
-      // Use Stripe's discount feature
+    // First-order 10% discount
+    if (firstOrderDiscountUsed && firstOrderDiscountAmount > 0) {
+      const firstOrderPence = Math.round(firstOrderDiscountAmount * 100);
+      totalDiscountPence += firstOrderPence;
+      discountParts.push('10% First Order');
+    }
+
+    // Coupon discount
+    if (couponCode && couponDiscount > 0) {
+      const couponPence = Math.round(couponDiscount * 100);
+      totalDiscountPence += couponPence;
+      discountParts.push(couponCode);
+    }
+
+    // Reward discount (£20 off)
+    if (rewardUsed) {
+      const rewardPence = Math.min(2000, Math.max(0, orderTotalPence - totalDiscountPence));
+      totalDiscountPence += rewardPence;
+      discountParts.push('£20 Reward');
+    }
+
+    // Cap discount at order total
+    totalDiscountPence = Math.min(totalDiscountPence, orderTotalPence);
+
+    if (totalDiscountPence > 0) {
+      const couponName = discountParts.join(' + ');
       discountParams = {
-        'discounts[0][coupon]': await getOrCreateRewardCoupon(env, discountAmount),
+        'discounts[0][coupon]': await createCombinedCoupon(env, totalDiscountPence, couponName),
       };
     }
 
-    // Helper function to get or create a coupon for the exact discount amount
-    async function getOrCreateRewardCoupon(env, amountOff) {
-      // Create a one-time coupon for the exact amount
+    // Helper to create a one-time Stripe coupon for the combined discount
+    async function createCombinedCoupon(env, amountOff, name) {
       const couponResponse = await fetch('https://api.stripe.com/v1/coupons', {
         method: 'POST',
         headers: {
@@ -84,7 +109,7 @@ export async function onRequestPost(context) {
           'amount_off': amountOff,
           'currency': 'gbp',
           'duration': 'once',
-          'name': 'Loyalty Reward - £20 Off',
+          'name': name,
           'max_redemptions': 1,
         }),
       });
@@ -121,6 +146,8 @@ export async function onRequestPost(context) {
         'metadata[rewardUsed]': rewardUsed ? 'true' : 'false',
         'metadata[couponCode]': couponCode || '',
         'metadata[couponDiscount]': couponDiscount ? String(couponDiscount) : '0',
+        'metadata[firstOrderDiscountUsed]': firstOrderDiscountUsed ? 'true' : 'false',
+        'metadata[firstOrderDiscountAmount]': firstOrderDiscountAmount ? String(firstOrderDiscountAmount) : '0',
         ...discountParams,
         ...lineItems.reduce((acc, item, index) => {
           acc[`line_items[${index}][price_data][currency]`] = item.price_data.currency;

@@ -124,6 +124,8 @@ export async function onRequestPost(context) {
         rewardUsed: { booleanValue: meta.rewardUsed === 'true' },
         couponCode: { stringValue: meta.couponCode || '' },
         couponDiscount: { doubleValue: couponDiscount },
+        firstOrderDiscountUsed: { booleanValue: meta.firstOrderDiscountUsed === 'true' },
+        firstOrderDiscountAmount: { doubleValue: meta.firstOrderDiscountAmount ? parseFloat(meta.firstOrderDiscountAmount) : 0 },
         status: { stringValue: 'paid' },
         userId: { stringValue: meta.userId || '' },
         stripeCreated: { integerValue: String(session.created || 0) },

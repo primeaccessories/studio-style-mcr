@@ -1847,13 +1847,13 @@
 
     function processFile(file) {
       if (!file.type.startsWith('image/')) { showToast('Please upload an image file', 'error'); return; }
-      if (file.size > 5 * 1024 * 1024) { showToast('Image must be under 5MB', 'error'); return; }
+      if (file.size > 20 * 1024 * 1024) { showToast('Image must be under 20MB', 'error'); return; }
 
       var reader = new FileReader();
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var maxSize = 600;
+          var maxSize = 1600;
           var w = img.width, h = img.height;
           if (w > maxSize || h > maxSize) {
             if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
@@ -1862,20 +1862,45 @@
           var canvas = document.createElement('canvas');
           canvas.width = w; canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          // Compress aggressively to keep Firestore doc under 1MB
-          var quality = 0.5;
-          var dataUrl = canvas.toDataURL('image/jpeg', quality);
-          // If still over 50KB, compress further
-          while (dataUrl.length > 50000 && quality > 0.2) {
-            quality -= 0.1;
-            dataUrl = canvas.toDataURL('image/jpeg', quality);
-          }
-          currentImages.push(dataUrl);
-          renderImageGrid();
+          // Upload to R2 for high quality storage
+          canvas.toBlob(function(blob) {
+            uploadImageToR2(blob).then(function(url) {
+              if (url) {
+                currentImages.push(url);
+                renderImageGrid();
+              }
+            });
+          }, 'image/jpeg', 0.92);
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
+    }
+
+    async function uploadImageToR2(blob) {
+      try {
+        showToast('Uploading image...', 'info');
+        var formData = new FormData();
+        formData.append('file', blob, Date.now() + '.jpg');
+        formData.append('adminPass', 'admin123');
+
+        var response = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData
+        });
+
+        var data = await response.json();
+        if (data.error) {
+          showToast('Upload failed: ' + data.error, 'error');
+          return null;
+        }
+
+        showToast('Image uploaded!', 'success');
+        return data.url;
+      } catch (error) {
+        showToast('Upload error: ' + error.message, 'error');
+        return null;
+      }
     }
 
     function toggleUrlInput() {

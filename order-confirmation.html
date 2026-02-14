@@ -339,9 +339,58 @@
       const isCollection = method === 'collection';
       localStorage.removeItem('cart');
 
-      const whatsappMessage = encodeURIComponent(
-        `Hi! I've just placed a ${isCollection ? 'collection' : 'drop-off'} order on your website and would like to arrange ${isCollection ? 'pickup' : 'delivery'}. Thank you!`
-      );
+      // Get order details from sessionStorage
+      let orderDetails = null;
+      try {
+        orderDetails = JSON.parse(sessionStorage.getItem('cashOrderDetails'));
+        sessionStorage.removeItem('cashOrderDetails');
+      } catch(e) {}
+
+      // Build detailed WhatsApp message with order info
+      let msgLines = [`Hi! I've just placed a ${isCollection ? 'collection' : 'drop-off'} order on your website.`];
+      if (orderDetails) {
+        msgLines.push('');
+        msgLines.push(`Order: ${orderDetails.orderNumber}`);
+        msgLines.push(`Name: ${orderDetails.customerInfo.firstName} ${orderDetails.customerInfo.lastName}`);
+        msgLines.push('');
+        msgLines.push('Items:');
+        orderDetails.items.forEach(item => {
+          let line = `- ${item.name} x${item.quantity} (£${(item.price * item.quantity).toFixed(2)})`;
+          if (item.size) line += ` [${item.size}]`;
+          msgLines.push(line);
+        });
+        msgLines.push('');
+        msgLines.push(`Total: £${orderDetails.total.toFixed(2)}`);
+        msgLines.push('');
+        msgLines.push(`I'd like to arrange ${isCollection ? 'collection' : 'drop-off delivery'}. Thank you!`);
+      } else {
+        msgLines.push(`I'd like to arrange ${isCollection ? 'pickup' : 'delivery'}. Thank you!`);
+      }
+      const whatsappMessage = encodeURIComponent(msgLines.join('\n'));
+
+      // Build order summary HTML
+      let orderSummaryHtml = '';
+      if (orderDetails) {
+        const itemsHtml = orderDetails.items.map(item =>
+          `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;">
+            <span>${item.name}${item.size ? ' (' + item.size + ')' : ''} x${item.quantity}</span>
+            <span>£${(item.price * item.quantity).toFixed(2)}</span>
+          </div>`
+        ).join('');
+
+        orderSummaryHtml = `
+          <div class="order-number">
+            <span>Order Number</span>
+            <strong>${orderDetails.orderNumber}</strong>
+          </div>
+          <div style="background:#f8f6f3;padding:20px;border-radius:4px;margin-bottom:20px;text-align:left;">
+            ${itemsHtml}
+            <div style="display:flex;justify-content:space-between;padding:12px 0 0;font-weight:bold;font-family:'Fjalla One',sans-serif;">
+              <span>Total (pay on ${isCollection ? 'collection' : 'delivery'})</span>
+              <span>£${orderDetails.total.toFixed(2)}</span>
+            </div>
+          </div>`;
+      }
 
       container.innerHTML = `
         <div class="confirmation-icon">
@@ -349,6 +398,8 @@
         </div>
         <h1>Order Confirmed!</h1>
         <p class="subtitle">Your ${isCollection ? 'collection' : 'drop-off'} order has been received</p>
+
+        ${orderSummaryHtml}
 
         <div style="background: #25D366; padding: 30px; margin: 30px 0; border-radius: 8px;">
           <p style="color: white; font-family: 'Cormorant Garamond', serif; font-size: 18px; margin-bottom: 20px;">
@@ -417,6 +468,8 @@
           total: (session.amount_total || 0) / 100,
           currency: session.currency || 'gbp',
           rewardUsed: session.metadata?.rewardUsed === 'true',
+          firstOrderDiscountUsed: session.metadata?.firstOrderDiscountUsed === 'true',
+          firstOrderDiscountAmount: parseFloat(session.metadata?.firstOrderDiscountAmount || '0'),
           status: 'paid',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           stripeCreated: session.created,

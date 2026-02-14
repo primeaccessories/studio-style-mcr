@@ -176,6 +176,10 @@
             <span>Delivery</span>
             <span id="checkout-delivery">—</span>
           </div>
+          <div class="summary-row first-order-row" id="first-order-row" style="display: none; color: #2e7d32;">
+            <span>First Order Discount (10%)</span>
+            <span id="checkout-first-order">-£0.00</span>
+          </div>
           <div class="summary-row coupon-row" id="coupon-row" style="display: none; color: #2e7d32;">
             <span>Discount (<span id="coupon-code-display"></span>)</span>
             <span id="checkout-coupon">-£0.00</span>
@@ -267,6 +271,8 @@
     let appliedCoupon = null;
     let couponDiscount = 0;
     let discountCodes = {}; // Will be loaded from Firebase
+    let firstOrderDiscount = false;
+    let firstOrderDiscountAmount = 0;
 
     // Load discount codes from Firebase
     async function loadDiscountCodes() {
@@ -305,6 +311,13 @@
         return;
       }
 
+      // Block STUDIO10 when first-order discount is already active
+      if (code === 'STUDIO10' && firstOrderDiscount) {
+        messageEl.textContent = 'Your 10% first-order discount is already applied!';
+        messageEl.className = 'coupon-message error';
+        return;
+      }
+
       applyBtn.disabled = true;
       applyBtn.textContent = 'Checking...';
 
@@ -332,7 +345,7 @@
       }
     }
 
-    // Check for reward on page load
+    // Check for reward and first-order discount on page load
     auth.onAuthStateChanged(async function(user) {
       if (user) {
         try {
@@ -342,6 +355,12 @@
             rewardAvailable = (data.rewards && data.rewards.rewardAvailable) || false;
             if (rewardAvailable) {
               document.getElementById('reward-row').style.display = 'flex';
+            }
+            // Auto-apply 10% first-order discount if orderCount is 0
+            const orderCount = (data.rewards && data.rewards.orderCount) || 0;
+            if (orderCount === 0) {
+              firstOrderDiscount = true;
+              document.getElementById('first-order-row').style.display = 'flex';
             }
             updateTotal();
           }
@@ -528,17 +547,23 @@
       if (!checked) {
         document.getElementById('checkout-delivery').textContent = '—';
         let total = subtotal;
+        // First-order 10% discount (on subtotal)
+        if (firstOrderDiscount) {
+          firstOrderDiscountAmount = +(subtotal * 0.10).toFixed(2);
+          document.getElementById('checkout-first-order').textContent = `-£${firstOrderDiscountAmount.toFixed(2)}`;
+          total -= firstOrderDiscountAmount;
+        }
         if (appliedCoupon) {
           if (appliedCoupon.type === 'percent') {
-            couponDiscount = subtotal * (appliedCoupon.value / 100);
+            couponDiscount = +(subtotal * (appliedCoupon.value / 100)).toFixed(2);
           } else {
             couponDiscount = Math.min(appliedCoupon.value, subtotal);
           }
           document.getElementById('checkout-coupon').textContent = `-£${couponDiscount.toFixed(2)}`;
-          total = total - couponDiscount;
+          total -= couponDiscount;
         }
         if (rewardAvailable) {
-          const rewardDiscount = Math.min(20, total);
+          const rewardDiscount = Math.min(20, Math.max(0, total));
           document.getElementById('checkout-reward').textContent = `-£${rewardDiscount.toFixed(2)}`;
           total = Math.max(0, total - 20);
         }
@@ -554,21 +579,31 @@
 
       document.getElementById('checkout-delivery').textContent = deliveryCost === 0 ? 'FREE' : `£${deliveryCost.toFixed(2)}`;
 
-      let total = subtotal + deliveryCost;
+      let total = subtotal;
+
+      // First-order 10% discount (on subtotal)
+      if (firstOrderDiscount) {
+        firstOrderDiscountAmount = +(subtotal * 0.10).toFixed(2);
+        document.getElementById('checkout-first-order').textContent = `-£${firstOrderDiscountAmount.toFixed(2)}`;
+        total -= firstOrderDiscountAmount;
+      }
 
       // Apply coupon discount if available
       if (appliedCoupon) {
         if (appliedCoupon.type === 'percent') {
-          couponDiscount = subtotal * (appliedCoupon.value / 100);
+          couponDiscount = +(subtotal * (appliedCoupon.value / 100)).toFixed(2);
         } else {
           couponDiscount = Math.min(appliedCoupon.value, subtotal);
         }
         document.getElementById('checkout-coupon').textContent = `-£${couponDiscount.toFixed(2)}`;
-        total = total - couponDiscount;
+        total -= couponDiscount;
       }
 
+      // Add delivery
+      total += deliveryCost;
+
       // Apply £20 reward discount if available
-      const rewardDiscount = rewardAvailable ? Math.min(20, total) : 0;
+      const rewardDiscount = rewardAvailable ? Math.min(20, Math.max(0, total)) : 0;
       if (rewardAvailable) {
         document.getElementById('checkout-reward').textContent = `-£${rewardDiscount.toFixed(2)}`;
         total = Math.max(0, total - 20);
@@ -628,7 +663,11 @@
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const activeType = getActiveDeliveryType();
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const finalTotal = rewardAvailable ? Math.max(0, subtotal - 20) : subtotal;
+      const cashFirstOrderAmt = firstOrderDiscount ? +(subtotal * 0.10).toFixed(2) : 0;
+      let finalTotal = subtotal - cashFirstOrderAmt;
+      if (appliedCoupon) finalTotal -= couponDiscount;
+      const cashRewardAmt = rewardAvailable ? Math.min(20, Math.max(0, finalTotal)) : 0;
+      finalTotal = Math.max(0, finalTotal - cashRewardAmt);
 
       try {
         const user = auth.currentUser;
@@ -643,8 +682,10 @@
           total: finalTotal,
           couponCode: appliedCoupon ? appliedCoupon.code : null,
           couponDiscount: appliedCoupon ? couponDiscount : 0,
+          firstOrderDiscountUsed: firstOrderDiscount,
+          firstOrderDiscountAmount: cashFirstOrderAmt,
           rewardUsed: rewardAvailable,
-          rewardDiscount: rewardAvailable ? Math.min(20, subtotal) : 0,
+          rewardDiscount: cashRewardAmt,
           status: 'pending',
           userId: user ? user.uid : null,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -677,6 +718,15 @@
           await db.collection('users').doc(user.uid).update(rewardUpdate);
         }
 
+        // Store order details for confirmation page WhatsApp message
+        sessionStorage.setItem('cashOrderDetails', JSON.stringify({
+          orderNumber: orderNumber,
+          items: cart,
+          customerInfo: getCustomerInfo(),
+          deliveryOption: activeType,
+          subtotal: subtotal,
+          total: finalTotal
+        }));
         localStorage.removeItem('cart');
         window.location.href = 'order-confirmation.html?method=' + activeType;
       } catch (error) {
@@ -711,7 +761,9 @@
             rewardUsed: rewardAvailable,
             userId: user ? user.uid : null,
             couponCode: appliedCoupon ? appliedCoupon.code : null,
-            couponDiscount: appliedCoupon ? couponDiscount : 0
+            couponDiscount: appliedCoupon ? couponDiscount : 0,
+            firstOrderDiscountUsed: firstOrderDiscount,
+            firstOrderDiscountAmount: firstOrderDiscountAmount
           })
         });
 
@@ -757,7 +809,9 @@
             rewardUsed: rewardAvailable,
             userId: user ? user.uid : null,
             couponCode: appliedCoupon ? appliedCoupon.code : null,
-            couponDiscount: appliedCoupon ? couponDiscount : 0
+            couponDiscount: appliedCoupon ? couponDiscount : 0,
+            firstOrderDiscountUsed: firstOrderDiscount,
+            firstOrderDiscountAmount: firstOrderDiscountAmount
           })
         });
 
