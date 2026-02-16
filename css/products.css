@@ -118,6 +118,31 @@
   transform: translateY(-1px);
 }
 
+.add-to-cart-btn.out-of-stock-btn {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.add-to-cart-btn.out-of-stock-btn:hover {
+  background: #e0e0e0;
+  transform: none;
+}
+
+.oos-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #555;
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
 /* Quick View Button (optional) */
 .quick-view {
   position: absolute;

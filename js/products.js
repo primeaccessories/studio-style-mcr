@@ -227,19 +227,25 @@ function renderCollectionProducts(collection) {
       priceHTML = '&pound;' + p.price.toFixed(2);
     }
 
+    var totalStock = getTotalStock(p);
+    var isOutOfStock = totalStock !== null && totalStock <= 0;
+
     var card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML =
       '<a href="product.html?id=' + p.id + '" class="product-image-link">' +
         '<div class="product-image">' +
           (p.sale ? '<span class="sale-badge">SALE</span>' : '') +
+          (isOutOfStock ? '<span class="oos-badge">OUT OF STOCK</span>' : '') +
           '<img src="' + p.image + '" alt="' + p.name + '" onerror="this.onerror=null;this.src=\'/images/placeholder-product.svg\'">' +
         '</div>' +
       '</a>' +
       '<div class="product-info">' +
         '<a href="product.html?id=' + p.id + '" class="product-name-link"><h3>' + p.name + '</h3></a>' +
         '<p class="price">' + priceHTML + '</p>' +
-        '<button class="add-to-cart-btn" onclick="addToCart(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\', event)">Add to Cart</button>' +
+        (isOutOfStock
+          ? '<button class="add-to-cart-btn out-of-stock-btn" disabled>Out of Stock</button>'
+          : '<button class="add-to-cart-btn" onclick="addToCart(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\', event)">Add to Cart</button>') +
       '</div>';
     grid.appendChild(card);
   });

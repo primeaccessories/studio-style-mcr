@@ -13,6 +13,21 @@ function updateCartCount() {
 
 // Add item to cart (size-aware: same product in different sizes = separate items)
 function addToCart(id, name, price, image, clickEvent, size) {
+  // Stock validation — block if out of stock
+  if (typeof getProducts === 'function') {
+    var products = getProducts();
+    var product = products.find(function(p) { return p.id === id; });
+    if (product && product.sizeQuantities) {
+      if (size) {
+        var sizeQty = product.sizeQuantities[size] || 0;
+        if (sizeQty <= 0) { showNotification('Sorry, that size is out of stock'); return; }
+      } else {
+        var total = Object.values(product.sizeQuantities).reduce(function(s, q) { return s + (q || 0); }, 0);
+        if (total <= 0) { showNotification('Sorry, this item is out of stock'); return; }
+      }
+    }
+  }
+
   var cartId = size ? id + '-size-' + size : id;
   const existing = cart.find(item => item.id === cartId);
 
