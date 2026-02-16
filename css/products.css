@@ -269,8 +269,14 @@
     aspect-ratio: 3 / 4;
   }
 
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   .product-info {
-    padding: 12px 0;
+    padding: 10px 0;
   }
 
   .product-info h3 {
@@ -279,7 +285,25 @@
 
   .product-info .price {
     font-size: 0.85rem;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+  }
+
+  .card-swatches {
+    margin-bottom: 5px;
+  }
+
+  .card-swatch-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .card-sizes {
+    margin-bottom: 6px;
+  }
+
+  .card-size-tag {
+    font-size: 0.55rem;
+    padding: 1px 4px;
   }
 
   .add-to-cart-btn {
@@ -290,10 +314,14 @@
 
 @media (max-width: 480px) {
   .products-grid {
-    gap: 10px;
+    gap: 8px;
   }
 
   .product-info h3 {
     font-size: 0.7rem;
+  }
+
+  .card-sizes {
+    display: none;
   }
 }

@@ -1,3 +1,8 @@
+// Escape string for safe use in onclick HTML attributes
+function escAttr(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/\\/g,'\\\\');
+}
+
 // Default product data - used when no localStorage data exists
 var DEFAULT_PRODUCTS = [
   // NEW ARRIVALS
@@ -280,10 +285,10 @@ function renderCollectionProducts(collection) {
         '<div class="product-image">' +
           (p.sale ? '<span class="sale-badge">SALE</span>' : '') +
           (isOutOfStock ? '<span class="oos-badge">OUT OF STOCK</span>' : '') +
-          '<img src="' + p.image + '" alt="' + p.name + '" onerror="this.onerror=null;this.src=\'/images/placeholder-product.svg\'">' +
+          '<img src="' + p.image + '" alt="' + escAttr(p.name) + '" onerror="this.onerror=null;this.src=\'/images/placeholder-product.svg\'">' +
         '</div>' +
       '</a>' +
-      '<button class="' + heartBtnClass + '" data-product-id="' + p.id + '" onclick="event.preventDefault();event.stopPropagation();addToWishlist(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\')">' +
+      '<button class="' + heartBtnClass + '" data-product-id="' + p.id + '" onclick="event.preventDefault();event.stopPropagation();addToWishlist(\'' + escAttr(p.id) + '\', \'' + escAttr(p.name) + '\', ' + p.price + ', \'' + escAttr(p.image) + '\')">' +
         '<i class="' + heartClass + '"></i>' +
       '</button>' +
       '<div class="product-info">' +
@@ -292,7 +297,7 @@ function renderCollectionProducts(collection) {
         buildCardSwatches(p) +
         (isOutOfStock
           ? '<button class="add-to-cart-btn out-of-stock-btn" disabled>Out of Stock</button>'
-          : '<button class="add-to-cart-btn" onclick="addToCart(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\', event)">Add to Cart</button>') +
+          : '<button class="add-to-cart-btn" onclick="addToCart(\'' + escAttr(p.id) + '\', \'' + escAttr(p.name) + '\', ' + p.price + ', \'' + escAttr(p.image) + '\', event)">Add to Cart</button>') +
       '</div>';
     grid.appendChild(card);
   });

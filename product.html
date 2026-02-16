@@ -288,15 +288,55 @@
     @media (max-width: 768px) {
       .product-container {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 20px;
+        padding: 0 15px;
       }
 
       .product-gallery {
         position: static;
       }
 
+      .product-main-image {
+        aspect-ratio: 3/4;
+        width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+        background: #f8f8f8;
+      }
+
       .product-title {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
+      }
+
+      .product-price {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+      }
+
+      .product-description {
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+      }
+
+      .colour-swatch-btn {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+      }
+
+      .size-btn {
+        min-width: 44px;
+        padding: 12px 14px;
+        font-size: 0.8rem;
+      }
+
+      .add-to-cart-large {
+        padding: 16px 30px;
+        font-size: 0.85rem;
+      }
+
+      .product-thumb-btn {
+        width: 60px;
+        height: 60px;
       }
     }
   </style>
@@ -475,7 +515,7 @@
   <script src="js/auth.js?v=2" defer></script>
   <script>
     var currentProduct = null;
-    var selectedSize = 'ONE SIZE';
+    var selectedSize = 'One Size';
 
     function selectSize(btn, size) {
       document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));

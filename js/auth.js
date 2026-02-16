@@ -37,10 +37,10 @@ auth.onAuthStateChanged(function(user) {
 function updateNavAuth(user) {
   const accountLinks = document.querySelectorAll('.account-link');
 
-  // Remove any existing dropdown
-  var existingDropdown = document.getElementById('account-dropdown');
-  if (existingDropdown) existingDropdown.remove();
+  // Remove all existing dropdowns
+  document.querySelectorAll('#account-dropdown').forEach(function(el) { el.remove(); });
 
+  var dropdownCreated = false;
   accountLinks.forEach(link => {
     if (user) {
       link.style.display = 'block';
@@ -59,16 +59,19 @@ function updateNavAuth(user) {
         }
       }).catch(function() {});
 
-      // Create dropdown
-      var dropdown = document.createElement('div');
-      dropdown.id = 'account-dropdown';
-      dropdown.className = 'account-dropdown';
-      dropdown.style.display = 'none';
-      dropdown.innerHTML =
-        '<div class="dropdown-rewards" id="dropdown-rewards">Loading rewards...</div>' +
-        '<a href="account.html" class="dropdown-link"><i class="fas fa-user-cog"></i> My Account</a>' +
-        '<button class="dropdown-signout" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>';
-      link.parentElement.appendChild(dropdown);
+      // Create dropdown on first account link only
+      if (!dropdownCreated) {
+        dropdownCreated = true;
+        var dropdown = document.createElement('div');
+        dropdown.id = 'account-dropdown';
+        dropdown.className = 'account-dropdown';
+        dropdown.style.display = 'none';
+        dropdown.innerHTML =
+          '<div class="dropdown-rewards" id="dropdown-rewards">Loading rewards...</div>' +
+          '<a href="account.html" class="dropdown-link"><i class="fas fa-user-cog"></i> My Account</a>' +
+          '<button class="dropdown-signout" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>';
+        link.parentElement.appendChild(dropdown);
+      }
 
       // Load rewards into dropdown
       db.collection('users').doc(user.uid).get().then(function(doc) {

@@ -36,7 +36,7 @@ function performSearch() {
   });
 
   if (matches.length === 0) {
-    resultsContainer.innerHTML = '<p class="search-no-results">No products found for "' + query.replace(/</g, '&lt;') + '"</p>';
+    resultsContainer.innerHTML = '<p class="search-no-results">No products found for "' + query.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') + '"</p>';
     return;
   }
 
@@ -48,13 +48,16 @@ function performSearch() {
   };
 
   var html = matches.map(function(p) {
-    var page = collectionPages[p.collection] || 'new-arrivals.html';
+    var cols = p.collections || (p.collection ? [p.collection] : []);
+    var firstCol = cols.length > 0 ? cols[0] : 'new-arrivals';
+    if (firstCol === 'yet-to-go-live') firstCol = 'new-arrivals';
+    var page = collectionPages[firstCol] || 'new-arrivals.html';
     var priceText = p.sale && p.originalPrice
       ? '<span class="search-was">&pound;' + p.originalPrice.toFixed(2) + '</span> &pound;' + p.price.toFixed(2)
       : '&pound;' + p.price.toFixed(2);
 
-    return '<a href="' + page + '" class="search-result-item" onclick="closeSearch()">' +
-      '<img src="' + p.image + '" alt="' + p.name + '">' +
+    return '<a href="product.html?id=' + p.id + '" class="search-result-item" onclick="closeSearch()">' +
+      '<img src="' + p.image + '" alt="">' +
       '<div class="search-result-info">' +
         '<span class="search-result-name">' + p.name + '</span>' +
         '<span class="search-result-price">' + priceText + '</span>' +
