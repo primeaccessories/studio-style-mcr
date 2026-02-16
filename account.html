@@ -46,6 +46,7 @@
     <nav class="nav">
       <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
       <a href="account.html" class="account-link active"><i class="fas fa-user"></i></a>
+      <a href="account.html#wishlist" class="wishlist-link"><i class="far fa-heart"></i><span class="wishlist-count">0</span></a>
       <div class="cart-link cart-link-header" onclick="toggleMiniCart()">
         <i class="fas fa-shopping-bag"></i>
         <span class="cart-count">0</span>
@@ -80,6 +81,9 @@
         </button>
         <button class="tab-btn" data-tab="orders">
           <i class="fas fa-box"></i> Orders
+        </button>
+        <button class="tab-btn" data-tab="wishlist">
+          <i class="fas fa-heart"></i> Wishlist
         </button>
         <button class="tab-btn" data-tab="profile">
           <i class="fas fa-user-cog"></i> Profile
@@ -135,6 +139,20 @@
               <div class="orders-loading">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>Loading your orders...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wishlist Tab -->
+        <div class="tab-pane" id="wishlist">
+          <div class="wishlist-section">
+            <h3>My Wishlist</h3>
+            <div id="wishlistItems">
+              <div class="wishlist-empty">
+                <i class="far fa-heart"></i>
+                <p>Your wishlist is empty</p>
+                <a href="new-arrivals.html">Start Shopping</a>
               </div>
             </div>
           </div>
@@ -293,6 +311,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" defer></script>
   <script src="js/products.js" defer></script>
   <script src="js/cart.js" defer></script>
+  <script src="js/wishlist.js" defer></script>
   <script src="js/search.js" defer></script>
   <script src="js/auth.js?v=2" defer></script>
   <script>
@@ -427,17 +446,65 @@
     });
 
     // Tab Switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+      var tabBtn = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
+      var tabPane = document.getElementById(tabName);
+      if (tabBtn) tabBtn.classList.add('active');
+      if (tabPane) tabPane.classList.add('active');
+    }
+
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', function() {
-        // Remove active from all tabs and panes
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-
-        // Add active to clicked tab and corresponding pane
-        this.classList.add('active');
-        document.getElementById(this.dataset.tab).classList.add('active');
+        switchTab(this.dataset.tab);
       });
     });
+
+    // Open wishlist tab if URL hash is #wishlist
+    if (window.location.hash === '#wishlist') {
+      switchTab('wishlist');
+    }
+
+    // Render wishlist tab content (called by wishlist.js real-time listener)
+    function renderWishlistTab() {
+      var container = document.getElementById('wishlistItems');
+      if (!container) return;
+
+      var items = typeof getWishlist === 'function' ? getWishlist() : [];
+
+      if (items.length === 0) {
+        container.innerHTML =
+          '<div class="wishlist-empty">' +
+            '<i class="far fa-heart"></i>' +
+            '<p>Your wishlist is empty</p>' +
+            '<a href="new-arrivals.html">Start Shopping</a>' +
+          '</div>';
+        return;
+      }
+
+      var html = '<div class="wishlist-grid">';
+      items.forEach(function(item) {
+        html +=
+          '<div class="wishlist-item">' +
+            '<a href="product.html?id=' + item.productId + '">' +
+              '<div class="wishlist-item-image">' +
+                '<img src="' + (item.image || '/images/placeholder-product.svg') + '" alt="' + item.name + '" onerror="this.onerror=null;this.src=\'/images/placeholder-product.svg\'">' +
+              '</div>' +
+            '</a>' +
+            '<div class="wishlist-item-info">' +
+              '<h4>' + item.name + '</h4>' +
+              '<p class="wishlist-item-price">&pound;' + item.price.toFixed(2) + '</p>' +
+            '</div>' +
+            '<div class="wishlist-item-actions">' +
+              '<button class="wishlist-add-cart-btn" onclick="addToCart(\'' + item.productId + '\', \'' + item.name.replace(/'/g, "\\'") + '\', ' + item.price + ', \'' + item.image + '\')">Add to Cart</button>' +
+              '<button class="wishlist-remove-btn" onclick="removeFromWishlist(\'' + item.productId + '\')"><i class="fas fa-trash-alt"></i></button>' +
+            '</div>' +
+          '</div>';
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
 
     // Profile Form
     document.getElementById('profileForm').addEventListener('submit', async function(e) {

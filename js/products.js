@@ -230,6 +230,10 @@ function renderCollectionProducts(collection) {
     var totalStock = getTotalStock(p);
     var isOutOfStock = totalStock !== null && totalStock <= 0;
 
+    var wishlisted = typeof isInWishlist === 'function' && isInWishlist(p.id);
+    var heartClass = wishlisted ? 'fas fa-heart' : 'far fa-heart';
+    var heartBtnClass = 'wishlist-heart-btn' + (wishlisted ? ' wishlisted' : '');
+
     var card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML =
@@ -240,6 +244,9 @@ function renderCollectionProducts(collection) {
           '<img src="' + p.image + '" alt="' + p.name + '" onerror="this.onerror=null;this.src=\'/images/placeholder-product.svg\'">' +
         '</div>' +
       '</a>' +
+      '<button class="' + heartBtnClass + '" data-product-id="' + p.id + '" onclick="event.preventDefault();event.stopPropagation();addToWishlist(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\')">' +
+        '<i class="' + heartClass + '"></i>' +
+      '</button>' +
       '<div class="product-info">' +
         '<a href="product.html?id=' + p.id + '" class="product-name-link"><h3>' + p.name + '</h3></a>' +
         '<p class="price">' + priceHTML + '</p>' +

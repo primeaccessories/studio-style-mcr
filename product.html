@@ -275,6 +275,7 @@
     <nav class="nav">
       <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
       <a href="account.html" class="account-link"><i class="fas fa-user"></i></a>
+      <a href="account.html#wishlist" class="wishlist-link"><i class="far fa-heart"></i><span class="wishlist-count">0</span></a>
       <div class="cart-link cart-link-header" onclick="toggleMiniCart()">
         <i class="fas fa-shopping-bag"></i>
         <span class="cart-count">0</span>
@@ -312,6 +313,9 @@
 
         <button id="addToCartBtn" class="add-to-cart-large" onclick="addProductToCart(event)">
           Add to Basket
+        </button>
+        <button id="addToWishlistBtn" class="add-to-wishlist-btn" onclick="toggleProductWishlist()">
+          <i class="far fa-heart"></i> Add to Wishlist
         </button>
 
         <div class="product-meta">
@@ -403,6 +407,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" defer></script>
   <script src="js/products.js" defer></script>
   <script src="js/cart.js" defer></script>
+  <script src="js/wishlist.js" defer></script>
   <script src="js/search.js" defer></script>
   <script src="js/auth.js?v=2" defer></script>
   <script>
@@ -552,6 +557,35 @@
         btn.style.color = '#1a1a1a';
       }, 1500);
     }
+
+    // Toggle wishlist for current product
+    function toggleProductWishlist() {
+      if (!currentProduct) return;
+      addToWishlist(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.image);
+      updateProductWishlistBtn();
+    }
+
+    // Update wishlist button state
+    function updateProductWishlistBtn() {
+      if (!currentProduct) return;
+      var btn = document.getElementById('addToWishlistBtn');
+      if (!btn) return;
+      if (typeof isInWishlist === 'function' && isInWishlist(currentProduct.id)) {
+        btn.classList.add('wishlisted');
+        btn.innerHTML = '<i class="fas fa-heart"></i> In Your Wishlist';
+      } else {
+        btn.classList.remove('wishlisted');
+        btn.innerHTML = '<i class="far fa-heart"></i> Add to Wishlist';
+      }
+    }
+
+    // Check wishlist state after product loads
+    var _origLoadProduct = loadProduct;
+    loadProduct = function() {
+      _origLoadProduct();
+      // Delay slightly to let wishlist init
+      setTimeout(updateProductWishlistBtn, 500);
+    };
 
     // Load product on page load
     document.addEventListener('DOMContentLoaded', loadProduct);

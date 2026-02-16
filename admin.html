@@ -1853,9 +1853,19 @@
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var maxSize = 1600;
+          var maxSize = 2400;
           var w = img.width, h = img.height;
-          if (w > maxSize || h > maxSize) {
+          var needsResize = w > maxSize || h > maxSize;
+
+          if (!needsResize && file.type === 'image/jpeg') {
+            // Already within bounds and JPEG — upload original file to preserve full quality
+            uploadImageToR2(file).then(function(url) {
+              if (url) { currentImages.push(url); renderImageGrid(); }
+            });
+            return;
+          }
+
+          if (needsResize) {
             if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
             else { w = Math.round(w * maxSize / h); h = maxSize; }
           }
@@ -1870,7 +1880,7 @@
                 renderImageGrid();
               }
             });
-          }, 'image/jpeg', 0.92);
+          }, 'image/jpeg', 0.95);
         };
         img.src = e.target.result;
       };
