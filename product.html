@@ -643,22 +643,19 @@
         });
         // Auto-select first available
         var addBtn = document.getElementById('addToCartBtn');
+        var notifyBtn = document.getElementById('notifyMeBtn');
         if (firstAvailable) {
           var firstBtn = sizesContainer.querySelector('.size-btn:not(.out-of-stock)');
           if (firstBtn) firstBtn.classList.add('active');
           selectedSize = firstAvailable;
           addBtn.disabled = false;
           addBtn.classList.remove('disabled');
+          addBtn.style.display = 'block';
           addBtn.textContent = 'Add to Basket';
-          var notifyBtnHide = document.getElementById('notifyMeBtn');
-          if (notifyBtnHide) notifyBtnHide.style.display = 'none';
+          if (notifyBtn) notifyBtn.style.display = 'none';
         } else if (hasSizeQty) {
           selectedSize = null;
-          addBtn.disabled = true;
-          addBtn.classList.add('disabled');
-          addBtn.textContent = 'Out of Stock';
-          // Show Notify Me button
-          var notifyBtn = document.getElementById('notifyMeBtn');
+          addBtn.style.display = 'none';
           if (notifyBtn) notifyBtn.style.display = 'block';
         } else {
           selectedSize = allSizes[0] || 'One Size';
