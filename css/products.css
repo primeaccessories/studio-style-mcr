@@ -130,6 +130,38 @@
   transform: none;
 }
 
+/* Card colour swatches & size tags */
+.card-swatches {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.card-swatch-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.card-sizes {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.card-size-tag {
+  font-size: 0.6rem;
+  color: #777;
+  border: 1px solid #e0e0e0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.3px;
+}
+
 .oos-badge {
   position: absolute;
   top: 10px;

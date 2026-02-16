@@ -195,6 +195,45 @@ function migrateProductsToFirebase() {
   });
 }
 
+// Colour swatch map for card display
+var _colourSwatchMap = {
+  'Black': '#1a1a1a', 'White': '#fff', 'Navy': '#1b2a4a', 'Grey': '#888',
+  'Cream': '#f5f0e6', 'Pink': '#e8a0b4', 'Red': '#c53030', 'Blue': '#2b6cb0',
+  'Green': '#2f855a', 'Brown': '#744210', 'Beige': '#d4c5a9', 'Khaki': '#6b6b3d',
+  'Chocolate': '#4a2c2a', 'Gold': '#c9a86c', 'Silver': '#b0b0b0',
+  'Burgundy': '#722f37', 'Teal': '#008080', 'Coral': '#ff7f50', 'Lilac': '#c8a2c8',
+  'Nude': '#e3bc9a', 'Tan': '#d2b48c', 'Charcoal': '#36454f', 'Ivory': '#fffff0',
+  'Mustard': '#c8a500', 'Olive': '#556b2f', 'Plum': '#8e4585', 'Rust': '#b7410e',
+  'Sand': '#c2b280', 'Stone': '#928e85', 'Taupe': '#483c32', 'Wine': '#722f37', 'Camel': '#c19a6b'
+};
+
+// Build colour swatches + sizes HTML for product cards
+function buildCardSwatches(p) {
+  var html = '';
+  var colours = p.colours || [];
+  var sizes = p.sizes || [];
+
+  if (colours.length > 0) {
+    html += '<div class="card-swatches">';
+    colours.forEach(function(c) {
+      var bg = _colourSwatchMap[c] || '#ddd';
+      var border = (c === 'White' || c === 'Cream' || c === 'Ivory') ? '1px solid #ddd' : '1px solid rgba(0,0,0,0.1)';
+      html += '<span class="card-swatch-dot" title="' + c + '" style="background:' + bg + ';border:' + border + ';"></span>';
+    });
+    html += '</div>';
+  }
+
+  if (sizes.length > 0 && !(sizes.length === 1 && (sizes[0] === 'One Size' || sizes[0] === 'Free Size'))) {
+    html += '<div class="card-sizes">';
+    sizes.forEach(function(s) {
+      html += '<span class="card-size-tag">' + s + '</span>';
+    });
+    html += '</div>';
+  }
+
+  return html;
+}
+
 // Render products on a collection page
 function renderCollectionProducts(collection) {
   var grid = document.querySelector('.products-grid');
@@ -250,6 +289,7 @@ function renderCollectionProducts(collection) {
       '<div class="product-info">' +
         '<a href="product.html?id=' + p.id + '" class="product-name-link"><h3>' + p.name + '</h3></a>' +
         '<p class="price">' + priceHTML + '</p>' +
+        buildCardSwatches(p) +
         (isOutOfStock
           ? '<button class="add-to-cart-btn out-of-stock-btn" disabled>Out of Stock</button>'
           : '<button class="add-to-cart-btn" onclick="addToCart(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', ' + p.price + ', \'' + p.image + '\', event)">Add to Cart</button>') +
