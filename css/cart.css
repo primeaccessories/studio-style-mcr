@@ -1404,8 +1404,8 @@
 /* Notify Me button on product cards */
 .notify-btn {
   width: 100%;
-  background: #2c2c2c;
-  color: #fff;
+  background: #e8e0d6;
+  color: #2c2c2c;
   border: none;
   padding: 14px 20px;
   font-size: 0.7rem;
@@ -1418,7 +1418,8 @@
 }
 
 .notify-btn:hover {
-  background: #444;
+  background: #ddd5ca;
+  transform: translateY(-1px);
 }
 
 .notify-btn i {
