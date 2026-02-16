@@ -561,13 +561,13 @@
         priceEl.textContent = '£' + currentProduct.price.toFixed(2);
       }
 
-      // Description
+      // Description — preserve line breaks as <br>
       var descEl = document.getElementById('productDescription');
-      if (currentProduct.description) {
-        descEl.textContent = currentProduct.description;
-      } else {
-        descEl.textContent = 'Beautiful piece from our latest collection. Perfect for any occasion.';
-      }
+      var descText = currentProduct.description || 'Beautiful piece from our latest collection. Perfect for any occasion.';
+      // Escape HTML, then convert newlines to <br>
+      var div = document.createElement('div');
+      div.textContent = descText;
+      descEl.innerHTML = div.innerHTML.replace(/\n/g, '<br>');
 
       // Colours & Sizes
       var colours = currentProduct.colours || [];
