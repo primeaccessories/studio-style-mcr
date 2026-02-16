@@ -121,6 +121,57 @@
       white-space: pre-line;
     }
 
+    .product-colours {
+      margin-bottom: 25px;
+    }
+
+    .product-colours h4 {
+      font-family: 'Fjalla One', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      color: #2c2c2c;
+    }
+
+    .colour-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .colour-swatch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 1px solid #ddd;
+      background: #fff;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 20px;
+    }
+
+    .colour-swatch-btn:hover,
+    .colour-swatch-btn.active {
+      border-color: #2c2c2c;
+    }
+
+    .colour-swatch-btn.active {
+      background: #f5f2ee;
+    }
+
+    .colour-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.15);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
     .product-sizes {
       margin-bottom: 30px;
     }
@@ -304,6 +355,13 @@
           Beautiful piece from our latest collection. Perfect for any occasion, this versatile item will become a staple in your wardrobe.
         </p>
 
+        <div class="product-colours" id="productColours" style="display: none;">
+          <h4>Colour</h4>
+          <div class="colour-options" id="colourOptions">
+            <!-- Colours loaded dynamically -->
+          </div>
+        </div>
+
         <div class="product-sizes">
           <h4>Select Size</h4>
           <div class="size-options">
@@ -420,6 +478,22 @@
       selectedSize = size;
     }
 
+    function getColourSwatchCSS(name) {
+      var map = {
+        'Black': '#1a1a1a', 'White': '#ffffff', 'Navy': '#1b2a4a', 'Grey': '#888888',
+        'Cream': '#f5f0e6', 'Pink': '#e8a0b4', 'Red': '#c53030', 'Blue': '#2b6cb0',
+        'Green': '#2f855a', 'Brown': '#744210', 'Beige': '#d4c5a9', 'Khaki': '#6b6b3d',
+        'Chocolate': '#4a2c2a', 'Gold': '#c9a86c', 'Silver': '#b0b0b0',
+        'Gunmetal': '#555555', 'Burgundy': '#722f37', 'Teal': '#008080',
+        'Coral': '#ff7f50', 'Lilac': '#c8a2c8', 'Nude': '#e3bc9a',
+        'Tan': '#d2b48c', 'Charcoal': '#36454f', 'Ivory': '#fffff0',
+        'Mustard': '#c8a500', 'Olive': '#556b2f', 'Plum': '#8e4585',
+        'Rust': '#b7410e', 'Sand': '#c2b280', 'Stone': '#928e85',
+        'Taupe': '#483c32', 'Wine': '#722f37', 'Camel': '#c19a6b'
+      };
+      return map[name] || '#ddd';
+    }
+
     function loadProduct() {
       var urlParams = new URLSearchParams(window.location.search);
       var productId = urlParams.get('id');
@@ -490,6 +564,32 @@
         descEl.textContent = 'Beautiful piece from our latest collection. Perfect for any occasion.';
       }
 
+      // Colours
+      var colours = currentProduct.colours || [];
+      var colourSection = document.getElementById('productColours');
+      var colourContainer = document.getElementById('colourOptions');
+      if (colours.length > 0 && colourSection && colourContainer) {
+        colourSection.style.display = 'block';
+        colourContainer.innerHTML = '';
+        var selectedColour = null;
+        colours.forEach(function(colour, idx) {
+          var btn = document.createElement('button');
+          btn.className = 'colour-swatch-btn' + (idx === 0 ? ' active' : '');
+          btn.title = colour;
+          var swatch = getColourSwatchCSS(colour);
+          btn.innerHTML = '<span class="colour-dot" style="background: ' + swatch + ';"></span> ' + colour;
+          btn.onclick = function() {
+            colourContainer.querySelectorAll('.colour-swatch-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            selectedColour = colour;
+          };
+          colourContainer.appendChild(btn);
+        });
+        selectedColour = colours[0];
+      } else if (colourSection) {
+        colourSection.style.display = 'none';
+      }
+
       // Sizes with stock awareness
       var sizesContainer = document.querySelector('.size-options');
       var sizeQuantities = currentProduct.sizeQuantities || {};
@@ -539,6 +639,11 @@
       if (!selectedSize) return;
 
       var name = currentProduct.name;
+      // Append selected colour if any
+      var activeColourBtn = document.querySelector('.colour-swatch-btn.active');
+      if (activeColourBtn) {
+        name += ' - ' + activeColourBtn.title;
+      }
       if (selectedSize !== 'ONE SIZE' && selectedSize !== 'One Size') {
         name += ' (' + selectedSize + ')';
       }

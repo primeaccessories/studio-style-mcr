@@ -1102,6 +1102,33 @@
       </div>
 
       <div class="form-group">
+        <label>Colours</label>
+        <div id="colourTags" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;"></div>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <input type="text" class="form-input" id="colourInput" placeholder="e.g. Black, Navy, Red..." style="flex: 1; padding: 8px 10px; font-size: 0.85rem;">
+          <button type="button" onclick="addColour()" style="padding: 8px 14px; background: #e8e0d6; border: none; cursor: pointer; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;">Add</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
+          <button type="button" class="colour-preset" onclick="addPresetColour('Black')" style="padding: 4px 10px; font-size: 0.7rem; background: #1a1a1a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Black</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('White')" style="padding: 4px 10px; font-size: 0.7rem; background: #fff; color: #333; border: 1px solid #ddd; border-radius: 12px; cursor: pointer;">White</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Navy')" style="padding: 4px 10px; font-size: 0.7rem; background: #1b2a4a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Navy</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Grey')" style="padding: 4px 10px; font-size: 0.7rem; background: #888; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Grey</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Cream')" style="padding: 4px 10px; font-size: 0.7rem; background: #f5f0e6; color: #333; border: 1px solid #ddd; border-radius: 12px; cursor: pointer;">Cream</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Pink')" style="padding: 4px 10px; font-size: 0.7rem; background: #e8a0b4; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Pink</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Red')" style="padding: 4px 10px; font-size: 0.7rem; background: #c53030; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Red</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Blue')" style="padding: 4px 10px; font-size: 0.7rem; background: #2b6cb0; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Blue</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Green')" style="padding: 4px 10px; font-size: 0.7rem; background: #2f855a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Green</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Brown')" style="padding: 4px 10px; font-size: 0.7rem; background: #744210; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Brown</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Beige')" style="padding: 4px 10px; font-size: 0.7rem; background: #d4c5a9; color: #333; border: 1px solid #c5b696; border-radius: 12px; cursor: pointer;">Beige</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Khaki')" style="padding: 4px 10px; font-size: 0.7rem; background: #6b6b3d; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Khaki</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Chocolate')" style="padding: 4px 10px; font-size: 0.7rem; background: #4a2c2a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Chocolate</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Gold')" style="padding: 4px 10px; font-size: 0.7rem; background: #c9a86c; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Gold</button>
+          <button type="button" class="colour-preset" onclick="addPresetColour('Silver')" style="padding: 4px 10px; font-size: 0.7rem; background: #b0b0b0; color: #333; border: 1px solid #999; border-radius: 12px; cursor: pointer;">Silver</button>
+        </div>
+        <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Click presets or type a custom colour name and click Add. Colours shown to customers on product page.</small>
+      </div>
+
+      <div class="form-group">
         <label>Clothing Sizes & Stock</label>
         <div class="size-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
           <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
@@ -1113,8 +1140,16 @@
             <input type="number" class="form-input" id="sizeQtyS" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
           <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">S/M</span>
+            <input type="number" class="form-input" id="sizeQtySM" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">M</span>
             <input type="number" class="form-input" id="sizeQtyM" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
+          </div>
+          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
+            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">M/L</span>
+            <input type="number" class="form-input" id="sizeQtyML" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
           </div>
           <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
             <span style="font-size: 0.8rem; color: #555; min-width: 55px;">L</span>
@@ -1692,6 +1727,73 @@
       renderTable();
     });
 
+    // COLOUR MANAGEMENT
+    var currentColours = [];
+
+    function renderColourTags() {
+      var container = document.getElementById('colourTags');
+      if (!container) return;
+      container.innerHTML = '';
+      currentColours.forEach(function(colour, idx) {
+        var tag = document.createElement('span');
+        tag.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f0ebe4; border: 1px solid #ddd; border-radius: 14px; font-size: 0.75rem; color: #333;';
+        var swatch = getColourSwatch(colour);
+        tag.innerHTML = '<span style="width: 12px; height: 12px; border-radius: 50%; border: 1px solid #ccc; display: inline-block; background: ' + swatch + ';"></span> ' + colour + ' <button onclick="removeColour(' + idx + ')" style="background: none; border: none; cursor: pointer; color: #999; font-size: 1rem; line-height: 1; padding: 0 2px;">&times;</button>';
+        container.appendChild(tag);
+      });
+    }
+
+    function addColour() {
+      var input = document.getElementById('colourInput');
+      var val = input.value.trim();
+      if (!val) return;
+      // Support comma-separated
+      val.split(',').forEach(function(c) {
+        c = c.trim();
+        if (c && currentColours.indexOf(c) === -1) currentColours.push(c);
+      });
+      input.value = '';
+      renderColourTags();
+    }
+
+    function addPresetColour(colour) {
+      if (currentColours.indexOf(colour) === -1) {
+        currentColours.push(colour);
+        renderColourTags();
+      }
+    }
+
+    function removeColour(idx) {
+      currentColours.splice(idx, 1);
+      renderColourTags();
+    }
+
+    // Enter key in colour input
+    document.addEventListener('DOMContentLoaded', function() {
+      var colourInput = document.getElementById('colourInput');
+      if (colourInput) {
+        colourInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') { e.preventDefault(); addColour(); }
+        });
+      }
+    });
+
+    function getColourSwatch(name) {
+      var map = {
+        'Black': '#1a1a1a', 'White': '#ffffff', 'Navy': '#1b2a4a', 'Grey': '#888888',
+        'Cream': '#f5f0e6', 'Pink': '#e8a0b4', 'Red': '#c53030', 'Blue': '#2b6cb0',
+        'Green': '#2f855a', 'Brown': '#744210', 'Beige': '#d4c5a9', 'Khaki': '#6b6b3d',
+        'Chocolate': '#4a2c2a', 'Gold': '#c9a86c', 'Silver': '#b0b0b0',
+        'Gunmetal': '#555555', 'Burgundy': '#722f37', 'Teal': '#008080',
+        'Coral': '#ff7f50', 'Lilac': '#c8a2c8', 'Nude': '#e3bc9a',
+        'Tan': '#d2b48c', 'Charcoal': '#36454f', 'Ivory': '#fffff0',
+        'Mustard': '#c8a500', 'Olive': '#556b2f', 'Plum': '#8e4585',
+        'Rust': '#b7410e', 'Sand': '#c2b280', 'Stone': '#928e85',
+        'Taupe': '#483c32', 'Wine': '#722f37', 'Camel': '#c19a6b'
+      };
+      return map[name] || '#ddd';
+    }
+
     // MODAL
     function openAddModal() {
       editingId = null;
@@ -1712,8 +1814,12 @@
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
       renderImageGrid();
+      // Clear colours
+      currentColours = [];
+      document.getElementById('colourInput').value = '';
+      renderColourTags();
       // Clear all size quantity inputs
-      ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
+      ['XS', 'S', 'SM', 'M', 'ML', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
         document.getElementById('sizeQty' + size).value = '';
       });
       [3,4,5,6,7,8].forEach(function(s) {
@@ -1746,14 +1852,19 @@
       document.getElementById('fileInput').value = '';
       renderImageGrid();
 
+      // Load colours
+      currentColours = (p.colours && Array.isArray(p.colours)) ? p.colours.slice() : [];
+      document.getElementById('colourInput').value = '';
+      renderColourTags();
+
       // Set size quantity inputs from sizeQuantities (with backward compat)
       var sq = p.sizeQuantities || {};
       if (!p.sizeQuantities && p.sizes) {
         var perSize = p.sizes.length > 0 && typeof p.quantity === 'number' ? Math.floor(p.quantity / p.sizes.length) : 0;
         p.sizes.forEach(function(s) { sq[s] = perSize; });
       }
-      ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
-        var sizeMap = { 'OneSize': 'One Size', 'FreeSize': 'Free Size', 'C8': '8', 'C10': '10', 'C12': '12', 'C14': '14', 'C16': '16', 'C18': '18' };
+      ['XS', 'S', 'SM', 'M', 'ML', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
+        var sizeMap = { 'SM': 'S/M', 'ML': 'M/L', 'OneSize': 'One Size', 'FreeSize': 'Free Size', 'C8': '8', 'C10': '10', 'C12': '12', 'C14': '14', 'C16': '16', 'C18': '18' };
         var sizeValue = sizeMap[size] || size;
         var input = document.getElementById('sizeQty' + size);
         input.value = sq[sizeValue] > 0 ? sq[sizeValue] : '';
@@ -2015,10 +2126,10 @@
       // Gather sizeQuantities from inputs
       var sizeQuantities = {};
       var sizes = [];
-      ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
+      ['XS', 'S', 'SM', 'M', 'ML', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
         var input = document.getElementById('sizeQty' + size);
         var val = parseInt(input.value, 10);
-        var sizeMap = { 'OneSize': 'One Size', 'FreeSize': 'Free Size', 'C8': '8', 'C10': '10', 'C12': '12', 'C14': '14', 'C16': '16', 'C18': '18' };
+        var sizeMap = { 'SM': 'S/M', 'ML': 'M/L', 'OneSize': 'One Size', 'FreeSize': 'Free Size', 'C8': '8', 'C10': '10', 'C12': '12', 'C14': '14', 'C16': '16', 'C18': '18' };
         var sizeValue = sizeMap[size] || size;
         if (val > 0) {
           sizeQuantities[sizeValue] = val;
@@ -2068,6 +2179,7 @@
           products[idx].sizes = sizes;
           products[idx].quantity = quantity;
           products[idx].sizeQuantities = sizeQuantities;
+          products[idx].colours = currentColours.slice();
         }
       } else {
         // Add new - find lowest sortOrder among products in any of the selected collections
@@ -2096,6 +2208,7 @@
           sizes: sizes,
           quantity: quantity,
           sizeQuantities: sizeQuantities,
+          colours: currentColours.slice(),
           sortOrder: minOrder
         });
       }
