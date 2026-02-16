@@ -1102,30 +1102,35 @@
       </div>
 
       <div class="form-group">
-        <label>Colours</label>
-        <div id="colourTags" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;"></div>
-        <div style="display: flex; gap: 6px; align-items: center;">
-          <input type="text" class="form-input" id="colourInput" placeholder="e.g. Black, Navy, Red..." style="flex: 1; padding: 8px 10px; font-size: 0.85rem;">
-          <button type="button" onclick="addColour()" style="padding: 8px 14px; background: #e8e0d6; border: none; cursor: pointer; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;">Add</button>
+        <label onclick="toggleColourDropdown()" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none;">
+          Colours <span id="colourDropdownBadge" style="font-size: 0.7rem; color: #999; font-weight: normal;"></span>
+          <span id="colourDropdownArrow" style="font-size: 0.7rem; transition: transform 0.2s;">&#9660;</span>
+        </label>
+        <div id="colourDropdownBody" style="display: none;">
+          <div id="colourTags" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;"></div>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="text" class="form-input" id="colourInput" placeholder="e.g. Black, Navy, Red..." style="flex: 1; padding: 8px 10px; font-size: 0.85rem;">
+            <button type="button" onclick="addColour()" style="padding: 8px 14px; background: #e8e0d6; border: none; cursor: pointer; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;">Add</button>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
+            <button type="button" class="colour-preset" onclick="addPresetColour('Black')" style="padding: 4px 10px; font-size: 0.7rem; background: #1a1a1a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Black</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('White')" style="padding: 4px 10px; font-size: 0.7rem; background: #fff; color: #333; border: 1px solid #ddd; border-radius: 12px; cursor: pointer;">White</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Navy')" style="padding: 4px 10px; font-size: 0.7rem; background: #1b2a4a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Navy</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Grey')" style="padding: 4px 10px; font-size: 0.7rem; background: #888; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Grey</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Cream')" style="padding: 4px 10px; font-size: 0.7rem; background: #f5f0e6; color: #333; border: 1px solid #ddd; border-radius: 12px; cursor: pointer;">Cream</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Pink')" style="padding: 4px 10px; font-size: 0.7rem; background: #e8a0b4; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Pink</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Red')" style="padding: 4px 10px; font-size: 0.7rem; background: #c53030; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Red</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Blue')" style="padding: 4px 10px; font-size: 0.7rem; background: #2b6cb0; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Blue</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Green')" style="padding: 4px 10px; font-size: 0.7rem; background: #2f855a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Green</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Brown')" style="padding: 4px 10px; font-size: 0.7rem; background: #744210; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Brown</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Beige')" style="padding: 4px 10px; font-size: 0.7rem; background: #d4c5a9; color: #333; border: 1px solid #c5b696; border-radius: 12px; cursor: pointer;">Beige</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Khaki')" style="padding: 4px 10px; font-size: 0.7rem; background: #6b6b3d; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Khaki</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Chocolate')" style="padding: 4px 10px; font-size: 0.7rem; background: #4a2c2a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Chocolate</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Gold')" style="padding: 4px 10px; font-size: 0.7rem; background: #c9a86c; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Gold</button>
+            <button type="button" class="colour-preset" onclick="addPresetColour('Silver')" style="padding: 4px 10px; font-size: 0.7rem; background: #b0b0b0; color: #333; border: 1px solid #999; border-radius: 12px; cursor: pointer;">Silver</button>
+          </div>
+          <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Click presets or type a custom colour name and click Add.</small>
         </div>
-        <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
-          <button type="button" class="colour-preset" onclick="addPresetColour('Black')" style="padding: 4px 10px; font-size: 0.7rem; background: #1a1a1a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Black</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('White')" style="padding: 4px 10px; font-size: 0.7rem; background: #fff; color: #333; border: 1px solid #ddd; border-radius: 12px; cursor: pointer;">White</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Navy')" style="padding: 4px 10px; font-size: 0.7rem; background: #1b2a4a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Navy</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Grey')" style="padding: 4px 10px; font-size: 0.7rem; background: #888; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Grey</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Cream')" style="padding: 4px 10px; font-size: 0.7rem; background: #f5f0e6; color: #333; border: 1px solid #ddd; border-radius: 12px; cursor: pointer;">Cream</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Pink')" style="padding: 4px 10px; font-size: 0.7rem; background: #e8a0b4; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Pink</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Red')" style="padding: 4px 10px; font-size: 0.7rem; background: #c53030; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Red</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Blue')" style="padding: 4px 10px; font-size: 0.7rem; background: #2b6cb0; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Blue</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Green')" style="padding: 4px 10px; font-size: 0.7rem; background: #2f855a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Green</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Brown')" style="padding: 4px 10px; font-size: 0.7rem; background: #744210; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Brown</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Beige')" style="padding: 4px 10px; font-size: 0.7rem; background: #d4c5a9; color: #333; border: 1px solid #c5b696; border-radius: 12px; cursor: pointer;">Beige</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Khaki')" style="padding: 4px 10px; font-size: 0.7rem; background: #6b6b3d; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Khaki</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Chocolate')" style="padding: 4px 10px; font-size: 0.7rem; background: #4a2c2a; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Chocolate</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Gold')" style="padding: 4px 10px; font-size: 0.7rem; background: #c9a86c; color: #fff; border: none; border-radius: 12px; cursor: pointer;">Gold</button>
-          <button type="button" class="colour-preset" onclick="addPresetColour('Silver')" style="padding: 4px 10px; font-size: 0.7rem; background: #b0b0b0; color: #333; border: 1px solid #999; border-radius: 12px; cursor: pointer;">Silver</button>
-        </div>
-        <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Click presets or type a custom colour name and click Add. Colours shown to customers on product page.</small>
       </div>
 
       <div class="form-group" id="clothingSizesGroup">
@@ -1676,6 +1681,28 @@
     var SIZE_KEY_TO_VALUE = {};
     CLOTHING_SIZES.forEach(function(s) { SIZE_KEY_TO_VALUE[s.key] = s.label; });
 
+    function toggleColourDropdown() {
+      var body = document.getElementById('colourDropdownBody');
+      var arrow = document.getElementById('colourDropdownArrow');
+      if (body.style.display === 'none') {
+        body.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+      } else {
+        body.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    function updateColourBadge() {
+      var badge = document.getElementById('colourDropdownBadge');
+      if (!badge) return;
+      if (currentColours.length > 0) {
+        badge.textContent = '(' + currentColours.join(', ') + ')';
+      } else {
+        badge.textContent = '';
+      }
+    }
+
     function renderColourTags() {
       var container = document.getElementById('colourTags');
       if (!container) return;
@@ -1687,6 +1714,7 @@
         tag.innerHTML = '<span style="width: 12px; height: 12px; border-radius: 50%; border: 1px solid #ccc; display: inline-block; background: ' + swatch + ';"></span> ' + colour + ' <button onclick="removeColour(' + idx + ')" style="background: none; border: none; cursor: pointer; color: #999; font-size: 1rem; line-height: 1; padding: 0 2px;">&times;</button>';
         container.appendChild(tag);
       });
+      updateColourBadge();
       renderClothingSizes();
     }
 
@@ -1881,10 +1909,12 @@
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
       renderImageGrid();
-      // Clear colours and render empty size grid
+      // Clear colours and collapse dropdown
       currentColours = [];
       document.getElementById('colourInput').value = '';
-      renderColourTags(); // This also calls renderClothingSizes()
+      document.getElementById('colourDropdownBody').style.display = 'none';
+      document.getElementById('colourDropdownArrow').style.transform = 'rotate(0deg)';
+      renderColourTags();
       // Clear shoe size inputs
       [3,4,5,6,7,8].forEach(function(s) {
         document.getElementById('sizeQtyShoe' + s).value = '';
@@ -1919,7 +1949,15 @@
       // Load colours and render size grid/matrix
       currentColours = (p.colours && Array.isArray(p.colours)) ? p.colours.slice() : [];
       document.getElementById('colourInput').value = '';
-      renderColourTags(); // This calls renderClothingSizes()
+      // Auto-open dropdown if product has colours, collapse otherwise
+      if (currentColours.length > 0) {
+        document.getElementById('colourDropdownBody').style.display = 'block';
+        document.getElementById('colourDropdownArrow').style.transform = 'rotate(180deg)';
+      } else {
+        document.getElementById('colourDropdownBody').style.display = 'none';
+        document.getElementById('colourDropdownArrow').style.transform = 'rotate(0deg)';
+      }
+      renderColourTags();
 
       // Load clothing size data into the rendered grid
       if (currentColours.length > 0 && p.colourSizeQuantities) {
