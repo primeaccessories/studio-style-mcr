@@ -1788,24 +1788,25 @@
         html += '</div>';
         container.innerHTML = html;
       } else {
-        // COLOUR-SIZE MATRIX
-        var html = '<div style="overflow-x: auto; margin-top: 8px;"><table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">';
-        // Header row — size labels
-        html += '<thead><tr><th style="padding: 6px 8px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #555; min-width: 80px;">Colour</th>';
-        CLOTHING_SIZES.forEach(function(s) {
-          html += '<th style="padding: 6px 4px; text-align: center; border-bottom: 2px solid #ddd; font-weight: 600; color: #555; min-width: 44px;">' + s.label + '</th>';
-        });
-        html += '</tr></thead><tbody>';
-        // One row per colour
+        // COLOUR-SIZE MATRIX — sizes as rows, colours as columns (fits without horizontal scroll)
+        var html = '<div style="margin-top: 8px;"><table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">';
+        // Header row — colour labels
+        html += '<thead><tr><th style="padding: 6px 8px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #555; width: 60px;">Size</th>';
         currentColours.forEach(function(colour) {
           var swatch = getColourSwatch(colour);
+          html += '<th style="padding: 6px 4px; text-align: center; border-bottom: 2px solid #ddd; font-weight: 600; color: #555;">' +
+            '<span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ' + swatch + '; border: 1px solid #ccc; vertical-align: middle; margin-right: 3px;"></span>' + colour + '</th>';
+        });
+        html += '</tr></thead><tbody>';
+        // One row per size
+        CLOTHING_SIZES.forEach(function(s) {
           html += '<tr style="border-bottom: 1px solid #eee;">';
-          html += '<td style="padding: 6px 8px; white-space: nowrap;"><span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ' + swatch + '; border: 1px solid #ccc; vertical-align: middle; margin-right: 4px;"></span> ' + colour + '</td>';
-          CLOTHING_SIZES.forEach(function(s) {
+          html += '<td style="padding: 5px 8px; font-weight: 500; color: #555;">' + s.label + '</td>';
+          currentColours.forEach(function(colour) {
             var inputId = 'csq_' + colour.replace(/[^a-zA-Z0-9]/g, '_') + '_' + s.key;
-            html += '<td style="padding: 4px 2px; text-align: center;">' +
+            html += '<td style="padding: 3px 2px; text-align: center;">' +
               '<input type="number" id="' + inputId + '" placeholder="0" min="0" step="1" ' +
-              'style="width: 44px; padding: 5px 2px; text-align: center; font-size: 0.8rem; border: 1px solid #eee; border-radius: 3px;">' +
+              'style="width: 100%; max-width: 60px; padding: 4px 2px; text-align: center; font-size: 0.8rem; border: 1px solid #eee; border-radius: 3px;">' +
             '</td>';
           });
           html += '</tr>';
