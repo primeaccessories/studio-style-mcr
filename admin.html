@@ -1128,74 +1128,9 @@
         <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Click presets or type a custom colour name and click Add. Colours shown to customers on product page.</small>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="clothingSizesGroup">
         <label>Clothing Sizes & Stock</label>
-        <div class="size-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XS</span>
-            <input type="number" class="form-input" id="sizeQtyXS" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">S</span>
-            <input type="number" class="form-input" id="sizeQtyS" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">S/M</span>
-            <input type="number" class="form-input" id="sizeQtySM" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">M</span>
-            <input type="number" class="form-input" id="sizeQtyM" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">M/L</span>
-            <input type="number" class="form-input" id="sizeQtyML" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">L</span>
-            <input type="number" class="form-input" id="sizeQtyL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XL</span>
-            <input type="number" class="form-input" id="sizeQtyXL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">XXL</span>
-            <input type="number" class="form-input" id="sizeQtyXXL" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">8</span>
-            <input type="number" class="form-input" id="sizeQtyC8" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">10</span>
-            <input type="number" class="form-input" id="sizeQtyC10" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">12</span>
-            <input type="number" class="form-input" id="sizeQtyC12" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">14</span>
-            <input type="number" class="form-input" id="sizeQtyC14" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">16</span>
-            <input type="number" class="form-input" id="sizeQtyC16" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">18</span>
-            <input type="number" class="form-input" id="sizeQtyC18" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">One Size</span>
-            <input type="number" class="form-input" id="sizeQtyOneSize" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-          <div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">
-            <span style="font-size: 0.8rem; color: #555; min-width: 55px;">Free Size</span>
-            <input type="number" class="form-input" id="sizeQtyFreeSize" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">
-          </div>
-        </div>
+        <div id="clothingSizesContainer"></div>
         <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Enter stock quantity per size. 0 or empty = not available.</small>
       </div>
 
@@ -1727,8 +1662,19 @@
       renderTable();
     });
 
-    // COLOUR MANAGEMENT
+    // COLOUR & SIZE MANAGEMENT
     var currentColours = [];
+    var CLOTHING_SIZES = [
+      { key: 'XS', label: 'XS' }, { key: 'S', label: 'S' }, { key: 'SM', label: 'S/M' },
+      { key: 'M', label: 'M' }, { key: 'ML', label: 'M/L' }, { key: 'L', label: 'L' },
+      { key: 'XL', label: 'XL' }, { key: 'XXL', label: 'XXL' },
+      { key: 'C8', label: '8' }, { key: 'C10', label: '10' }, { key: 'C12', label: '12' },
+      { key: 'C14', label: '14' }, { key: 'C16', label: '16' }, { key: 'C18', label: '18' },
+      { key: 'FreeSize', label: 'Free Size' }, { key: 'OneSize', label: 'One Size' }
+    ];
+    // Map input key → display value used in product data
+    var SIZE_KEY_TO_VALUE = {};
+    CLOTHING_SIZES.forEach(function(s) { SIZE_KEY_TO_VALUE[s.key] = s.label; });
 
     function renderColourTags() {
       var container = document.getElementById('colourTags');
@@ -1741,13 +1687,13 @@
         tag.innerHTML = '<span style="width: 12px; height: 12px; border-radius: 50%; border: 1px solid #ccc; display: inline-block; background: ' + swatch + ';"></span> ' + colour + ' <button onclick="removeColour(' + idx + ')" style="background: none; border: none; cursor: pointer; color: #999; font-size: 1rem; line-height: 1; padding: 0 2px;">&times;</button>';
         container.appendChild(tag);
       });
+      renderClothingSizes();
     }
 
     function addColour() {
       var input = document.getElementById('colourInput');
       var val = input.value.trim();
       if (!val) return;
-      // Support comma-separated
       val.split(',').forEach(function(c) {
         c = c.trim();
         if (c && currentColours.indexOf(c) === -1) currentColours.push(c);
@@ -1764,11 +1710,14 @@
     }
 
     function removeColour(idx) {
+      // Save current matrix values before removing
+      var saved = readColourSizeMatrix();
       currentColours.splice(idx, 1);
       renderColourTags();
+      // Restore remaining colours' values
+      loadColourSizeMatrix(saved);
     }
 
-    // Enter key in colour input
     document.addEventListener('DOMContentLoaded', function() {
       var colourInput = document.getElementById('colourInput');
       if (colourInput) {
@@ -1794,6 +1743,124 @@
       return map[name] || '#ddd';
     }
 
+    // Render clothing sizes — flat grid (no colours) or colour-size matrix
+    function renderClothingSizes() {
+      var container = document.getElementById('clothingSizesContainer');
+      if (!container) return;
+
+      if (currentColours.length === 0) {
+        // FLAT GRID — no colours
+        var html = '<div class="size-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">';
+        CLOTHING_SIZES.forEach(function(s) {
+          html += '<div class="size-cell" style="display: flex; align-items: center; gap: 6px; background: #fafafa; border: 1px solid #eee; padding: 8px 10px; border-radius: 4px;">' +
+            '<span style="font-size: 0.8rem; color: #555; min-width: 55px;">' + s.label + '</span>' +
+            '<input type="number" class="form-input" id="sizeQty' + s.key + '" placeholder="0" min="0" step="1" style="width: 60px; padding: 6px 8px; text-align: center; font-size: 0.85rem;">' +
+          '</div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+      } else {
+        // COLOUR-SIZE MATRIX
+        var html = '<div style="overflow-x: auto; margin-top: 8px;"><table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">';
+        // Header row — size labels
+        html += '<thead><tr><th style="padding: 6px 8px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #555; min-width: 80px;">Colour</th>';
+        CLOTHING_SIZES.forEach(function(s) {
+          html += '<th style="padding: 6px 4px; text-align: center; border-bottom: 2px solid #ddd; font-weight: 600; color: #555; min-width: 44px;">' + s.label + '</th>';
+        });
+        html += '</tr></thead><tbody>';
+        // One row per colour
+        currentColours.forEach(function(colour) {
+          var swatch = getColourSwatch(colour);
+          html += '<tr style="border-bottom: 1px solid #eee;">';
+          html += '<td style="padding: 6px 8px; white-space: nowrap;"><span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ' + swatch + '; border: 1px solid #ccc; vertical-align: middle; margin-right: 4px;"></span> ' + colour + '</td>';
+          CLOTHING_SIZES.forEach(function(s) {
+            var inputId = 'csq_' + colour.replace(/[^a-zA-Z0-9]/g, '_') + '_' + s.key;
+            html += '<td style="padding: 4px 2px; text-align: center;">' +
+              '<input type="number" id="' + inputId + '" placeholder="0" min="0" step="1" ' +
+              'style="width: 44px; padding: 5px 2px; text-align: center; font-size: 0.8rem; border: 1px solid #eee; border-radius: 3px;">' +
+            '</td>';
+          });
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+      }
+    }
+
+    // Read colour-size matrix inputs → { "Black": { "S": 3, "M": 5 }, "Navy": { "L": 4 } }
+    function readColourSizeMatrix() {
+      var result = {};
+      currentColours.forEach(function(colour) {
+        var colourData = {};
+        CLOTHING_SIZES.forEach(function(s) {
+          var inputId = 'csq_' + colour.replace(/[^a-zA-Z0-9]/g, '_') + '_' + s.key;
+          var input = document.getElementById(inputId);
+          if (input) {
+            var val = parseInt(input.value, 10);
+            if (val > 0) colourData[SIZE_KEY_TO_VALUE[s.key]] = val;
+          }
+        });
+        if (Object.keys(colourData).length > 0) result[colour] = colourData;
+      });
+      return result;
+    }
+
+    // Load colour-size matrix from data → set input values
+    function loadColourSizeMatrix(data) {
+      if (!data) return;
+      currentColours.forEach(function(colour) {
+        var colourData = data[colour] || {};
+        CLOTHING_SIZES.forEach(function(s) {
+          var inputId = 'csq_' + colour.replace(/[^a-zA-Z0-9]/g, '_') + '_' + s.key;
+          var input = document.getElementById(inputId);
+          var sizeValue = SIZE_KEY_TO_VALUE[s.key];
+          if (input) {
+            input.value = colourData[sizeValue] > 0 ? colourData[sizeValue] : '';
+          }
+        });
+      });
+    }
+
+    // Read flat grid inputs → { sizeQuantities, sizes }
+    function readFlatSizeGrid() {
+      var sizeQuantities = {};
+      var sizes = [];
+      CLOTHING_SIZES.forEach(function(s) {
+        var input = document.getElementById('sizeQty' + s.key);
+        if (!input) return;
+        var val = parseInt(input.value, 10);
+        var sizeValue = SIZE_KEY_TO_VALUE[s.key];
+        if (val > 0) {
+          sizeQuantities[sizeValue] = val;
+          sizes.push(sizeValue);
+        }
+      });
+      return { sizeQuantities: sizeQuantities, sizes: sizes };
+    }
+
+    // Load flat grid from data
+    function loadFlatSizeGrid(sizeQuantities) {
+      if (!sizeQuantities) return;
+      CLOTHING_SIZES.forEach(function(s) {
+        var input = document.getElementById('sizeQty' + s.key);
+        var sizeValue = SIZE_KEY_TO_VALUE[s.key];
+        if (input) {
+          input.value = sizeQuantities[sizeValue] > 0 ? sizeQuantities[sizeValue] : '';
+        }
+      });
+    }
+
+    // Derive aggregated sizeQuantities from colourSizeQuantities (for listing page stock checks)
+    function aggregateColourSizes(csq) {
+      var result = {};
+      Object.keys(csq).forEach(function(colour) {
+        Object.keys(csq[colour]).forEach(function(size) {
+          result[size] = (result[size] || 0) + csq[colour][size];
+        });
+      });
+      return result;
+    }
+
     // MODAL
     function openAddModal() {
       editingId = null;
@@ -1814,14 +1881,11 @@
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
       renderImageGrid();
-      // Clear colours
+      // Clear colours and render empty size grid
       currentColours = [];
       document.getElementById('colourInput').value = '';
-      renderColourTags();
-      // Clear all size quantity inputs
-      ['XS', 'S', 'SM', 'M', 'ML', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
-        document.getElementById('sizeQty' + size).value = '';
-      });
+      renderColourTags(); // This also calls renderClothingSizes()
+      // Clear shoe size inputs
       [3,4,5,6,7,8].forEach(function(s) {
         document.getElementById('sizeQtyShoe' + s).value = '';
       });
@@ -1852,26 +1916,29 @@
       document.getElementById('fileInput').value = '';
       renderImageGrid();
 
-      // Load colours
+      // Load colours and render size grid/matrix
       currentColours = (p.colours && Array.isArray(p.colours)) ? p.colours.slice() : [];
       document.getElementById('colourInput').value = '';
-      renderColourTags();
+      renderColourTags(); // This calls renderClothingSizes()
 
-      // Set size quantity inputs from sizeQuantities (with backward compat)
-      var sq = p.sizeQuantities || {};
-      if (!p.sizeQuantities && p.sizes) {
-        var perSize = p.sizes.length > 0 && typeof p.quantity === 'number' ? Math.floor(p.quantity / p.sizes.length) : 0;
-        p.sizes.forEach(function(s) { sq[s] = perSize; });
+      // Load clothing size data into the rendered grid
+      if (currentColours.length > 0 && p.colourSizeQuantities) {
+        // Load colour-size matrix
+        loadColourSizeMatrix(p.colourSizeQuantities);
+      } else {
+        // Load flat grid (backward compat)
+        var sq = p.sizeQuantities || {};
+        if (!p.sizeQuantities && p.sizes) {
+          var perSize = p.sizes.length > 0 && typeof p.quantity === 'number' ? Math.floor(p.quantity / p.sizes.length) : 0;
+          p.sizes.forEach(function(s) { sq[s] = perSize; });
+        }
+        loadFlatSizeGrid(sq);
       }
-      ['XS', 'S', 'SM', 'M', 'ML', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
-        var sizeMap = { 'SM': 'S/M', 'ML': 'M/L', 'OneSize': 'One Size', 'FreeSize': 'Free Size', 'C8': '8', 'C10': '10', 'C12': '12', 'C14': '14', 'C16': '16', 'C18': '18' };
-        var sizeValue = sizeMap[size] || size;
-        var input = document.getElementById('sizeQty' + size);
-        input.value = sq[sizeValue] > 0 ? sq[sizeValue] : '';
-      });
+      // Load shoe sizes
+      var shoeQty = p.sizeQuantities || {};
       [3,4,5,6,7,8].forEach(function(s) {
         var input = document.getElementById('sizeQtyShoe' + s);
-        input.value = sq[String(s)] > 0 ? sq[String(s)] : '';
+        input.value = shoeQty[String(s)] > 0 ? shoeQty[String(s)] : '';
       });
 
       if (p.sale && p.originalPrice) {
@@ -2123,19 +2190,31 @@
       var isSale = document.getElementById('formSale').checked;
       var price, originalPrice;
 
-      // Gather sizeQuantities from inputs
+      // Gather size/colour data
+      var colourSizeQuantities = null;
       var sizeQuantities = {};
       var sizes = [];
-      ['XS', 'S', 'SM', 'M', 'ML', 'L', 'XL', 'XXL', 'C8', 'C10', 'C12', 'C14', 'C16', 'C18', 'FreeSize', 'OneSize'].forEach(function(size) {
-        var input = document.getElementById('sizeQty' + size);
-        var val = parseInt(input.value, 10);
-        var sizeMap = { 'SM': 'S/M', 'ML': 'M/L', 'OneSize': 'One Size', 'FreeSize': 'Free Size', 'C8': '8', 'C10': '10', 'C12': '12', 'C14': '14', 'C16': '16', 'C18': '18' };
-        var sizeValue = sizeMap[size] || size;
-        if (val > 0) {
-          sizeQuantities[sizeValue] = val;
-          sizes.push(sizeValue);
-        }
-      });
+
+      if (currentColours.length > 0) {
+        // COLOUR-SIZE MATRIX MODE
+        colourSizeQuantities = readColourSizeMatrix();
+        // Derive aggregated sizeQuantities for backward compat (listing pages, stock checks)
+        sizeQuantities = aggregateColourSizes(colourSizeQuantities);
+        sizes = Object.keys(sizeQuantities);
+        // Sort sizes in canonical order
+        var sizeOrder = ['XS', 'S', 'S/M', 'M', 'M/L', 'L', 'XL', 'XXL', '8', '10', '12', '14', '16', '18', 'Free Size', 'One Size'];
+        sizes.sort(function(a, b) {
+          var ia = sizeOrder.indexOf(a), ib = sizeOrder.indexOf(b);
+          return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+        });
+      } else {
+        // FLAT GRID MODE (no colours)
+        var flatData = readFlatSizeGrid();
+        sizeQuantities = flatData.sizeQuantities;
+        sizes = flatData.sizes;
+      }
+
+      // Add shoe sizes (always separate)
       [3,4,5,6,7,8].forEach(function(s) {
         var input = document.getElementById('sizeQtyShoe' + s);
         var val = parseInt(input.value, 10);
@@ -2180,6 +2259,7 @@
           products[idx].quantity = quantity;
           products[idx].sizeQuantities = sizeQuantities;
           products[idx].colours = currentColours.slice();
+          products[idx].colourSizeQuantities = colourSizeQuantities;
         }
       } else {
         // Add new - find lowest sortOrder among products in any of the selected collections
@@ -2209,6 +2289,7 @@
           quantity: quantity,
           sizeQuantities: sizeQuantities,
           colours: currentColours.slice(),
+          colourSizeQuantities: colourSizeQuantities,
           sortOrder: minOrder
         });
       }
