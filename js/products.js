@@ -228,23 +228,25 @@ function buildCardSwatches(p) {
     html += '</div>';
   }
 
-  // Build available sizes from sizeQuantities or colourSizeQuantities if sizes[] is empty
+  // Build all sizes from any data source (show all sizes the product comes in)
   var availableSizes = [];
+  var sizeSet = {};
   if (p.colourSizeQuantities) {
-    var sizeSet = {};
     Object.keys(p.colourSizeQuantities).forEach(function(colour) {
       Object.keys(p.colourSizeQuantities[colour]).forEach(function(sz) {
-        if ((p.colourSizeQuantities[colour][sz] || 0) > 0) sizeSet[sz] = true;
+        sizeSet[sz] = true;
       });
     });
-    availableSizes = Object.keys(sizeSet);
-  } else if (p.sizeQuantities) {
-    Object.keys(p.sizeQuantities).forEach(function(sz) {
-      if ((p.sizeQuantities[sz] || 0) > 0) availableSizes.push(sz);
-    });
-  } else if (sizes.length > 0) {
-    availableSizes = sizes;
   }
+  if (p.sizeQuantities) {
+    Object.keys(p.sizeQuantities).forEach(function(sz) {
+      sizeSet[sz] = true;
+    });
+  }
+  if (sizes.length > 0) {
+    sizes.forEach(function(sz) { sizeSet[sz] = true; });
+  }
+  availableSizes = Object.keys(sizeSet);
 
   // Standard size ordering
   var sizeOrder = ['XXS','XS','S','S/M','M','M/L','L','XL','XXL','3XL','4XL','5XL',
