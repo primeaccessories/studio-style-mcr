@@ -228,9 +228,37 @@ function buildCardSwatches(p) {
     html += '</div>';
   }
 
-  if (sizes.length > 0 && !(sizes.length === 1 && (sizes[0] === 'One Size' || sizes[0] === 'Free Size'))) {
+  // Build available sizes from sizeQuantities or colourSizeQuantities if sizes[] is empty
+  var availableSizes = [];
+  if (p.colourSizeQuantities) {
+    var sizeSet = {};
+    Object.keys(p.colourSizeQuantities).forEach(function(colour) {
+      Object.keys(p.colourSizeQuantities[colour]).forEach(function(sz) {
+        if ((p.colourSizeQuantities[colour][sz] || 0) > 0) sizeSet[sz] = true;
+      });
+    });
+    availableSizes = Object.keys(sizeSet);
+  } else if (p.sizeQuantities) {
+    Object.keys(p.sizeQuantities).forEach(function(sz) {
+      if ((p.sizeQuantities[sz] || 0) > 0) availableSizes.push(sz);
+    });
+  } else if (sizes.length > 0) {
+    availableSizes = sizes;
+  }
+
+  // Standard size ordering
+  var sizeOrder = ['XXS','XS','S','S/M','M','M/L','L','XL','XXL','3XL','4XL','5XL',
+    '4','6','8','10','12','14','16','18','20','22','24'];
+  availableSizes.sort(function(a, b) {
+    var ia = sizeOrder.indexOf(a), ib = sizeOrder.indexOf(b);
+    if (ia === -1) ia = 999;
+    if (ib === -1) ib = 999;
+    return ia - ib;
+  });
+
+  if (availableSizes.length > 0 && !(availableSizes.length === 1 && (availableSizes[0] === 'One Size' || availableSizes[0] === 'Free Size'))) {
     html += '<div class="card-sizes">';
-    sizes.forEach(function(s) {
+    availableSizes.forEach(function(s) {
       html += '<span class="card-size-tag">' + s + '</span>';
     });
     html += '</div>';
