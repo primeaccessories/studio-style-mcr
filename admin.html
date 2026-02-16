@@ -130,67 +130,12 @@
       padding: 8px 15px; border: 1px solid #ddd; font-family: inherit;
       font-size: 0.8rem; outline: none; background: #fff; cursor: pointer;
     }
-    .add-btn, .bulk-sizes-btn {
+    .add-btn {
       padding: 10px 20px; background: #000; color: #fff; border: none;
       font-family: inherit; font-size: 0.7rem; letter-spacing: 1.5px;
       text-transform: uppercase; cursor: pointer;
     }
-    .add-btn:hover, .bulk-sizes-btn:hover { background: #333; }
-    .bulk-sizes-btn { background: #2c2c2c; }
-
-    /* BULK SIZES MODAL */
-    .bulk-modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6); z-index: 2000; display: none;
-      align-items: flex-start; justify-content: center; padding: 30px 15px;
-      overflow-y: auto;
-    }
-    .bulk-modal-overlay.show { display: flex; }
-    .bulk-modal {
-      background: #fff; width: 100%; max-width: 900px; border-radius: 6px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3); margin-bottom: 30px;
-    }
-    .bulk-modal-header {
-      padding: 20px 25px; border-bottom: 1px solid #eee;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .bulk-modal-header h2 { font-size: 1rem; letter-spacing: 2px; }
-    .bulk-modal-close {
-      background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;
-    }
-    .bulk-modal-close:hover { color: #000; }
-    .bulk-modal-body { padding: 20px 25px; max-height: 70vh; overflow-y: auto; }
-    .bulk-modal-footer {
-      padding: 15px 25px; border-top: 1px solid #eee;
-      display: flex; justify-content: flex-end; gap: 10px;
-    }
-    .bulk-save-btn {
-      padding: 12px 30px; background: #2e7d32; color: #fff; border: none;
-      font-family: inherit; font-size: 0.7rem; letter-spacing: 1.5px;
-      text-transform: uppercase; cursor: pointer; border-radius: 3px;
-    }
-    .bulk-save-btn:hover { background: #1b5e20; }
-    .bulk-cancel-btn {
-      padding: 12px 30px; background: #eee; color: #333; border: none;
-      font-family: inherit; font-size: 0.7rem; letter-spacing: 1.5px;
-      text-transform: uppercase; cursor: pointer; border-radius: 3px;
-    }
-    .bulk-table { width: 100%; border-collapse: collapse; }
-    .bulk-table th {
-      font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase;
-      color: #999; padding: 8px 4px; border-bottom: 2px solid #eee;
-      text-align: center; font-weight: 400; position: sticky; top: 0; background: #fff;
-    }
-    .bulk-table th:first-child { text-align: left; padding-left: 10px; min-width: 180px; }
-    .bulk-table td { padding: 6px 4px; border-bottom: 1px solid #f5f5f5; text-align: center; }
-    .bulk-table td:first-child { text-align: left; padding-left: 10px; font-size: 0.8rem; color: #333; }
-    .bulk-table input[type="number"] {
-      width: 42px; padding: 4px 2px; text-align: center; border: 1px solid #ddd;
-      border-radius: 3px; font-size: 0.8rem; font-family: inherit;
-    }
-    .bulk-table input[type="number"]:focus { border-color: #666; outline: none; }
-    .bulk-no-sizes { color: #c53030; font-size: 0.65rem; }
-    .bulk-has-sizes { color: #2e7d32; font-size: 0.65rem; }
+    .add-btn:hover { background: #333; }
 
     /* PRODUCT TABLE */
     .product-table { width: 100%; border-collapse: collapse; }
@@ -881,10 +826,7 @@
           <div class="toolbar-left">
             <input type="text" class="admin-search" id="searchInput" placeholder="Search products..." oninput="renderTable()">
           </div>
-          <div style="display:flex;gap:8px;">
-            <button class="bulk-sizes-btn" onclick="openBulkSizes()"><i class="fas fa-ruler"></i> &nbsp;Bulk Sizes</button>
-            <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> &nbsp;Add Product</button>
-          </div>
+          <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> &nbsp;Add Product</button>
         </div>
         <div id="goLiveBar" style="display:none; background:#2e7d32; color:#fff; padding:14px 20px; margin-bottom:10px; align-items:center; justify-content:space-between; border-radius:4px;">
           <span style="font-size:0.8rem; letter-spacing:1px;">These products are hidden until you go live. Use the <strong>Live</strong> button on each product or push all at once.</span>
@@ -1079,24 +1021,6 @@
       <div class="modal-actions">
         <button class="modal-save" onclick="saveDiscount()">Save Code</button>
         <button class="modal-cancel" onclick="closeDiscountModal()">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- BULK SIZES MODAL -->
-  <div class="bulk-modal-overlay" id="bulkSizesOverlay" onclick="closeBulkSizes()">
-    <div class="bulk-modal" onclick="event.stopPropagation()">
-      <div class="bulk-modal-header">
-        <h2><i class="fas fa-ruler" style="margin-right:8px;color:#666;"></i> Bulk Size Editor</h2>
-        <button class="bulk-modal-close" onclick="closeBulkSizes()">&times;</button>
-      </div>
-      <div class="bulk-modal-body">
-        <p style="font-size:0.8rem;color:#666;margin-bottom:15px;">Set stock quantities for each size across all products. Leave blank or 0 for sizes not available.</p>
-        <div id="bulkSizesTableWrap"></div>
-      </div>
-      <div class="bulk-modal-footer">
-        <button class="bulk-cancel-btn" onclick="closeBulkSizes()">Cancel</button>
-        <button class="bulk-save-btn" onclick="saveBulkSizes()"><i class="fas fa-save"></i> &nbsp;Save All</button>
       </div>
     </div>
   </div>
@@ -1978,98 +1902,6 @@
         });
       });
       return result;
-    }
-
-    // BULK SIZES
-    var BULK_SIZES = ['XS','S','S/M','M','M/L','L','XL','XXL','8','10','12','14','16','18','One Size'];
-
-    function openBulkSizes() {
-      var products = getProducts();
-      var html = '<table class="bulk-table"><thead><tr><th>Product</th>';
-      BULK_SIZES.forEach(function(s) { html += '<th>' + s + '</th>'; });
-      html += '<th>Status</th></tr></thead><tbody>';
-
-      products.forEach(function(p, idx) {
-        // Get current sizes from any source
-        var sq = {};
-        if (p.colourSizeQuantities) {
-          sq = aggregateColourSizes(p.colourSizeQuantities);
-        } else if (p.sizeQuantities) {
-          sq = p.sizeQuantities;
-        }
-        var hasSizes = Object.keys(sq).some(function(k) { return k !== 'One Size' && k !== 'Free Size'; }) || (sq['One Size'] > 0 || sq['Free Size'] > 0);
-        var hasColourMatrix = p.colourSizeQuantities && Object.keys(p.colourSizeQuantities).length > 0;
-
-        html += '<tr data-product-idx="' + idx + '">';
-        html += '<td>' + p.name + (hasColourMatrix ? ' <span style="font-size:0.6rem;color:#888;">(has colours)</span>' : '') + '</td>';
-        BULK_SIZES.forEach(function(s) {
-          var val = sq[s] || '';
-          // If product has colour matrix, show aggregated values as read-only
-          if (hasColourMatrix) {
-            html += '<td><input type="number" min="0" step="1" value="' + (val || '') + '" data-size="' + s + '" disabled style="background:#f0f0f0;color:#999;" title="Edit via product colour matrix"></td>';
-          } else {
-            html += '<td><input type="number" min="0" step="1" value="' + (val || '') + '" data-size="' + s + '"></td>';
-          }
-        });
-        html += '<td>' + (hasSizes ? '<span class="bulk-has-sizes"><i class="fas fa-check"></i></span>' : '<span class="bulk-no-sizes"><i class="fas fa-times"></i> No sizes</span>') + '</td>';
-        html += '</tr>';
-      });
-
-      html += '</tbody></table>';
-      document.getElementById('bulkSizesTableWrap').innerHTML = html;
-      document.getElementById('bulkSizesOverlay').classList.add('show');
-    }
-
-    function closeBulkSizes() {
-      document.getElementById('bulkSizesOverlay').classList.remove('show');
-    }
-
-    function saveBulkSizes() {
-      var products = getProducts();
-      var rows = document.querySelectorAll('#bulkSizesTableWrap tr[data-product-idx]');
-      var changed = false;
-
-      rows.forEach(function(row) {
-        var idx = parseInt(row.getAttribute('data-product-idx'), 10);
-        var p = products[idx];
-        if (!p) return;
-
-        // Skip products with colour matrix (edit those individually)
-        if (p.colourSizeQuantities && Object.keys(p.colourSizeQuantities).length > 0) return;
-
-        var newSQ = {};
-        var newSizes = [];
-        var inputs = row.querySelectorAll('input[data-size]:not([disabled])');
-        inputs.forEach(function(input) {
-          var size = input.getAttribute('data-size');
-          var val = parseInt(input.value, 10);
-          if (val > 0) {
-            newSQ[size] = val;
-            newSizes.push(size);
-          }
-        });
-
-        // Check if anything changed
-        var oldSQ = p.sizeQuantities || {};
-        var same = JSON.stringify(newSQ) === JSON.stringify(oldSQ);
-        if (!same) {
-          p.sizeQuantities = newSQ;
-          p.sizes = newSizes;
-          // Update total quantity
-          p.quantity = Object.values(newSQ).reduce(function(s,q){return s+(q||0);},0);
-          changed = true;
-        }
-      });
-
-      if (changed) {
-        saveProducts(products);
-        renderTable();
-        closeBulkSizes();
-        alert('Sizes updated for all products!');
-      } else {
-        closeBulkSizes();
-        alert('No changes detected.');
-      }
     }
 
     // MODAL
