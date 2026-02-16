@@ -1172,6 +1172,18 @@
         <small style="color: #999; font-size: 0.7rem; margin-top: 5px; display: block;">Enter stock for each shoe size. Leave at 0 for non-footwear.</small>
       </div>
 
+      <div id="notifyBanner" style="display: none; background: #fffbeb; border: 1px solid #f0d060; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+          <i class="fas fa-bell" style="color: #c9a86c;"></i>
+          <strong style="font-size: 0.85rem;" id="notifyBannerCount">0 people</strong>
+          <span style="font-size: 0.8rem; color: #666;">want to know when this is back in stock</span>
+        </div>
+        <div id="notifyBannerEmails" style="font-size: 0.75rem; color: #555; max-height: 80px; overflow-y: auto;"></div>
+        <button type="button" onclick="copyNotifyEmails()" style="margin-top: 8px; padding: 6px 14px; background: #2c2c2c; color: #fff; border: none; border-radius: 4px; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer;">
+          <i class="fas fa-copy"></i> Copy All Emails
+        </button>
+      </div>
+
       <div class="modal-actions">
         <button class="modal-save" onclick="saveProduct()">Save Product</button>
         <button class="modal-cancel" onclick="closeModal()">Cancel</button>
@@ -1912,6 +1924,8 @@
       document.getElementById('urlInputWrap').style.display = 'none';
       document.getElementById('fileInput').value = '';
       renderImageGrid();
+      // Hide notify banner for new products
+      document.getElementById('notifyBanner').style.display = 'none';
       // Clear colours and collapse dropdown
       currentColours = [];
       document.getElementById('colourInput').value = '';
@@ -1992,6 +2006,9 @@
         document.getElementById('saleFields').classList.remove('show');
       }
 
+      // Load pending stock notifications for this product
+      loadNotifyBanner(id);
+
       document.getElementById('modalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
     }
@@ -2000,6 +2017,60 @@
       document.getElementById('modalOverlay').classList.remove('show');
       document.body.style.overflow = '';
       editingId = null;
+    }
+
+    // --- Stock notification helpers ---
+    var _pendingNotifyDocs = []; // Cache for current product's notifications
+
+    function loadNotifyBanner(productId) {
+      var banner = document.getElementById('notifyBanner');
+      var countEl = document.getElementById('notifyBannerCount');
+      var emailsEl = document.getElementById('notifyBannerEmails');
+      _pendingNotifyDocs = [];
+      banner.style.display = 'none';
+
+      if (typeof db === 'undefined') return;
+
+      db.collection('stockNotifications')
+        .where('productId', '==', productId)
+        .where('notified', '==', false)
+        .get()
+        .then(function(snapshot) {
+          if (snapshot.empty) return;
+          snapshot.forEach(function(doc) {
+            _pendingNotifyDocs.push({ id: doc.id, ...doc.data() });
+          });
+          var count = _pendingNotifyDocs.length;
+          countEl.textContent = count + (count === 1 ? ' person' : ' people');
+          emailsEl.textContent = _pendingNotifyDocs.map(function(d) { return d.email; }).join(', ');
+          banner.style.display = 'block';
+        })
+        .catch(function(err) {
+          console.error('Error loading notifications:', err);
+        });
+    }
+
+    function copyNotifyEmails() {
+      var emails = _pendingNotifyDocs.map(function(d) { return d.email; }).join(', ');
+      navigator.clipboard.writeText(emails).then(function() {
+        showAlert('Copied!', emails);
+      }).catch(function() {
+        prompt('Copy these emails:', emails);
+      });
+    }
+
+    function markNotificationsAsSent(productId) {
+      if (_pendingNotifyDocs.length === 0) return Promise.resolve();
+      var batch = db.batch();
+      _pendingNotifyDocs.forEach(function(doc) {
+        batch.update(db.collection('stockNotifications').doc(doc.id), {
+          notified: true,
+          notifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      });
+      return batch.commit().then(function() {
+        _pendingNotifyDocs = [];
+      });
     }
 
     function toggleSaleFields() {
@@ -2336,6 +2407,22 @@
       }
 
       saveProducts(products);
+
+      // Check if we should notify subscribers (stock went from 0 to >0)
+      if (editingId && _pendingNotifyDocs.length > 0 && quantity > 0) {
+        var emailList = _pendingNotifyDocs.map(function(d) { return d.email; }).join(', ');
+        var count = _pendingNotifyDocs.length;
+        showConfirm(
+          'Back in Stock — ' + count + ' waiting',
+          count + ' customer' + (count > 1 ? 's' : '') + ' asked to be notified:\n\n' + emailList + '\n\nMark them as notified?',
+          'Yes, Mark Notified',
+          function() {
+            markNotificationsAsSent(editingId);
+            navigator.clipboard.writeText(emailList).catch(function() {});
+          }
+        );
+      }
+
       closeModal();
       renderTable();
     }

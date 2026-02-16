@@ -417,6 +417,9 @@
         <button id="addToCartBtn" class="add-to-cart-large" onclick="addProductToCart(event)">
           Add to Basket
         </button>
+        <button id="notifyMeBtn" class="notify-btn" style="display: none; margin-bottom: 12px;" onclick="showNotifyModal(currentProduct.id, currentProduct.name)">
+          <i class="fas fa-bell"></i> Notify Me When Back in Stock
+        </button>
         <button id="addToWishlistBtn" class="add-to-wishlist-btn" onclick="toggleProductWishlist()">
           <i class="far fa-heart"></i> Add to Wishlist
         </button>
@@ -511,6 +514,7 @@
   <script src="js/products.js" defer></script>
   <script src="js/cart.js" defer></script>
   <script src="js/wishlist.js" defer></script>
+  <script src="js/notify.js" defer></script>
   <script src="js/search.js" defer></script>
   <script src="js/auth.js?v=2" defer></script>
   <script>
@@ -646,11 +650,16 @@
           addBtn.disabled = false;
           addBtn.classList.remove('disabled');
           addBtn.textContent = 'Add to Basket';
+          var notifyBtnHide = document.getElementById('notifyMeBtn');
+          if (notifyBtnHide) notifyBtnHide.style.display = 'none';
         } else if (hasSizeQty) {
           selectedSize = null;
           addBtn.disabled = true;
           addBtn.classList.add('disabled');
           addBtn.textContent = 'Out of Stock';
+          // Show Notify Me button
+          var notifyBtn = document.getElementById('notifyMeBtn');
+          if (notifyBtn) notifyBtn.style.display = 'block';
         } else {
           selectedSize = allSizes[0] || 'One Size';
         }

@@ -1286,3 +1286,156 @@
     gap: 10px;
   }
 }
+
+/* Notify Me Modal */
+.notify-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 20px;
+}
+
+.notify-modal-overlay.show {
+  opacity: 1;
+}
+
+.notify-modal {
+  background: #fff;
+  padding: 40px 30px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  border-radius: 4px;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.notify-modal-overlay.show .notify-modal {
+  transform: translateY(0);
+}
+
+.notify-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+}
+
+.notify-modal-icon {
+  font-size: 2rem;
+  color: #c9a86c;
+  margin-bottom: 15px;
+}
+
+.notify-modal h3 {
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.notify-modal-product {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.notify-modal-desc {
+  font-size: 0.8rem;
+  color: #777;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.notify-email-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.notify-email-input:focus {
+  border-color: #2c2c2c;
+}
+
+.notify-submit-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: #2c2c2c;
+  color: #fff;
+  border: none;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.notify-submit-btn:hover {
+  background: #444;
+}
+
+.notify-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Notify Me button on product cards */
+.notify-btn {
+  width: 100%;
+  background: #2c2c2c;
+  color: #fff;
+  border: none;
+  padding: 14px 20px;
+  font-size: 0.7rem;
+  font-family: inherit;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 400;
+}
+
+.notify-btn:hover {
+  background: #444;
+}
+
+.notify-btn i {
+  margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+  .notify-btn {
+    padding: 12px 15px;
+    font-size: 0.65rem;
+  }
+
+  .notify-modal {
+    padding: 30px 20px;
+  }
+
+  .notify-modal h3 {
+    font-size: 1rem;
+  }
+}

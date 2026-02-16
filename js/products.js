@@ -296,7 +296,7 @@ function renderCollectionProducts(collection) {
         '<p class="price">' + priceHTML + '</p>' +
         buildCardSwatches(p) +
         (isOutOfStock
-          ? '<button class="add-to-cart-btn out-of-stock-btn" disabled>Out of Stock</button>'
+          ? '<button class="notify-btn" onclick="event.stopPropagation();showNotifyModal(\'' + escAttr(p.id) + '\', \'' + escAttr(p.name) + '\')"><i class="fas fa-bell"></i> Notify Me</button>'
           : '<button class="add-to-cart-btn" onclick="addToCart(\'' + escAttr(p.id) + '\', \'' + escAttr(p.name) + '\', ' + p.price + ', \'' + escAttr(p.image) + '\', event)">Add to Cart</button>') +
       '</div>';
     grid.appendChild(card);
