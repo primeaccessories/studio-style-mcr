@@ -1,12 +1,25 @@
 // Create a refund for a Stripe payment
+import { verifyAdmin } from './_lib/adminAuth.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
+  // Admin endpoint — restrict CORS to this site's own origin (no wildcard).
+  const origin = new URL(request.url).origin;
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': 'true',
   };
+
+  // Require a valid admin session cookie.
+  if (!(await verifyAdmin(request, env))) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
+  }
 
   try {
     const body = await request.json();
@@ -74,12 +87,14 @@ export async function onRequestPost(context) {
   }
 }
 
-export async function onRequestOptions() {
+export async function onRequestOptions(context) {
+  const origin = new URL(context.request.url).origin;
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Credentials': 'true',
     },
   });
 }

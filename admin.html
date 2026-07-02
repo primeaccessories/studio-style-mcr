@@ -1226,23 +1226,40 @@
       lastTouchEnd = now;
     }, false);
 
-    var ADMIN_PASSWORD = 'admin123';
+    function showLoginError() {
+      document.getElementById('loginError').classList.add('show');
+      document.getElementById('loginPassword').value = '';
+      setTimeout(function() { document.getElementById('loginError').classList.remove('show'); }, 2000);
+    }
 
-    function attemptLogin(e) {
+    async function attemptLogin(e) {
       e.preventDefault();
-      if (document.getElementById('loginPassword').value === ADMIN_PASSWORD) {
-        sessionStorage.setItem('adminAuth', 'true');
-        // Ensure Firebase Auth session exists (anonymous sign-in if not already signed in)
-        if (typeof auth !== 'undefined' && !auth.currentUser) {
-          auth.signInAnonymously().catch(function(err) {
-            console.warn('Anonymous sign-in failed:', err);
-          });
+      var pwInput = document.getElementById('loginPassword');
+      var password = pwInput.value;
+      try {
+        // Server verifies the password and sets a signed, HttpOnly admin_session cookie.
+        var resp = await fetch('/api/admin-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ password: password })
+        });
+        if (resp.ok) {
+          sessionStorage.setItem('adminAuth', 'true');
+          pwInput.value = '';
+          // Ensure Firebase Auth session exists (anonymous sign-in if not already signed in)
+          if (typeof auth !== 'undefined' && !auth.currentUser) {
+            auth.signInAnonymously().catch(function(err) {
+              console.warn('Anonymous sign-in failed:', err);
+            });
+          }
+          showDashboard();
+        } else {
+          showLoginError();
         }
-        showDashboard();
-      } else {
-        document.getElementById('loginError').classList.add('show');
-        document.getElementById('loginPassword').value = '';
-        setTimeout(function() { document.getElementById('loginError').classList.remove('show'); }, 2000);
+      } catch (err) {
+        console.warn('Login request failed:', err);
+        showLoginError();
       }
     }
   </script>
@@ -1462,7 +1479,9 @@
         bookingsUnsubscribe = null;
       }
       sessionStorage.removeItem('adminAuth');
-      location.reload();
+      // Clear the server-side admin_session cookie, then reload regardless of outcome.
+      var done = function() { location.reload(); };
+      fetch('/api/admin-logout', { method: 'POST', credentials: 'same-origin' }).then(done, done);
     }
 
     // MAIN TABS
@@ -2182,10 +2201,10 @@
         showToast('Uploading image...', 'info');
         var formData = new FormData();
         formData.append('file', blob, Date.now() + '.jpg');
-        formData.append('adminPass', 'admin123');
 
         var response = await fetch('/api/upload-image', {
           method: 'POST',
+          credentials: 'same-origin',
           body: formData
         });
 

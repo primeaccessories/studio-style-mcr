@@ -1,0 +1,15 @@
+# === secrets — added by Turbo security review 2026-06-30 ===
+.env
+.env.local
+.env.*.local
+.dev.vars
+.dev.vars.*
+*.pem
+*.key
+*.p8
+*.p12
+*service-account*.json
+*serviceAccount*.json
+secrets.json
+.wrangler/
+# === end secrets ===

@@ -31,18 +31,45 @@ export async function onRequestPost(context) {
       dropoff: 0,
     };
 
-    // Build line items for Stripe
-    const lineItems = items.map(item => ({
-      price_data: {
-        currency: 'gbp',
-        product_data: {
-          name: item.name,
-          images: item.image ? [item.image] : [],
+    // C7 fix: never trust client-supplied item.price. Fetch authoritative prices
+    // from Firestore (siteData/products) and price every line server-side.
+    let priceMap;
+    try {
+      priceMap = await fetchServerPriceMap(env);
+    } catch (err) {
+      console.error('Price lookup failed:', err);
+      return new Response(JSON.stringify({ error: 'Unable to verify prices right now. Please try again in a moment.' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
+    // Build line items for Stripe using SERVER prices only.
+    const lineItems = [];
+    let subtotalPence = 0;
+    for (const item of items) {
+      const serverPrice = lookupServerPrice(priceMap, item);
+      if (serverPrice === null) {
+        return new Response(JSON.stringify({ error: 'One or more items in your basket are no longer available. Please refresh your basket and try again.' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        });
+      }
+      const qty = Math.max(1, Math.floor(Number(item.quantity)) || 1);
+      const unitAmount = Math.round(serverPrice * 100); // Convert to pence
+      subtotalPence += unitAmount * qty;
+      lineItems.push({
+        price_data: {
+          currency: 'gbp',
+          product_data: {
+            name: item.name,
+            images: item.image ? [item.image] : [],
+          },
+          unit_amount: unitAmount,
         },
-        unit_amount: Math.round(item.price * 100), // Convert to pence
-      },
-      quantity: item.quantity,
-    }));
+        quantity: qty,
+      });
+    }
 
     // Add delivery as a line item
     const deliveryCost = deliveryPrices[deliveryOption] !== undefined ? deliveryPrices[deliveryOption] : deliveryPrices.standard;
@@ -59,25 +86,33 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Calculate combined discount (first-order + coupon + reward) as a single Stripe coupon
+    // Calculate combined discount (first-order + coupon + reward) as a single Stripe coupon.
+    // subtotalPence is computed above from SERVER prices, not client-supplied values.
     let discountParams = {};
-    const subtotalPence = items.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0);
     const orderTotalPence = subtotalPence + deliveryCost;
     let totalDiscountPence = 0;
     let discountParts = [];
 
-    // First-order 10% discount
+    // First-order 10% discount — clamp to at most 10% of the server-computed subtotal.
     if (firstOrderDiscountUsed && firstOrderDiscountAmount > 0) {
-      const firstOrderPence = Math.round(firstOrderDiscountAmount * 100);
-      totalDiscountPence += firstOrderPence;
-      discountParts.push('10% First Order');
+      const requestedPence = Math.round(Number(firstOrderDiscountAmount) * 100);
+      const maxFirstOrderPence = Math.round(subtotalPence * 0.10);
+      const firstOrderPence = Math.max(0, Math.min(requestedPence, maxFirstOrderPence));
+      if (firstOrderPence > 0) {
+        totalDiscountPence += firstOrderPence;
+        discountParts.push('10% First Order');
+      }
     }
 
-    // Coupon discount
+    // Coupon discount — clamp magnitude to the goods subtotal so a tampered value
+    // can never exceed the value of the items being purchased.
     if (couponCode && couponDiscount > 0) {
-      const couponPence = Math.round(couponDiscount * 100);
-      totalDiscountPence += couponPence;
-      discountParts.push(couponCode);
+      const requestedPence = Math.round(Number(couponDiscount) * 100);
+      const couponPence = Math.max(0, Math.min(requestedPence, subtotalPence));
+      if (couponPence > 0) {
+        totalDiscountPence += couponPence;
+        discountParts.push(String(couponCode).slice(0, 40));
+      }
     }
 
     // Reward discount (£20 off)
@@ -202,4 +237,59 @@ export async function onRequestOptions() {
       'Access-Control-Allow-Headers': 'Content-Type',
     },
   });
+}
+
+// --- C7: authoritative pricing from Firestore --------------------------------
+
+// Convert a Firestore typed number field to a JS number (handles double / integer).
+function fsNumber(field) {
+  if (!field) return null;
+  if (field.doubleValue !== undefined) return Number(field.doubleValue);
+  if (field.integerValue !== undefined) return Number(field.integerValue);
+  return null;
+}
+
+// Fetch siteData/products from the Firestore REST API and build a
+// productId -> price (in pounds) map. Throws on network / empty-doc errors so
+// the caller can FAIL CLOSED rather than fall back to client-supplied prices.
+async function fetchServerPriceMap(env) {
+  // Project id comes from the site's client config (js/auth.js). Overridable via env.
+  const projectId = (env && env.FIREBASE_PROJECT_ID) || 'studiostylemcr-e5ead';
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/siteData/products`;
+  const resp = await fetch(url, { headers: { Accept: 'application/json' } });
+  if (!resp.ok) throw new Error(`Firestore responded ${resp.status}`);
+  const doc = await resp.json();
+  const values = doc && doc.fields && doc.fields.items && doc.fields.items.arrayValue
+    ? (doc.fields.items.arrayValue.values || [])
+    : [];
+  if (!values.length) throw new Error('No products found in Firestore');
+  const map = {};
+  for (const v of values) {
+    const f = v && v.mapValue && v.mapValue.fields;
+    if (!f || !f.id || f.id.stringValue === undefined) continue;
+    const id = f.id.stringValue;
+    const price = fsNumber(f.price);
+    if (id && price !== null && price >= 0) map[id] = price;
+  }
+  if (!Object.keys(map).length) throw new Error('No priced products found in Firestore');
+  return map;
+}
+
+// Resolve the authoritative price (in pounds) for a cart line. Tries the stable
+// productId first, then falls back to the cart id and the size-stripped cart id
+// so older baskets (created before productId existed) still resolve. Returns
+// null if the product cannot be found in the catalogue.
+function lookupServerPrice(priceMap, item) {
+  const candidates = [];
+  if (item && item.productId) candidates.push(String(item.productId));
+  if (item && item.id) {
+    candidates.push(String(item.id));
+    candidates.push(String(item.id).replace(/-size-.+$/, ''));
+  }
+  for (const key of candidates) {
+    if (key && Object.prototype.hasOwnProperty.call(priceMap, key)) {
+      return priceMap[key];
+    }
+  }
+  return null;
 }

@@ -1,12 +1,25 @@
 // List Stripe payments/charges
+import { verifyAdmin } from './_lib/adminAuth.js';
+
 export async function onRequestGet(context) {
   const { request, env } = context;
 
+  // Admin endpoint — restrict CORS to this site's own origin (no wildcard).
+  const origin = new URL(request.url).origin;
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': 'true',
   };
+
+  // Require a valid admin session cookie.
+  if (!(await verifyAdmin(request, env))) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
+  }
 
   try {
     const url = new URL(request.url);
@@ -84,12 +97,14 @@ export async function onRequestGet(context) {
   }
 }
 
-export async function onRequestOptions() {
+export async function onRequestOptions(context) {
+  const origin = new URL(context.request.url).origin;
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Credentials': 'true',
     },
   });
 }
