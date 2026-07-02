@@ -104,14 +104,22 @@ export async function onRequestPost(context) {
       }
     }
 
-    // Coupon discount — clamp magnitude to the goods subtotal so a tampered value
-    // can never exceed the value of the items being purchased.
-    if (couponCode && couponDiscount > 0) {
-      const requestedPence = Math.round(Number(couponDiscount) * 100);
-      const couponPence = Math.max(0, Math.min(requestedPence, subtotalPence));
-      if (couponPence > 0) {
-        totalDiscountPence += couponPence;
-        discountParts.push(String(couponCode).slice(0, 40));
+    // Coupon discount — validated SERVER-SIDE against the real `discountCodes`
+    // source. The client-supplied couponDiscount is IGNORED; the discount is
+    // recomputed from the coupon's actual type/value, so a fake or tampered code
+    // cannot reduce the total. Unknown/disabled code => no discount (order still
+    // proceeds, matching the client "Invalid or expired" behaviour).
+    if (couponCode) {
+      const serverCoupon = await fetchServerCoupon(env, couponCode);
+      if (serverCoupon && serverCoupon.value !== null) {
+        let couponPence = serverCoupon.type === 'percent'
+          ? Math.round(subtotalPence * (Number(serverCoupon.value) || 0) / 100)
+          : Math.round((Number(serverCoupon.value) || 0) * 100);
+        couponPence = Math.max(0, Math.min(couponPence, subtotalPence));
+        if (couponPence > 0) {
+          totalDiscountPence += couponPence;
+          discountParts.push(String(couponCode).slice(0, 40));
+        }
       }
     }
 
@@ -273,6 +281,32 @@ async function fetchServerPriceMap(env) {
   }
   if (!Object.keys(map).length) throw new Error('No priced products found in Firestore');
   return map;
+}
+
+// Look up a coupon by code in the Firestore `discountCodes` collection and return
+// the matching ENABLED coupon's { type, value }, or null. Fails closed (null =>
+// no discount) on any error so a fake/tampered/disabled code cannot discount.
+async function fetchServerCoupon(env, code) {
+  try {
+    if (!code) return null;
+    const projectId = (env && env.FIREBASE_PROJECT_ID) || 'studiostylemcr-e5ead';
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/discountCodes`;
+    const resp = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const docs = (data && data.documents) || [];
+    const want = String(code).trim().toUpperCase();
+    for (const doc of docs) {
+      const f = doc && doc.fields;
+      if (!f || !f.code || f.code.stringValue === undefined) continue;
+      if (String(f.code.stringValue).toUpperCase() !== want) continue;
+      if (!f.enabled || f.enabled.booleanValue !== true) return null;
+      return { type: f.type && f.type.stringValue, value: fsNumber(f.value) };
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
 }
 
 // Resolve the authoritative price (in pounds) for a cart line. Tries the stable
