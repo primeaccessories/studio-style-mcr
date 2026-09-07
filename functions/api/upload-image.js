@@ -22,6 +22,14 @@ export async function onRequestPost(context) {
     });
   }
 
+  // R2 is not bound in this environment — fail cleanly instead of throwing.
+  if (!env.IMAGES) {
+    return new Response(JSON.stringify({ error: 'Image storage is not configured' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get('file');

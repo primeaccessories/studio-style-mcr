@@ -5,6 +5,11 @@ export async function onRequestGet(context) {
   const { params, env } = context;
   const key = params.path.join('/');
 
+  // R2 is not bound in this environment — fail cleanly instead of throwing.
+  if (!env.IMAGES) {
+    return new Response('Image storage unavailable', { status: 503 });
+  }
+
   const object = await env.IMAGES.get(key);
   if (!object) {
     return new Response('Not found', { status: 404 });
